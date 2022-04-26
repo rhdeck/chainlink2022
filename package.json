@@ -1,0 +1,28 @@
+{
+  "name": "chainlink2022",
+  "version": "1.0.0",
+  "description": "Chainlink Hackathon 2022 Monorepo - Go Boilermakers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhdeck/chainlink2022.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rhdeck/chainlink2022/issues"
+  },
+  "homepage": "https://github.com/rhdeck/chainlink2022#readme",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "chai": "^4.3.6",
+    "ethereum-waffle": "^3.4.4",
+    "ethers": "^5.6.4",
+    "hardhat": "^2.9.3"
+  }
+}
