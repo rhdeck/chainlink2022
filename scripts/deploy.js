@@ -31,6 +31,12 @@ async function main() {
   await anyapi.deployed();
 
   console.log("AnyApi deployed to:", anyapi.address);
+  
+  const tx = await anyapi.requestVolumeData();
+  const tx_receipt = await tx.wait();
+  console.log({tx_receipt});
+  console.log(await anyapi.volume);
+    
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -30,9 +30,9 @@ contract APIConsumer is ChainlinkClient {
      */
     constructor() {
         setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
-        oracle = 0xc57B33452b4F7BB189bB5AfaE9cc4aBa1f7a4FD8;
-        jobId = "d5270d1c311941d0b08bead21fea7747";
-        fee = 0.1 * 10**18; // (Varies by network and job)
+        oracle = 0x0bDDCD124709aCBf9BB3F824EbC61C87019888bb;
+        jobId = "c6a006e4f4844754a6524445acde84a0";
+        fee = 0.01 * 10**18; // (Varies by network and job)
     }
 
     /**
