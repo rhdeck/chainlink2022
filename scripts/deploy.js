@@ -12,14 +12,25 @@ async function main() {
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
   // await hre.run('compile');
+    // We get the contract to deploy
+  
+  
+  //   const Anyapi = await hre.ethers.getContractFactory("APIConsumer");
+  // const anyapi = await Anyapi.deploy();
+
+  // await anyapi.deployed();
+
+  // console.log("AnyApi deployed to:", anyapi.address);
+
+
 
   // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const Anyapi = await hre.ethers.getContractFactory("APIConsumer");
+  const anyapi = await Anyapi.deploy();
 
-  await greeter.deployed();
+  await anyapi.deployed();
 
-  console.log("Greeter deployed to:", greeter.address);
+  console.log("AnyApi deployed to:", anyapi.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
