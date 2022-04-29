@@ -25,17 +25,17 @@ async function main() {
 
 
   // We get the contract to deploy
-  const Anyapi = await hre.ethers.getContractFactory("APIConsumer");
+  const Anyapi = await hre.ethers.getContractFactory("KeepersCounter");
   const anyapi = await Anyapi.deploy();
 
   await anyapi.deployed();
 
-  console.log("AnyApi deployed to:", anyapi.address);
+  console.log("Keepers deployed to:", anyapi.address);
   
-  const tx = await anyapi.requestVolumeData();
-  const tx_receipt = await tx.wait();
-  console.log({tx_receipt});
-  console.log(await anyapi.volume);
+  // const tx = await anyapi.requestVolumeData();
+  // const tx_receipt = await tx.wait();
+  // console.log({tx_receipt});
+  // console.log(await anyapi.volume);
     
 }
 
