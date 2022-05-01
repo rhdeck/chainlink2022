@@ -40,9 +40,9 @@ contract KeepersCounter is ChainlinkClient, KeeperCompatibleInterface {
      */
     constructor() {
         setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
-        oracle = 0xCCE5e4DF0e98C35d1CD86d9C6935Cf1bA03459ef;
-        jobId = "f3b1bc9cba2f4d828639f228b5b58f42";
-        fee = 0.0001 * 10**18; // (Varies by network and job)
+        oracle = 0x0bDDCD124709aCBf9BB3F824EbC61C87019888bb; // returns bytes32
+        jobId = "c6a006e4f4844754a6524445acde84a0"; //returns bytes32
+        fee = 0.01 * 10**18; // (Varies by network and job)
     }
 
     /**
@@ -123,10 +123,6 @@ contract KeepersCounter is ChainlinkClient, KeeperCompatibleInterface {
     function setActive(bool newValue) external {
         isActive = newValue;
     }
-
-    // modifier isOwner(){
-
-    // }
 
     // function withdrawLink() external {} - Implement a withdraw function to avoid locking your LINK in the contract
 }

@@ -30,9 +30,9 @@ contract APIConsumer is ChainlinkClient {
      */
     constructor() {
         setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
-        oracle = 0x0bDDCD124709aCBf9BB3F824EbC61C87019888bb;
-        jobId = "c6a006e4f4844754a6524445acde84a0";
-        fee = 0.01 * 10**18; // (Varies by network and job)
+        oracle = 0xCCE5e4DF0e98C35d1CD86d9C6935Cf1bA03459ef;
+        jobId = "f3b1bc9cba2f4d828639f228b5b58f42";
+        fee = 0.0001 * 10**18; // (Varies by network and job)
     }
 
     /**
@@ -62,8 +62,8 @@ contract APIConsumer is ChainlinkClient {
         //    }
         //   }
         //  }
-        // request.add("path", "RAW.ETH.USD.VOLUME24HOUR"); // Chainlink nodes prior to 1.0.0 support this format
-        request.add("path", "RAW,ETH,USD,VOLUME24HOUR"); // Chainlink nodes 1.0.0 and later support this format
+        request.add("path", "RAW.ETH.USD.VOLUME24HOUR"); // Chainlink nodes prior to 1.0.0 support this format
+        // request.add("path", "RAW,ETH,USD,VOLUME24HOUR"); // Chainlink nodes 1.0.0 and later support this format
 
         // Multiply the result by 1000000000000000000 to remove decimals
         int256 timesAmount = 10**18;
