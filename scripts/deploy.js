@@ -25,7 +25,7 @@ async function main() {
 
 
   // We get the contract to deploy
-  const Anyapi = await hre.ethers.getContractFactory("APIConsumer");
+  const Anyapi = await hre.ethers.getContractFactory("KeepersCounter");
   const anyapi = await Anyapi.deploy();
 
   await anyapi.deployed();

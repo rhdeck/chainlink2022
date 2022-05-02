@@ -29,6 +29,10 @@ module.exports = {
       url: "https://rpc-mumbai.maticvigil.com",
       accounts: [process.env.PK],
     },
+    kovan: {
+      url: process.env.ALCHEMY_KOVAN,
+      accounts: [process.env.PK],
+    }
   },
   contractSizer: {
     runOnCompile: true,
@@ -36,6 +40,7 @@ module.exports = {
   etherscan: {
     apiKey: {
       polygonMumbai: process.env.POLYGON_API,
+      kovan: process.env.KOVAN_API,
     },
   },
 };
