@@ -32,6 +32,10 @@ module.exports = {
     kovan: {
       url: process.env.ALCHEMY_KOVAN,
       accounts: [process.env.PK],
+    },
+    polygon:{
+      url: process.env.ALCHEMY_POLYGON,
+      accounts: [process.env.PK],
     }
   },
   contractSizer: {
@@ -41,6 +45,7 @@ module.exports = {
     apiKey: {
       polygonMumbai: process.env.POLYGON_API,
       kovan: process.env.KOVAN_API,
+      polygon: process.env.POLYGON_API,
     },
   },
 };
