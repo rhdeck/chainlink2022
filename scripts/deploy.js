@@ -25,8 +25,8 @@ async function main() {
 
 
   // We get the contract to deploy
-  const Anyapi = await hre.ethers.getContractFactory("KeepersCounterPolygon");
-  const anyapi = await Anyapi.deploy();
+  const Anyapi = await hre.ethers.getContractFactory("Oracle");
+  const anyapi = await Anyapi.deploy("0xa36085F69e2889c224210F603D836748e7dC0088");
 
   await anyapi.deployed();
 

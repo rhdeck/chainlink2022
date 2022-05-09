@@ -70,7 +70,7 @@ const createRequest = (input, callback) => {
       console.log(response.data)
       console.log({jobRunID: jobRunID})
       console.log({status: response.status})
-      callback(response.status, Requester.success(jobRunID, { data: {ap:response.data.quote.ap}}))
+      callback(response.status, Requester.success(jobRunID, { data: {as:response.data.quote.as}}))
     })
     .catch(error => {
       callback(500, Requester.errored(jobRunID, error))
