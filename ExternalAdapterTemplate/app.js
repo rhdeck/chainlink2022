@@ -17,7 +17,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.EA_PORT || 8080;
-const host = process.env.EA_HOST || "1782.17.0.1";
+const host = process.env.EA_HOST || "172.17.0.1";
 
 app.use(bodyParser.json());
 
@@ -30,12 +30,12 @@ app.post("/cryptoprice", async (req, res) => {
   res.status(status).json(result);
 });
 
-app.listen(port, host () => console.log(`Listening on port ${port}!`));
+app.listen(port, host, () => console.log(`Listening on port ${port}!`));
 //#endregion
 //#region requests
 const getCryptoAskingSize = async (input) => {
   try {
-    const jobId = typeof input.id === "undefined" ? 1 : input.id;
+    const jobRunId = typeof input.id === "undefined" ? 1 : input.id;
     const { exchange, symbol } = input.data;
     if (!exchange) throw new Error("Data is required");
     if (!symbol) throw new Error("Symbol is required");
@@ -45,19 +45,14 @@ const getCryptoAskingSize = async (input) => {
     const data = await response.json();
     return {
       status: response.status,
-      result: data.quote.as,
-      jobId,
+      result: {jobRunId, askingSize:data.quote.as},
     };
   } catch (error) {
     return {
       status: 500,
-      jobId,
-      status: "errored",
-      statusCode: 500,
-      error: { name: "AdapterError", message: error.message },
-    };
-  }
-};
+      result: { jobRunId, status: "errored", error:"AdapterError", message: error.message , statusCode: 500,
+      },
+};}};
 //Return asking price of the symbol on the exchange given
 const getCryptoPrice = async (input) => {
   try {
