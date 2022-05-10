@@ -1,7 +1,6 @@
 // const createRequest = require("./index").createRequest;
 
 const fetch = require("cross-fetch");
-const { Requester, Validator } = require("@chainlink/external-adapter");
 //#region Set up Alpaca API Keys
 require("dotenv").config();
 const APCA_API_KEY_ID = process.env.APCA_API_KEY_ID;
@@ -18,25 +17,30 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.EA_PORT || 8080;
+const host = process.env.EA_HOST || "1782.17.0.1";
 
 app.use(bodyParser.json());
 
-app.post("/askingsize", async (req, res) => {
-  const { status, result } = await getAskingSize(req.body);
+app.post("/cryptoaskingsize", async (req, res) => {
+  const { status, result } = await getCryptoAskingSize(req.body);
+  res.status(status).json(result);
+});
+app.post("/cryptoprice", async (req, res) => {
+  const { status, result } = await getCryptoPrice(req.body);
   res.status(status).json(result);
 });
 
-app.listen(port, () => console.log(`Listening on port ${port}!`));
+app.listen(port, host () => console.log(`Listening on port ${port}!`));
 //#endregion
-//#region createRequest
-const getAskingSize = async (input) => {
-  const jobId = typeof input.id === "undefined" ? 1 : input.id;
-  const exchange = input.data.exchange;
-  if (!exchange) throw new Error("Data is required");
-  const symbol = input.data.symbol;
-  if (!symbol) throw new Error("Symbol is required");
-  const url = `https://data.alpaca.markets/v1beta1/crypto/${symbol}/quotes/latest?exchange=${exchange}`;
+//#region requests
+const getCryptoAskingSize = async (input) => {
   try {
+    const jobId = typeof input.id === "undefined" ? 1 : input.id;
+    const { exchange, symbol } = input.data;
+    if (!exchange) throw new Error("Data is required");
+    if (!symbol) throw new Error("Symbol is required");
+    const url = `https://data.alpaca.markets/v1beta1/crypto/${symbol}/quotes/latest?exchange=${exchange}`;
+
     const response = await fetch(url, { headers });
     const data = await response.json();
     return {
@@ -50,7 +54,32 @@ const getAskingSize = async (input) => {
       jobId,
       status: "errored",
       statusCode: 500,
-      error: { name: "AdapterError", message: "There was an error" },
+      error: { name: "AdapterError", message: error.message },
+    };
+  }
+};
+//Return asking price of the symbol on the exchange given
+const getCryptoPrice = async (input) => {
+  try {
+    const jobId = typeof input.id === "undefined" ? 1 : input.id;
+    const { exchange, symbol } = input.data;
+    if (!exchange) throw new Error("Data is required");
+    if (!symbol) throw new Error("Symbol is required");
+    const url = `https://data.alpaca.markets/v1beta1/crypto/${symbol}/quotes/latest?exchange=${exchange}`;
+    const response = await fetch(url, { headers });
+    const data = await response.json();
+    return {
+      status: response.status,
+      result: data.quote.ap,
+      jobId,
+    };
+  } catch (error) {
+    return {
+      status: 500,
+      jobId,
+      status: "errored",
+      statusCode: 500,
+      error: { name: "AdapterError", message: error.message },
     };
   }
 };
