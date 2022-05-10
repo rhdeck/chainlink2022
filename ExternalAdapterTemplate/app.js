@@ -56,7 +56,7 @@ const getCryptoAskingSize = async (input) => {
 //Return asking price of the symbol on the exchange given
 const getCryptoPrice = async (input) => {
   try {
-    const jobId = typeof input.id === "undefined" ? 1 : input.id;
+    const jobRunId = typeof input.id === "undefined" ? 1 : input.id;
     const { exchange, symbol } = input.data;
     if (!exchange) throw new Error("Data is required");
     if (!symbol) throw new Error("Symbol is required");
@@ -65,17 +65,14 @@ const getCryptoPrice = async (input) => {
     const data = await response.json();
     return {
       status: response.status,
-      result: data.quote.ap,
-      jobId,
+      result: {jobRunId, price: data.quote.ap},
     };
   } catch (error) {
     return {
       status: 500,
-      jobId,
-      status: "errored",
-      statusCode: 500,
-      error: { name: "AdapterError", message: error.message },
-    };
+      result: { jobRunId, status: "errored", error:"AdapterError", message: error.message , statusCode: 500,
+      }
+    }
   }
 };
 //#endregion
