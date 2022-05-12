@@ -945,6 +945,43 @@
       "artifacts": [
         "SafeMathChainlink"
       ]
+    },
+    "/Users/akshayrakheja/Documents/chainlink2022/contracts/CryptoPriceFeed.sol": {
+      "lastModificationDate": 1652317252114,
+      "contentHash": "54d39905fe05dd36244e96a9855c5705",
+      "sourceName": "contracts/CryptoPriceFeed.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@chainlink/contracts/src/v0.8/ChainlinkClient.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.7"
+      ],
+      "artifacts": [
+        "CryptoPriceFeed"
+      ]
     }
   }
 }

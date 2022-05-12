@@ -25,12 +25,12 @@ async function main() {
 
 
   // We get the contract to deploy
-  const Anyapi = await hre.ethers.getContractFactory("Oracle");
-  const anyapi = await Anyapi.deploy("0xa36085F69e2889c224210F603D836748e7dC0088");
+  const Anyapi = await hre.ethers.getContractFactory("CryptoPriceFeed");
+  const anyapi = await Anyapi.deploy();
 
   await anyapi.deployed();
 
-  console.log("Keepers deployed to:", anyapi.address);
+  console.log("CryptoPriceFeed deployed to:", anyapi.address);
   
   // const tx = await anyapi.requestVolumeData();
   // const tx_receipt = await tx.wait();

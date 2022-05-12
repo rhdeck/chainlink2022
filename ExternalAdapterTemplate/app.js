@@ -34,8 +34,8 @@ app.listen(port, host, () => console.log(`Listening on port ${port}!`));
 //#endregion
 //#region requests
 const getCryptoAskingSize = async (input) => {
+  const jobRunId = typeof input.id === "undefined" ? 1 : input.id;  
   try {
-    const jobRunId = typeof input.id === "undefined" ? 1 : input.id;
     const { exchange, symbol } = input.data;
     if (!exchange) throw new Error("Data is required");
     if (!symbol) throw new Error("Symbol is required");
@@ -55,17 +55,18 @@ const getCryptoAskingSize = async (input) => {
 };}};
 //Return asking price of the symbol on the exchange given
 const getCryptoPrice = async (input) => {
+  const jobRunId = typeof input.id === "undefined" ? 1 : input.id;
   try {
-    const jobRunId = typeof input.id === "undefined" ? 1 : input.id;
     const { exchange, symbol } = input.data;
     if (!exchange) throw new Error("Data is required");
     if (!symbol) throw new Error("Symbol is required");
     const url = `https://data.alpaca.markets/v1beta1/crypto/${symbol}/quotes/latest?exchange=${exchange}`;
     const response = await fetch(url, { headers });
     const data = await response.json();
+    const price = Math.floor(data.quote.ap * 100);
     return {
       status: response.status,
-      result: {jobRunId, price: data.quote.ap},
+      result: {jobRunId, price},
     };
   } catch (error) {
     return {
