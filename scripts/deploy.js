@@ -5,38 +5,36 @@
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
 
+const showEvents = (receipt) => {
+  if (receipt.events) {
+    console.log(
+      "events",
+      receipt.events.map(({ eventSignature, args }) => ({
+        eventSignature,
+        args,
+      }))
+    );
+  } else {
+    console.log("No events");
+    console.log(receipt);
+  }
+};
+
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
-    // We get the contract to deploy
-  
-  
-  //   const Anyapi = await hre.ethers.getContractFactory("APIConsumer");
-  // const anyapi = await Anyapi.deploy();
-
-  // await anyapi.deployed();
-
-  // console.log("AnyApi deployed to:", anyapi.address);
-
-
-
+  const new_signer = await hre.ethers.getSigners();
+  console.log("Signer is :",new_signer.address);
   // We get the contract to deploy
-  const Anyapi = await hre.ethers.getContractFactory("CryptoPriceFeed");
-  const anyapi = await Anyapi.deploy();
+  const PriceFeed = await hre.ethers.getContractFactory("CryptoPriceFeed");
+  const priceFeed = await PriceFeed.deploy();
 
-  await anyapi.deployed();
+  await priceFeed.deployed();
 
-  console.log("CryptoPriceFeed deployed to:", anyapi.address);
-  
-  // const tx = await anyapi.requestVolumeData();
-  // const tx_receipt = await tx.wait();
-  // console.log({tx_receipt});
-  // console.log(await anyapi.volume);
-    
+  console.log("CryptoPriceFeed deployed to:", priceFeed.address);
+
+  // const txn = await priceFeed.requestPrice("MATICUSD", "FTXU");
+  // //   console.log("we here",txn);
+  // const receipt = await txn.wait();
+  // showEvents(receipt);    
 }
 
 // We recommend this pattern to be able to use async/await everywhere

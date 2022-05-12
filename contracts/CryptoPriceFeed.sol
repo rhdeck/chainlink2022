@@ -2,6 +2,8 @@
 pragma solidity ^0.8.7;
 
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+import "hardhat/console.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * Request testnet LINK and ETH here: https://faucets.chain.link/
@@ -12,7 +14,7 @@ import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
  * THIS IS AN EXAMPLE CONTRACT WHICH USES HARDCODED VALUES FOR CLARITY.
  * PLEASE DO NOT USE THIS CODE IN PRODUCTION.
  */
-contract CryptoPriceFeed is ChainlinkClient {
+contract CryptoPriceFeed is ChainlinkClient, Ownable {
     using Chainlink for Chainlink.Request;
 
     address private oracle;
@@ -22,8 +24,10 @@ contract CryptoPriceFeed is ChainlinkClient {
     mapping(string => uint256) public blocks;
     // @TODO: Check if the increase in mapping size (more txns/requests) makes it more gassy
     mapping(bytes32 => string) private requests;
+    mapping(address => bool) private requesters;
 
     constructor() {
+        requesters[msg.sender] = true;
         setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB); // for mumbai network
         oracle = 0xE3a98D9FAAB4a4B338B40A6dF6273Ab520152b8c;
         priceJobId = "f2d37f55b72245128ef2d4ea421cd766";
@@ -36,6 +40,7 @@ contract CryptoPriceFeed is ChainlinkClient {
      */
     function requestPrice(string memory _symbol, string memory _exchange)
         public
+        onlyRequester
         returns (bytes32 requestId)
     {
         Chainlink.Request memory request = buildChainlinkRequest(
@@ -46,10 +51,10 @@ contract CryptoPriceFeed is ChainlinkClient {
 
         request.add("symbol", _symbol);
         request.add("exchange", _exchange);
-
-        requests[request.id] = _symbol;
         // Sends the request
-        return sendChainlinkRequestTo(oracle, request, fee);
+        bytes32 _requestId = sendChainlinkRequestTo(oracle, request, fee);
+        requests[_requestId] = _symbol;
+        return _requestId;
     }
 
     /**
@@ -60,9 +65,35 @@ contract CryptoPriceFeed is ChainlinkClient {
         recordChainlinkFulfillment(_requestId)
     {
         // volume = _volume;
-        string memory _symbol = requests[_requestId];
+
+        string storage _symbol = requests[_requestId];
+
         prices[_symbol] = _returnedPrice;
         blocks[_symbol] = block.number;
+    }
+
+    function getPriceandBlock(string memory _symbol)
+        external
+        view
+        returns (uint256, uint256)
+    {
+        return (prices[_symbol], blocks[_symbol]);
+    }
+
+    modifier onlyRequester() {
+        require(
+            requesters[_msgSender()] == true,
+            "Only Requester: Caller is not a requester"
+        );
+        _;
+    }
+
+    function setRequester(address _requester) public onlyOwner {
+        requesters[_requester] = true;
+    }
+
+    function isRequester(address _requester) public view returns (bool) {
+        return requesters[_requester];
     }
 
     // function withdrawLink() external {} - Implement a withdraw function to avoid locking your LINK in the contract
