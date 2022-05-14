@@ -24,12 +24,12 @@ async function main() {
   const new_signer = await hre.ethers.getSigners();
   console.log("Signer is :",new_signer.address);
   // We get the contract to deploy
-  const PriceFeed = await hre.ethers.getContractFactory("CryptoPriceFeed");
+  const PriceFeed = await hre.ethers.getContractFactory("EquitiesKeeper");
   const priceFeed = await PriceFeed.deploy();
 
   await priceFeed.deployed();
 
-  console.log("CryptoPriceFeed deployed to:", priceFeed.address);
+  console.log("EquitiesPriceFeed deployed to:", priceFeed.address);
 
   // const txn = await priceFeed.requestPrice("MATICUSD", "FTXU");
   // //   console.log("we here",txn);

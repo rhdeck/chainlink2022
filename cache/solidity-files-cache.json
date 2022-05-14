@@ -1091,6 +1091,85 @@
       "artifacts": [
         "Context"
       ]
+    },
+    "/Users/akshayrakheja/Documents/chainlink2022/contracts/EquitiesPriceFeed.sol": {
+      "lastModificationDate": 1652489680974,
+      "contentHash": "8b8d7a91cce0e9324896fba581825a55",
+      "sourceName": "contracts/EquitiesPriceFeed.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@chainlink/contracts/src/v0.8/ChainlinkClient.sol",
+        "hardhat/console.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.7"
+      ],
+      "artifacts": [
+        "EquitiesPriceFeed"
+      ]
+    },
+    "/Users/akshayrakheja/Documents/chainlink2022/contracts/EquitiesKeeper.sol": {
+      "lastModificationDate": 1652491809954,
+      "contentHash": "a0671df9fff3f6b33b4f419da7031c4d",
+      "sourceName": "contracts/EquitiesKeeper.sol",
+      "solcConfig": {
+        "version": "0.8.7",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@chainlink/contracts/src/v0.8/ChainlinkClient.sol",
+        "@chainlink/contracts/src/v0.8/KeeperCompatible.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "./EquitiesPriceFeed.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.7"
+      ],
+      "artifacts": [
+        "EquitiesKeeper"
+      ]
     }
   }
 }
