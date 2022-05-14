@@ -37,13 +37,18 @@ app.post("/equitiestrade", async (req, res) => {
   const { status, result } = await tradeEquities(req.body);
   res.status(status).json(result);
 });
+app.post("/equitiesprice", async (req, res) => {
+  const { status, result } = await getEquitiesPrice(req.body);
+  res.status(status).json(result);
+});
+
 
 
 app.listen(port, host, () => console.log(`Listening on port ${port}!`));
 //#endregion
 //#region requests
 const getCryptoAskingSize = async (input) => {
-  const jobRunId = typeof input.id === "undefined" ? 1 : input.id;  
+  const jobRunId = typeof input.id === "undefined" ? 1 : input.id;
   try {
     const { exchange, symbol } = input.data;
     if (!exchange) throw new Error("Data is required");
@@ -54,14 +59,17 @@ const getCryptoAskingSize = async (input) => {
     const data = await response.json();
     return {
       status: response.status,
-      result: {jobRunId, askingSize:data.quote.as},
+      result: { jobRunId, askingSize: data.quote.as },
     };
   } catch (error) {
     return {
       status: 500,
-      result: { jobRunId, status: "errored", error:"AdapterError", message: error.message , statusCode: 500,
+      result: {
+        jobRunId, status: "errored", error: "AdapterError", message: error.message, statusCode: 500,
       },
-};}};
+    };
+  }
+};
 //Return asking price of the symbol on the exchange given
 const getCryptoPrice = async (input) => {
   const jobRunId = typeof input.id === "undefined" ? 1 : input.id;
@@ -75,12 +83,13 @@ const getCryptoPrice = async (input) => {
     const price = Math.floor(data.quote.ap * 100);
     return {
       status: response.status,
-      result: {jobRunId, price},
+      result: { jobRunId, price },
     };
   } catch (error) {
     return {
       status: 500,
-      result: { jobRunId, status: "errored", error:"AdapterError", message: error.message , statusCode: 500,
+      result: {
+        jobRunId, status: "errored", error: "AdapterError", message: error.message, statusCode: 500,
       }
     }
   }
@@ -101,12 +110,13 @@ const tradeCrypto = async (input) => {
     const price = Math.floor(data.quote.ap * 100);
     return {
       status: response.status,
-      result: {jobRunId, price},
+      result: { jobRunId, price },
     };
   } catch (error) {
     return {
       status: 500,
-      result: { jobRunId, status: "errored", error:"AdapterError", message: error.message , statusCode: 500,
+      result: {
+        jobRunId, status: "errored", error: "AdapterError", message: error.message, statusCode: 500,
       }
     }
   }
@@ -128,12 +138,38 @@ const tradeEquities = async (input) => {
     const price = Math.floor(data.quote.ap * 100);
     return {
       status: response.status,
-      result: {jobRunId, price},
+      result: { jobRunId, price },
     };
   } catch (error) {
     return {
       status: 500,
-      result: { jobRunId, status: "errored", error:"AdapterError", message: error.message , statusCode: 500,
+      result: {
+        jobRunId, status: "errored", error: "AdapterError", message: error.message, statusCode: 500,
+      }
+    }
+  }
+};
+//#endregion
+
+//Return asking price of the symbol on the exchange given
+const getEquitiesPrice = async (input) => {
+  const jobRunId = typeof input.id === "undefined" ? 1 : input.id;
+  try {
+    const { symbol } = input.data;
+    if (!symbol) throw new Error("Symbol is required");
+    const url = `https://data.alpaca.markets/v2/stocks/${symbol}/quotes/latest`;
+    const response = await fetch(url, { headers });
+    const data = await response.json();
+    const price = Math.floor(data.quote.ap * 100);
+    return {
+      status: response.status,
+      result: { jobRunId, price },
+    };
+  } catch (error) {
+    return {
+      status: 500,
+      result: {
+        jobRunId, status: "errored", error: "AdapterError", message: error.message, statusCode: 500,
       }
     }
   }
