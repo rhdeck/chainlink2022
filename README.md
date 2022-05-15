@@ -1,5 +1,5 @@
 # PolyNodes
-
+![alt text](assets/Polynodes%20logo.png)
 Chainlink Nodes - On Easy. 
 
 We make running Chainlink Oracle Nodes easy and inexpensive for use on L2 Chains. 
