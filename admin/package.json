@@ -1,0 +1,76 @@
+{
+  "name": "dots-test",
+  "private": false,
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "bin": "lib/bin.js",
+  "scripts": {
+    "setup": "./init-template.js",
+    "pre-commit": "(git-branch-is --not main || (set -u && echo $ALLOWMAIN)) && yarn test",
+    "test": "tsc --noEmit",
+    "build": "tsc && chmod +x lib/bin.js && yarn pack -f package.tgz",
+    "docs:bin": "mkdir docstemp ; (commanderdoc markdown lib/bin.js -o docstemp/__cli.md --cli-name \"npx `jq -r .name package.json`\") ; ",
+    "docs:lib": "typedoc --theme markdown --readme none --includeVersion --out docstemp src/ && rm README.md ; mv docstemp/README.md docstemp/_library.md",
+    "docs:compile": "mkdir docstemp ; cp TOP.md docstemp/README.md ; concat-md docstemp > README.md && rm -rf docstemp",
+    "docs": "rm -rf docstemp && yarn docs:lib && yarn docs:bin && yarn docs:compile",
+    "prepublishOnly": "yarn build && yarn docs && git commit README.md -m \"docs: updating docs\" && git push",
+    "watch": "livelink watch",
+    "prepare": "install-peers"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rhdeck/dots-test.git"
+  },
+  "author": "Ray Deck",
+  "license": "MIT",
+  "bugs": {
+    "url": "https:/github.com/rhdeck/dots-test/issues"
+  },
+  "homepage": "https://github.com/rhdeck/dots-test#README",
+  "devDependencies": {
+    "@commitlint/cli": "^9.1.1",
+    "@commitlint/config-conventional": "^9.1.1",
+    "@raydeck/livelink": "^1.5.2",
+    "@types/inquirer": "^7.3.1",
+    "@types/node": "^14.14.17",
+    "@types/node-forge": "^0.10.9",
+    "@types/ssh2": "^0.5.48",
+    "@types/uuid": "^8.3.4",
+    "@types/validate-npm-package-name": "^3.0.2",
+    "commanderdoc": "^0.1.11",
+    "concat-md": "^0.3.5",
+    "git-branch-is": "^4.0.0",
+    "husky": "^4.3.6",
+    "install-peers-cli": "^2.2.0",
+    "ts-node": "^10.4.0",
+    "typedoc": "^0.22.10",
+    "typedoc-plugin-markdown": "^3.11.0",
+    "typescript": "^4.5.2",
+    "validate-npm-package-name": "^3.0.0"
+  },
+  "files": [
+    "src",
+    "lib"
+  ],
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "commander": "^6.2.1",
+    "cross-fetch": "^3.1.4",
+    "dotenv": "^16.0.1",
+    "dots-wrapper": "^3.6.2",
+    "inquirer": "^7.3.3",
+    "node-forge": "^0.10.0",
+    "node-ssh": "^12.0.1",
+    "uuid": "^8.3.2"
+  },
+  "liveLink": {
+    "ignoreMasks": [
+      "package.tgz",
+      "lib/**",
+      "README.md",
+      "docs/**",
+      "docstemp/**"
+    ]
+  }
+}
