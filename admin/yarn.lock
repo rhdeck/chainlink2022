@@ -293,6 +293,11 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
+"@types/mustache@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@types/mustache/-/mustache-4.1.2.tgz#d0e158013c81674a5b6d8780bc3fe234e1804eaf"
+  integrity sha512-c4OVMMcyodKQ9dpwBwh3ofK9P6U9ZktKU9S+p33UqwMNN1vlv2P0zJZUScTshnx7OEoIIRcCFNQ904sYxZz8kg==
+
 "@types/node-forge@^0.10.9":
   version "0.10.9"
   resolved "https://registry.yarnpkg.com/@types/node-forge/-/node-forge-0.10.9.tgz#3c2e049a042ac27e731a9432dc3fd9b321307040"
@@ -3283,6 +3288,11 @@ ms@^2.0.0, ms@^2.1.1:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
+
+mustache@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/mustache/-/mustache-4.2.0.tgz#e5892324d60a12ec9c2a73359edca52972bf6f64"
+  integrity sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==
 
 mute-stream@0.0.6:
   version "0.0.6"

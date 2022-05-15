@@ -8,6 +8,7 @@ import {
   // deployCode,
   destroyDroplet,
   getDropletByKey,
+  getDroplets,
   // initializeDroplet,
   // sleep,
 } from ".";
@@ -24,24 +25,6 @@ commander.command("build <key>").action(async (key) => {
   console.log("Root private key", privateKey);
   fs.writeFileSync(`${key}_root_private.key`, privateKey);
   fs.chmodSync(`${key}_root_private.key`, 0o600);
-  // console.log();
-  // const { privateKey: userPrivateKey, userName } = await createUser({
-  //   droplet_id: id,
-  //   rootPrivateKey: privateKey,
-  //   hostHash: hash,
-  //   userName: "nodeuser",
-  // });
-  // await deployCode({
-  //   droplet_id: id,
-  //   privateKey: userPrivateKey,
-  //   username: userName,
-  //   hash,
-  //   path: "./",
-  // });
-  // console.log("We are done now");
-  // fs.writeFileSync(`${key}_nodeuser_private.key`, userPrivateKey);
-  // fs.chmodSync(`${key}_nodeuser_private.key`, 0o600);
-  // console.log("create user output", output);
 });
 commander.command("destroy <key>").action(async (key) => {
   if (!key) {
@@ -79,7 +62,10 @@ commander.command("info <key>").action(async (key) => {
     )
   );
 });
-
+commander.command("list").action(async () => {
+  const list = (await getDroplets()).map(({ name }) => name);
+  console.log(JSON.stringify(list, null, 2));
+});
 commander.parse(process.argv);
 
 const key = commander.args[0];
