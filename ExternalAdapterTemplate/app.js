@@ -43,7 +43,6 @@ app.post("/equitiesprice", async (req, res) => {
 });
 
 
-
 app.listen(port, host, () => console.log(`Listening on port ${port}!`));
 //#endregion
 //#region requests
@@ -125,20 +124,22 @@ const tradeCrypto = async (input) => {
 
 
 // @TODO: Trade Equities on Alpaca
-//Return asking price of the symbol on the exchange given
+// Trade equities on Alpaca for the given symbol
 const tradeEquities = async (input) => {
   const jobRunId = typeof input.id === "undefined" ? 1 : input.id;
   try {
-    const { exchange, symbol } = input.data;
-    if (!exchange) throw new Error("Data is required");
+    const { symbol, qty } = input.data;
     if (!symbol) throw new Error("Symbol is required");
-    const url = `https://data.alpaca.markets/v1beta1/crypto/${symbol}/quotes/latest?exchange=${exchange}`;
-    const response = await fetch(url, { headers });
+    if (!qty) throw new Error("Quantity is required");
+    const body = {symbol, qty, side:'buy', type:"market", time_in_force:"day"};
+    const url = `https://paper-api.alpaca.markets/v2/orders`;
+    const response = await fetch(url, { headers, body: JSON.stringify(body), method: 'POST' });
     const data = await response.json();
-    const price = Math.floor(data.quote.ap * 100);
+    console.log({data})
+    const orderStatus = data.status;
     return {
       status: response.status,
-      result: { jobRunId, price },
+      result: { jobRunId, orderStatus },
     };
   } catch (error) {
     return {
