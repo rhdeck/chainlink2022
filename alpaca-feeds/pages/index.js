@@ -14,6 +14,7 @@ export default function Home() {
       <div className={styles.overlay__inner}>
         <div className={styles.overlay__content}>
           <img src="../images/abstract.png" className={styles.spinner}></img>
+          <div style={{textAlign:"center"}}>Retrieving Blockchain Data</div>
         </div>
       </div>
     </div>
@@ -26,7 +27,7 @@ export default function Home() {
     try {
       for (let i = 0; i < equities.length; i++) {
         priceBlock = await instance.getPriceandBlock(equities[i]);
-        newPrice.push(`Price: ${Number(priceBlock[0] / 100)}`);
+        newPrice.push(`Price: $${Number(priceBlock[0] / 100)}`);
       }
       setPrice(newPrice);
     } catch (err) {
@@ -70,28 +71,29 @@ export default function Home() {
       </Head>
       <div className={styles.logo}>Alpaca Feeds</div>
       <main className={styles.main}>
-        <h1 className={styles.title}>Alpaca Feeds</h1>
+        <h1>Alpaca Feeds</h1>
+        <h4>(Powered by PolyNodes)</h4>
+        <p style={{width:"50%", textAlign:"center"}}>Alpaca Market Feeds are updated continuously on the Polygon Blockchain via Chainlink nodes.</p>
         {!price.length > 0 ? (
           <div className={styles.cardTwo}>
             {loader}
           </div>
         ) : (
+          <div>
+          <h2>Equities</h2>
           <div className={styles.gridTwo}>
-            <div className={styles.grid}>
-              <div className={styles.cardTwo}>
-                <h2>Equities</h2>
-              </div>
-            </div>
             <div className={styles.grid}>
               {price.map((price, index) => {
                 return (
                   <div key={index} className={styles.card}>
+                    
                     <h2>{equities[index]}</h2>
                     <p>{price}</p>
                   </div>
                 );
               })}
             </div>
+          </div>
           </div>
         )}
       </main>
