@@ -42,6 +42,7 @@
 .title {
   margin: 0;
   padding-bottom: 4rem;
+  color:#ffff;
   line-height: 1.15;
   font-size: 3rem;
 }
@@ -86,13 +87,13 @@
   margin: 1rem;
   padding: 1rem;
   text-align: left;
-  color: inherit;
+  color: #4A23A4;
   text-decoration: none;
   border: 1px solid #eaeaea;
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
   width: 600px;
-  background-color: #8A81F0;
+  background-color: #BE90F7;
 }
 
 .cardTwo {
@@ -118,7 +119,6 @@
 
 .logo {
   position: absolute;
-  color:#ffff;
   font-size: 1.25rem;
   width: 100%;
   height: 50px;
@@ -128,11 +128,44 @@
   padding-left: 6px;
   justify-content: flex-start;
   align-items: center;
-
-  background: #BD3196;
-  /* Black Shadows/Black E9 */
   
-  box-shadow: 0px 40px 55px -11px rgba(0, 0, 0, 0.12);
+}
+
+.overlay {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: conic-gradient(from 206.55deg at 99.28% 1.37%, #BD3196 0deg, #341652 33.77deg, #BD3196 360deg), conic-gradient(from 153.43deg at 0% 0%, #BD3196 0deg, #341652 33.77deg, #BD3196 360deg), linear-gradient(185.86deg, #F19DFF -8.74%, #9A3AD6 109.78%);
+}
+
+.overlay__inner {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.overlay__content {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.spinner {
+  width: 300px;
+  height: 300px;
+  display: inline-block;
+  animation: spin 3s infinite linear;
+}
+
+@keyframes spin {
+100% {
+  transform: rotate(360deg);
+}
 }
 
 @media (max-width: 600px) {
