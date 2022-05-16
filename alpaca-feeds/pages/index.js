@@ -3,12 +3,12 @@ import styles from "../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import instance from "../instance";
 import instanceKeeper from "../instanceKeeper";
-import { ethers } from "ethers";
 
 export default function Home() {
   const [price, setPrice] = useState([]);
   const [equities, setEquities] = useState([]);
   const [lastUpkeep, setLastUpkeep] = useState([]);
+  const [pastTimestamp, setPastTimestamp] = useState();
 
   const loader = (
     <div className={styles.overlay}>
@@ -38,7 +38,23 @@ export default function Home() {
   };
 
   const getEquities = async () => {
-    const equitiesLength = await instanceKeeper.numEquities();
+    let timeStamp;
+    try {
+    timeStamp = await instanceKeeper.lastTimeStamp()
+    } catch (err) {
+      console.log(err.message)
+    }
+    if(!pastTimestamp) {
+    setPastTimestamp(timeStamp)
+    }
+
+    let equitiesLength;
+
+    try {
+    equitiesLength = await instanceKeeper.numEquities();
+    } catch (err) {
+      console.log(err.message)
+    }
     let equity;
     let allEquities = [];
 
@@ -53,20 +69,25 @@ export default function Home() {
     }
   };
 
-  const getTimeInterval = async () => {
-      const time = Date.now();
-      const currentTime = Math.floor(time / 1000);
-      const pastBlockInfo = await instanceKeeper.lastTimeStamp();
-      const minutes = Math.floor((currentTime-pastBlockInfo)/60)
-      const seconds = ((currentTime-pastBlockInfo)%60)
+  const getTimeInterval = () => {
+      const time = Date.now()
+      const currentTime = Math.floor(time / 1000)
+      const minutes = Math.floor((currentTime-pastTimestamp)/60)
+      const seconds = ((currentTime-pastTimestamp)%60)
+      if(!isNaN(minutes)) {
       setLastUpkeep([minutes, seconds])
+      }
   }
-
 
   useEffect(() => {
     getEquities();
-    getTimeInterval();
   }, []);
+
+  useEffect(() => {
+    setInterval(() => {
+      getTimeInterval();
+    }, 1000)
+  }, [pastTimestamp]);
 
   useEffect(() => {
     getPriceandFeed();
