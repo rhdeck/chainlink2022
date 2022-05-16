@@ -1,3 +1,21 @@
+/*
+                                                                                
+                            ((((((((                                           
+                       ((((((((((((((((((                                       
+                    (((((((         ((((((((                                    
+                    ((((               (((((                                    
+                    ((((                (((      #####                          
+                    ((((                     ##############                     
+                    ((((                 ##########  ##########                 
+                    (((((((          ((#######           #######                
+                       ((((((((((((((((######              #####                
+                           ((((((((((   #####              #####                
+                                        #####              #####                
+                                        #####             ######                
+                                        ##########    ##########                
+                                            ################                    
+                                                #######    
+*/
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
@@ -27,6 +45,8 @@ contract EquitiesKeeper is ChainlinkClient, KeeperCompatibleInterface, Ownable {
 
     mapping(address => bool) private requesters;
     string[] public equities;
+    uint256 public numEquities = 0;
+    uint256 public EquityFee = 1 * 10**17;
 
     uint256 public counter;
 
@@ -35,7 +55,7 @@ contract EquitiesKeeper is ChainlinkClient, KeeperCompatibleInterface, Ownable {
     /**
      * Use an interval in seconds and a timestamp to slow execution of Upkeep
      */
-    uint256 public immutable interval = 10;
+    uint256 public interval = 600;
     uint256 public lastTimeStamp;
 
     /**
@@ -103,12 +123,23 @@ contract EquitiesKeeper is ChainlinkClient, KeeperCompatibleInterface, Ownable {
         return requesters[_requester];
     }
 
-    function addEquity(string memory _equity) public onlyOwner {
+    function adminAddEquity(string memory _equity) public onlyOwner {
         equities.push(_equity);
+        numEquities = numEquities + 1;
+    }
+
+    function addEquity(string memory _equity) public payable {
+        require(msg.value == EquityFee, "Equity Fee is not paid");
+        equities.push(_equity);
+        numEquities = numEquities + 1;
     }
 
     function setPriceFeedContract(address _priceFeedContract) public onlyOwner {
         priceFeedContract = _priceFeedContract;
+    }
+
+    function setInterval(uint256 _interval) public onlyOwner {
+        interval = _interval;
     }
 
     // function withdrawLink() external {} - Implement a withdraw function to avoid locking your LINK in the contract
