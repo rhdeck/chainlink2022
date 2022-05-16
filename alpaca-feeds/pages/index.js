@@ -54,12 +54,11 @@ export default function Home() {
   };
 
   const getTimeInterval = async () => {
-      const provider = new ethers.providers.AlchemyProvider("maticmum")
-      const currentBlock = await provider.getBlockNumber()
-      const currentBlockInfo = await provider.getBlock(currentBlock)
+      const time = Date.now();
+      const currentTime = Math.floor(time / 1000);
       const pastBlockInfo = await instanceKeeper.lastTimeStamp();
-      const minutes = Math.floor((currentBlockInfo.timestamp-pastBlockInfo)/60)
-      const seconds = ((currentBlockInfo.timestamp-pastBlockInfo)%60)
+      const minutes = Math.floor((currentTime-pastBlockInfo)/60)
+      const seconds = ((currentTime-pastBlockInfo)%60)
       setLastUpkeep([minutes, seconds])
   }
 
