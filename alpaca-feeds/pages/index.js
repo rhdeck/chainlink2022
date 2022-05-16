@@ -72,10 +72,11 @@ export default function Home() {
   const getTimeInterval = () => {
       const time = Date.now()
       const currentTime = Math.floor(time / 1000)
-      const minutes = Math.floor((currentTime-pastTimestamp)/60)
+      const hours = Math.floor((currentTime-pastTimestamp)/3600)
+      const minutes = Math.floor(((currentTime-pastTimestamp)%3600)/60)
       const seconds = ((currentTime-pastTimestamp)%60)
-      if(!isNaN(minutes)) {
-      setLastUpkeep([minutes, seconds])
+      if(!isNaN(seconds)) {
+      setLastUpkeep([hours, minutes, seconds])
       }
   }
 
@@ -128,12 +129,13 @@ export default function Home() {
               })}
             </div>
           </div>
-          <div style={{textAlign:"center", marginTop:"2rem"}}>Last Update</div>
+  
           <div className={styles.timer}>
           
             <div className={styles.timerIcon}><div className={styles.timerHands}></div></div>
-            <div className={styles.timerText}>{lastUpkeep[0]}<p style={{opacity:"60%", display:"inline-block"}}>M : </p>{lastUpkeep[1]}<p style={{opacity:"60%", display:"inline-block"}}>S</p></div>
+            <div className={styles.timerText}>{lastUpkeep[0]}<p style={{opacity:"60%", display:"inline-block"}}>H : </p> {lastUpkeep[1]}<p style={{opacity:"60%", display:"inline-block"}}>M : </p> {lastUpkeep[2]}<p style={{opacity:"60%", display:"inline-block"}}>S</p></div>
             </div>
+            <div style={{textAlign:"center", marginTop:".5rem"}}>Since Last Update</div>
           
           </div>
         )}
