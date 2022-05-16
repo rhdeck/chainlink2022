@@ -31,13 +31,7 @@ export default function Home() {
         priceBlock = await instance.getPriceandBlock(equities[i]);
         newPrice.push(`$${Number(priceBlock[0] / 100)}`);
       }
-      const provider = new ethers.providers.AlchemyProvider("maticmum")
-      const currentBlock = await provider.getBlockNumber()
-      const currentBlockInfo = await provider.getBlock(currentBlock)
-      const pastBlockInfo = await provider.getBlock(Number(priceBlock[1]))
-      const minutes = Math.floor((currentBlockInfo.timestamp-pastBlockInfo.timestamp)/60)
-      const seconds = ((currentBlockInfo.timestamp-pastBlockInfo.timestamp)%60)
-      setLastUpkeep(`${minutes} minutes and ${seconds} seconds since last update`)
+      
       setPrice(newPrice);
     } catch (err) {
       console.log("Error Message: ", err.message);
@@ -60,8 +54,20 @@ export default function Home() {
     }
   };
 
+  const getTimeInterval = async () => {
+      const provider = new ethers.providers.AlchemyProvider("maticmum")
+      const currentBlock = await provider.getBlockNumber()
+      const currentBlockInfo = await provider.getBlock(currentBlock)
+      const pastBlockInfo = await instanceKeeper.lastTimeStamp();
+      const minutes = Math.floor((currentBlockInfo.timestamp-pastBlockInfo)/60)
+      const seconds = ((currentBlockInfo.timestamp-pastBlockInfo)%60)
+      setLastUpkeep(`${minutes} minutes and ${seconds} seconds since last update`)
+  }
+
+
   useEffect(() => {
     getEquities();
+    getTimeInterval();
   }, []);
 
   useEffect(() => {
@@ -113,6 +119,7 @@ export default function Home() {
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
           target="_blank"
           rel="noopener noreferrer"
+          style={{color:"#ffff"}}
         >
           Powered by PolyNodes
         </a>
