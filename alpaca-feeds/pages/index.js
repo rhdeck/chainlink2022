@@ -1,15 +1,14 @@
 import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import instance from "../instance";
 import instanceKeeper from "../instanceKeeper";
-import { ethers } from "ethers";
 
 export default function Home() {
   const [price, setPrice] = useState([]);
   const [equities, setEquities] = useState([]);
-  const [lastUpkeep, setLastUpkeep] = useState();
+  const [lastUpkeep, setLastUpkeep] = useState([]);
+  const [pastTimestamp, setPastTimestamp] = useState();
 
   const loader = (
     <div className={styles.overlay}>
@@ -39,7 +38,23 @@ export default function Home() {
   };
 
   const getEquities = async () => {
-    const equitiesLength = await instanceKeeper.numEquities();
+    let timeStamp;
+    try {
+    timeStamp = await instanceKeeper.lastTimeStamp()
+    } catch (err) {
+      console.log(err.message)
+    }
+    if(!pastTimestamp) {
+    setPastTimestamp(timeStamp)
+    }
+
+    let equitiesLength;
+
+    try {
+    equitiesLength = await instanceKeeper.numEquities();
+    } catch (err) {
+      console.log(err.message)
+    }
     let equity;
     let allEquities = [];
 
@@ -54,21 +69,25 @@ export default function Home() {
     }
   };
 
-  const getTimeInterval = async () => {
-      const provider = new ethers.providers.AlchemyProvider("maticmum")
-      const currentBlock = await provider.getBlockNumber()
-      const currentBlockInfo = await provider.getBlock(currentBlock)
-      const pastBlockInfo = await instanceKeeper.lastTimeStamp();
-      const minutes = Math.floor((currentBlockInfo.timestamp-pastBlockInfo)/60)
-      const seconds = ((currentBlockInfo.timestamp-pastBlockInfo)%60)
-      setLastUpkeep(`${minutes} minutes and ${seconds} seconds since last update`)
+  const getTimeInterval = () => {
+      const time = Date.now()
+      const currentTime = Math.floor(time / 1000)
+      const minutes = Math.floor((currentTime-pastTimestamp)/60)
+      const seconds = ((currentTime-pastTimestamp)%60)
+      if(!isNaN(minutes)) {
+      setLastUpkeep([minutes, seconds])
+      }
   }
-
 
   useEffect(() => {
     getEquities();
-    getTimeInterval();
   }, []);
+
+  useEffect(() => {
+    setInterval(() => {
+      getTimeInterval();
+    }, 1000)
+  }, [pastTimestamp]);
 
   useEffect(() => {
     getPriceandFeed();
@@ -109,19 +128,25 @@ export default function Home() {
               })}
             </div>
           </div>
-          <h4 style={{textAlign:"center", fontWeight:"normal"}}>{lastUpkeep}</h4>
+          <div style={{textAlign:"center", marginTop:"2rem"}}>Last Update</div>
+          <div className={styles.timer}>
+          
+            <div className={styles.timerIcon}><div className={styles.timerHands}></div></div>
+            <div className={styles.timerText}>{lastUpkeep[0]}<p style={{opacity:"60%", display:"inline-block"}}>M : </p>{lastUpkeep[1]}<p style={{opacity:"60%", display:"inline-block"}}>S</p></div>
+            </div>
+          
           </div>
         )}
       </main>
 
       <footer className={styles.footer}>
         <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          href="https://finity.polygon.technology/"
           target="_blank"
           rel="noopener noreferrer"
           style={{color:"#ffff"}}
         >
-          Powered by PolyNodes
+          Developed with Finity
         </a>
       </footer>
     </div>
