@@ -4,10 +4,12 @@ import styles from "../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import instance from "../instance";
 import instanceKeeper from "../instanceKeeper";
+import { ethers } from "ethers";
 
 export default function Home() {
   const [price, setPrice] = useState([]);
   const [equities, setEquities] = useState([]);
+  const [lastUpkeep, setLastUpkeep] = useState();
 
   const loader = (
     <div className={styles.overlay}>
@@ -27,8 +29,15 @@ export default function Home() {
     try {
       for (let i = 0; i < equities.length; i++) {
         priceBlock = await instance.getPriceandBlock(equities[i]);
-        newPrice.push(`Price: $${Number(priceBlock[0] / 100)}`);
+        newPrice.push(`$${Number(priceBlock[0] / 100)}`);
       }
+      const provider = new ethers.providers.AlchemyProvider("maticmum")
+      const currentBlock = await provider.getBlockNumber()
+      const currentBlockInfo = await provider.getBlock(currentBlock)
+      const pastBlockInfo = await provider.getBlock(Number(priceBlock[1]))
+      const minutes = Math.floor((currentBlockInfo.timestamp-pastBlockInfo.timestamp)/60)
+      const seconds = ((currentBlockInfo.timestamp-pastBlockInfo.timestamp)%60)
+      setLastUpkeep(`${minutes} minutes and ${seconds} seconds since last update`)
       setPrice(newPrice);
     } catch (err) {
       console.log("Error Message: ", err.message);
@@ -94,6 +103,7 @@ export default function Home() {
               })}
             </div>
           </div>
+          <h4 style={{textAlign:"center", fontWeight:"normal"}}>{lastUpkeep}</h4>
           </div>
         )}
       </main>
