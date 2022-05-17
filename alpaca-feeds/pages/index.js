@@ -69,29 +69,57 @@ export default function Home() {
     }
   };
 
-  const getTimeInterval = () => {
+  const getTimeInterval = useCallback(() => {
       const time = Date.now()
       const currentTime = Math.floor(time / 1000)
-      const minutes = Math.floor((currentTime-pastTimestamp)/60)
-      const seconds = ((currentTime-pastTimestamp)%60)
-      if(!isNaN(minutes)) {
-      setLastUpkeep([minutes, seconds])
+      const hours = Math.floor((currentTime-pastTimestamp)/3600).toString().padStart(2,"0")
+      const minutes = Math.floor(((currentTime-pastTimestamp)%3600)/60).toString().padStart(2,"0")
+      const seconds = ((currentTime-pastTimestamp)%60).toString().padStart(2,"0")
+      if(!isNaN(seconds)) {
+      setLastUpkeep([hours, minutes, seconds])
       }
-  }
+  }, [pastTimestamp])
 
   useEffect(() => {
     getEquities();
   }, []);
 
+  const [timer, setTimer] = useState();
+
   useEffect(() => {
-    setInterval(() => {
+    if (timer) {
+      clearInterval(timer)
+    }
+    const newInterval = setInterval(() => {
       getTimeInterval();
-    }, 1000)
+    }, 500)
+
+    setTimer(newInterval)
+
   }, [pastTimestamp]);
+
+  const [timerTwo, setTimerTwo] = useState();
+
+  useEffect(() => {
+    if (timerTwo) {
+      clearInterval(timerTwo)
+    }
+    const newInterval = setInterval(() => {
+      getEquities()
+      console.log("Equities Ran")
+    }, 60000)
+
+    setTimerTwo(newInterval)
+
+  }, []);
 
   useEffect(() => {
     getPriceandFeed();
   }, [equities]);
+
+  const clickFooter = useCallback(() => {
+    window.location.href="https://finity.polygon.technology/"
+  }, [])
 
   return (
     <div className={styles.container}>
@@ -114,7 +142,6 @@ export default function Home() {
           </div>
         ) : (
           <div>
-          <h2>Equities</h2>
           <div className={styles.gridTwo}>
             <div className={styles.grid}>
               {price.map((price, index) => {
@@ -128,26 +155,22 @@ export default function Home() {
               })}
             </div>
           </div>
-          <div style={{textAlign:"center", marginTop:"2rem"}}>Last Update</div>
+  
           <div className={styles.timer}>
           
             <div className={styles.timerIcon}><div className={styles.timerHands}></div></div>
-            <div className={styles.timerText}>{lastUpkeep[0]}<p style={{opacity:"60%", display:"inline-block"}}>M : </p>{lastUpkeep[1]}<p style={{opacity:"60%", display:"inline-block"}}>S</p></div>
+            <div className={styles.timerText}>{lastUpkeep[0]}<p style={{opacity:"60%", display:"inline-block"}}>H : </p> {lastUpkeep[1]}<p style={{opacity:"60%", display:"inline-block"}}>M : </p> {lastUpkeep[2]}<p style={{opacity:"60%", display:"inline-block"}}>S</p></div>
             </div>
+            <div style={{textAlign:"center", marginTop:".5rem"}}>Since Last Update</div>
           
           </div>
         )}
       </main>
 
       <footer className={styles.footer}>
-        <a
-          href="https://finity.polygon.technology/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{color:"#ffff"}}
-        >
-          Developed with Finity
-        </a>
+
+          <button className={styles.finityButton} onClick={clickFooter}>Developed with <img src="https://assets.website-files.com/61f6b057c024d3274ee3a052/61f6e2b3e6ce5e8a000000bd_logoPurple.svg"></img></button>
+
       </footer>
     </div>
   );
