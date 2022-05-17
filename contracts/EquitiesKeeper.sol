@@ -23,6 +23,7 @@ import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./EquitiesPriceFeed.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 /**
  * Request testnet LINK and ETH here: https://faucets.chain.link/
@@ -46,7 +47,7 @@ contract EquitiesKeeper is ChainlinkClient, KeeperCompatibleInterface, Ownable {
     mapping(address => bool) private requesters;
     string[] public equities;
     uint256 public numEquities = 0;
-    uint256 public EquityFee = 1 * 10**17;
+    uint256 public EquityFee = 2 * 10**18;
 
     uint256 public counter;
 
@@ -142,5 +143,13 @@ contract EquitiesKeeper is ChainlinkClient, KeeperCompatibleInterface, Ownable {
         interval = _interval;
     }
 
-    // function withdrawLink() external {} - Implement a withdraw function to avoid locking your LINK in the contract
+    function setEquityFee(uint256 _EquityFee) public onlyOwner {
+        EquityFee = _EquityFee;
+    }
+
+    function withdrawLink() external onlyOwner {
+        ERC20 Link = ERC20(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
+        uint256 balanceLink = Link.balanceOf(address(this));
+        Link.transfer(msg.sender, balanceLink);
+    }
 }
