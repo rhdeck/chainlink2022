@@ -3,6 +3,7 @@ import styles from "../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import instance from "../instance";
 import instanceKeeper from "../instanceKeeper";
+import { UrlJsonRpcProvider } from "@ethersproject/providers";
 
 export default function Home() {
   const [price, setPrice] = useState([]);
@@ -131,7 +132,7 @@ export default function Home() {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className={styles.logo}>Alpaca Feeds</div>
+      <div className={styles.logo}><div className={styles.logoText}>Alpaca Feeds</div></div>
       <main className={styles.main}>
 
         
@@ -148,6 +149,7 @@ export default function Home() {
         <p  className={styles.description}>Alpaca Market Feeds are updated continuously on the Polygon Blockchain via Chainlink nodes.</p>
         </div>
             <div className={styles.grid}>
+
               {price.map((price, index) => {
                 return (
                   <div key={index} className={styles.card}>
@@ -166,7 +168,7 @@ export default function Home() {
             <div className={styles.timerIcon}><div className={styles.timerHands}></div></div>
             <div className={styles.timerText}>{lastUpkeep[0]}<p style={{opacity:"60%", display:"inline-block"}}>H : </p> {lastUpkeep[1]}<p style={{opacity:"60%", display:"inline-block"}}>M : </p> {lastUpkeep[2]}<p style={{opacity:"60%", display:"inline-block"}}>S</p></div>
             </div>
-            <div style={{textAlign:"center", marginBottom:"3rem", fontSize:"20px"}}>Since Last Update</div>
+            <div className={styles.updateText}>Since Last Update</div>
           
           </div>
         )}
@@ -174,7 +176,7 @@ export default function Home() {
 
       <footer className={styles.footer}>
 
-          <button className={styles.finityButton} onClick={clickFooter}>Developed with <img className={styles.finityLogo} src="https://assets.website-files.com/61f6b057c024d3274ee3a052/61f6e2b3e6ce5e8a000000bd_logoPurple.svg"></img></button>
+          <button className={styles.finityButton} onClick={clickFooter}><div style={{marginRight:"5px"}}>Developed with </div><img className={styles.finityLogo} src="https://assets.website-files.com/61f6b057c024d3274ee3a052/61f6e2b3e6ce5e8a000000bd_logoPurple.svg"></img></button>
 
       </footer>
     </div>
