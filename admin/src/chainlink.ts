@@ -1,13 +1,7 @@
 import { stringify } from "@iarna/toml";
 import { v4 } from "uuid";
+import { ChainlinkDOTGraph } from "./dotgraph";
 //#region Chainlink interface
-function escape(src: string) {
-  return src.replace('"', '"');
-}
-export type ChainlinkDOTGraph = {
-  definitions: Record<string, Record<string, any>>;
-  steps: string[][];
-};
 export function command(commands: string[]) {
   const prepend = `docker exec chainlink /bin/bash -c "\
     chainlink admin login --file /chainlink/.api &&`;
@@ -45,15 +39,19 @@ export function createBridge({ name, url }: { name: string; url: string }) {
         --url ${url} \
   `;
 }
-export function compileDOTGraph(graph: ChainlinkDOTGraph) {}
+//#endregion
+//#region Job
 export function createJobToml({
   type = "directrequest",
   contractAddress,
   evmChainId,
   externalJobId = v4(),
   requesters,
+  name,
   graph,
   minContractPaymentLinkJuels,
+  minIncomingConfirmations,
+  maxTaskDuration,
 }: {
   type?: string;
   name: string;
@@ -63,16 +61,22 @@ export function createJobToml({
   requesters?: string[];
   graph: ChainlinkDOTGraph;
   minContractPaymentLinkJuels?: number;
+  minIncomingConfirmations?: number;
+  maxTaskDuration?: string;
 }) {
-  const observationSource = compileDOTGraph(graph);
+  const observationSource = graph.toString();
   const obj: Record<string, any> = {
     type,
+    name,
     schemaVersion: 1,
-    evmChainId,
+    evmChainId, //: new Number(evmChainId).toString(),
     contractAddress,
     externalJobId,
     minContractPaymentLinkJuels,
     observationSource,
+    minIncomingConfirmations,
+    maxTaskDuration,
+    requesters,
   };
   const toml = stringify(obj);
   return toml;

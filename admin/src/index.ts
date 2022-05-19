@@ -115,6 +115,8 @@ export async function createDroplet(key: string) {
   });
   const id = keyResponse.data.ssh_key.id;
   const user_data = makeUserData(key);
+  console.log(user_data);
+  // process.exit();
   const response = await dots.droplet.createDroplet({
     image: STANDARD_IMAGE,
     region: "nyc3",

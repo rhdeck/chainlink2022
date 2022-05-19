@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import commander, { command } from "commander";
 import { image, region } from "dots-wrapper/dist/modules";
-import fs from "fs";
+import fs, { writeFileSync } from "fs";
 import {
   createDroplet,
   // createUser,
@@ -12,9 +12,33 @@ import {
   // initializeDroplet,
   // sleep,
 } from ".";
-
+import { createJobToml } from "./chainlink";
+import { ChainlinkDOTGraph, Steps } from "./dotgraph";
 commander.arguments("<keyname>");
 commander.description("Build test and destroy a droplet");
+commander.command("test").action(async (key) => {
+  const contractAddress = "0x0000000000000000000000000000000000000000";
+  const graph = new ChainlinkDOTGraph()
+    .add(Steps.decode_log)
+    .add(Steps.decode_cbor)
+    .add(Steps.fetch)
+    // .add(({ steps, add }) =>
+    //   add(Steps.encode_data_uint([...steps[0]].pop() || ""))
+    // )
+    // .add(Steps.encode_data_uint("fetch"))
+    .add(Steps.encode_tx)
+    .add(Steps.submit_tx(contractAddress));
+  const out = createJobToml({
+    name: "testjob2",
+    contractAddress,
+    evmChainId: 42,
+    graph,
+  });
+  console.log("---BEGIN-----------------------------");
+  console.log(out);
+  console.log("---END-----------------------------");
+  writeFileSync("testjob.toml", out);
+});
 commander.command("build <key>").action(async (key) => {
   if (!key) {
     console.error("Cannot run without defining a name for all this");

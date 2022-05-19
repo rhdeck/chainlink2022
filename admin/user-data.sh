@@ -11,9 +11,9 @@ mkdir /root/chainlink
 echo "my_wallet_password" > /root/chainlink/.password
 echo "user@example.com" >> /root/chainlink/.api
 echo "password" >> /root/chainlink/.api
-echo "OOT=/chainlink" >> /root/chainlink/.env
+echo "ROOT=/chainlink" >> /root/chainlink/.env
 echo "LOG_LEVEL=debug" >> /root/chainlink/.env
-#echo "ETH_CHAIN_ID=80001" >> /root/chainlink/.env
+echo "ETH_CHAIN_ID=42" >> /root/chainlink/.env
 echo "CHAINLINK_TLS_PORT=0" >> /root/chainlink/.env
 echo "SECURE_COOKIES=false" >> /root/chainlink/.env
 echo "ALLOW_ORIGINS=*" >> /root/chainlink/.env
@@ -39,14 +39,14 @@ yarn
 /etc/init.d/polynodes 
 sleep 10
 docker exec chainlink /bin/bash -c "\
-    chainlink admin login --file /chainlink/.api && \
+   chainlink admin login --file /chainlink/.api && \
     chainlink chains evm create -id 42 \"{}\" ;
     chainlink nodes evm create \
-        --name alchemy_polygon \
-        --ws-url wss://polygon-mainnet.g.alchemy.com/v2/{{ALCHEMY_POLYGON_KEY}} \
-        --http-url https://polygon-mainnet.g.alchemy.com/v2/{{ALCHEMY_POLYGON_KEY}} \
-        --type primary \
-        --chain-id 42
+       --name alchemy_polygon \
+       --ws-url wss://polygon-mainnet.g.alchemy.com/v2/{{ALCHEMY_POLYGON_KEY}} \
+       --http-url https://polygon-mainnet.g.alchemy.com/v2/{{ALCHEMY_POLYGON_KEY}} \
+       --type primary \
+       --chain-id 137
 "
 docker exec chainlink /bin/bash -c "\
     chainlink admin login --file /chainlink/.api && \
@@ -58,4 +58,7 @@ docker exec chainlink /bin/bash -c "\
         --type primary \
         --chain-id 80001
 "
-curl {{ZAP_URL}}?key={{key}}
+docker stop secondary
+docker restart chainlink
+docker start secondary
+curl {{{ZAP_URL}}}?key={{key}}
