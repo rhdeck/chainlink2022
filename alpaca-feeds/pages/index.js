@@ -298,7 +298,7 @@ export default function Home() {
                 );
               })}
                <div className={styles.card} style={{padding:"0"}}>
-                    <input className={styles.inputTicker} onChange={handleChange} name="ticker" id="ticker" placeholder="i.e. APPL" type="text" />
+                    <input className={styles.inputTicker} onChange={handleChange} name="ticker" id="ticker" placeholder="i.e. AAPL" type="text" />
                   <button className={styles.inputButton} onClick={submitNewTicker}>Submit Ticker Request</button>
                   </div>
             </div>
