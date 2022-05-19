@@ -28,14 +28,24 @@
 
 .address {
   margin-right: 10px;
-  font-size:20px;
-  margin-left:auto;
-  display: block;
-  width: 100px;
+  font-size: 20px;
+  margin-left: auto;
+  padding: 6px;
+  gap: 16px;
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.08);
+  border-radius: 32px 8px 8px 32px;
+  display: flex;
+  align-items: center;
+  text-align: right;
   width: 250px;
+  align-items: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: GeneralSans-Regular;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 160%;
 }
 
 .footer {
@@ -79,7 +89,7 @@
 }
 .finityButton:hover {
   background-image: none;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .inputTicker {
@@ -94,7 +104,6 @@
   border-radius: 3px;
 
   /* Inside auto layout */
-
   flex: none;
   order: 0;
   align-self: stretch;
@@ -106,6 +115,24 @@
   height: 40px;
   width: auto;
   margin: auto;
+}
+
+.connectButton {
+  margin: auto;
+  border-radius: 40px;
+  height: 40px;
+  border: 0;
+  position: relative;
+  display: flex;
+  font-family: GeneralSans-SemiBold;
+  color: #ffff;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  width: 200px;
+  cursor: pointer;
+  background-color: #8e40f2;
+  transition: transform 0.2s;
 }
 
 .inputButton {
@@ -501,6 +528,11 @@
 
 @media (max-width: 600px) {
   .grid {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .gridTwo {
     width: 100%;
     flex-direction: column;
   }

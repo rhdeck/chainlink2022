@@ -267,8 +267,8 @@ export default function Home() {
       </Head>
       <div className={styles.logo}><div className={styles.logoText}>Alpaca Feeds</div>
       {!currentAccount ? 
-      <button style={{marginRight:"10px"}} onClick={onConnect} className={styles.inputButton}>Connect</button>
-      : <div className={styles.address}>{currentAccount}</div>
+      <button style={{marginRight:"10px"}} onClick={onConnect} className={styles.connectButton}>Connect</button>
+      : <div className={styles.address}><img width="48px" height="48px" src="./images/badge.png"/>{currentAccount}</div>
 }
       </div>
       <main className={styles.main}>
