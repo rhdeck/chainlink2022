@@ -133,9 +133,8 @@ export default function Home() {
       </Head>
       <div className={styles.logo}>Alpaca Feeds</div>
       <main className={styles.main}>
-        <h1>Alpaca Feeds</h1>
-        <h4>(Powered by PolyNodes)</h4>
-        <p style={{width:"50%", textAlign:"center"}}>Alpaca Market Feeds are updated continuously on the Polygon Blockchain via Chainlink nodes.</p>
+
+        
         {!price.length > 0 ? (
           <div className={styles.cardTwo}>
             {loader}
@@ -143,6 +142,11 @@ export default function Home() {
         ) : (
           <div>
           <div className={styles.gridTwo}>
+            <div>
+          <h1 className={styles.header1}>Alpaca Feeds</h1>
+        <h4 className={styles.header2}>(Powered by PolyNodes)</h4>
+        <p style={{width:"50%", textAlign:"center"}}>Alpaca Market Feeds are updated continuously on the Polygon Blockchain via Chainlink nodes.</p>
+        </div>
             <div className={styles.grid}>
               {price.map((price, index) => {
                 return (

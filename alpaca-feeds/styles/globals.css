@@ -3,11 +3,11 @@ body {
   padding: 0;
   margin: 0;
   color:#ffff;
-  font-family: General Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  font-family: GeneralSans-Bold, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 
 
-    background: conic-gradient(from 206.55deg at 99.28% 1.37%, #BD3196 0deg, #341652 33.77deg, #BD3196 360deg), conic-gradient(from 153.43deg at 0% 0%, #BD3196 0deg, #341652 33.77deg, #BD3196 360deg), linear-gradient(185.86deg, #F19DFF -8.74%, #9A3AD6 109.78%);
+    background-color: #8e40f2;
 }
 
 #BD3196

@@ -4,13 +4,23 @@
 
 .main {
   min-height: 100vh;
-  padding: 4rem 0;
+  padding: 8rem 0;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: top;
   align-items: center;
 }
+
+.header1 {
+  font-size: 6rem;
+  width:200px;
+}
+
+.header2 {
+  font-size: 2rem;
+}
+
 
 .footer {
   display: flex;
@@ -30,7 +40,9 @@
 
 .finityButton {
   border-radius: 20px;
-  background-image: linear-gradient(180deg,#b485fb,#7131ff);
+  height:60px;
+  justify-content: center;
+
 }
 
 .title a {
@@ -82,10 +94,10 @@
 
 .gridTwo {
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  max-width: auto;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 90vw;
 }
 
 .card {
@@ -133,6 +145,7 @@
   padding-left: 6px;
   justify-content: flex-start;
   align-items: center;
+  background-color: #CF9FFF;
 }
 
 .overlay {
