@@ -3,13 +3,20 @@ import styles from "../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import instance from "../instance";
 import instanceKeeper from "../instanceKeeper";
-import { UrlJsonRpcProvider } from "@ethersproject/providers";
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import abi from "../src/utils/Keepers.json";
+import { ethers } from "ethers";
 
 export default function Home() {
   const [price, setPrice] = useState([]);
   const [equities, setEquities] = useState([]);
   const [lastUpkeep, setLastUpkeep] = useState([]);
   const [pastTimestamp, setPastTimestamp] = useState();
+  const [currentAccount, setCurrentAccount] = useState();
+  const [instanceThree, setInstanceThree] = useState();
+
+  const dappAddress = "0x0ddFd0d1D2a31F3bE60ffD18882462EfE5882D71";
 
   const loader = (
     <div className={styles.overlay}>
@@ -21,6 +28,113 @@ export default function Home() {
       </div>
     </div>
   );
+
+  const initialFormData = Object.freeze({
+    ticker: ""
+  });
+
+  const [formData, updateFormData] = useState(initialFormData);
+
+  const handleChange = async (e) => {
+    updateFormData({
+      ...formData,
+
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const providerOptions = {
+    walletconnect: {
+      package: WalletConnectProvider,
+      options: {},
+    },
+  };
+
+  let web3Modal;
+
+  async function init() {
+    if (window !== undefined) {
+      web3Modal = new Web3Modal({
+        network: "matic",
+        cacheProvider: true,
+        providerOptions,
+      });
+
+      web3Modal.show = true;
+    }
+
+    const instances = await web3Modal.connect();
+
+    const provider = new ethers.providers.Web3Provider(instances);
+    const signer = provider.getSigner();
+  }
+
+  const fetchAccountData = useCallback(async () => {
+    const { ethereum } = window;
+
+    let chainId;
+    let accounts = [];
+
+    if (ethereum) {
+      // Get connected chain id from Ethereum node
+      chainId = await ethereum.request({ method: "eth_chainId" });
+      // Load chain information over an HTTP API
+
+      // Get list of accounts of the connected wallet
+      try {
+        accounts = await ethereum.request({ method: "eth_accounts" });
+      } catch (err) {
+        console.log(err.message);
+      }
+      // MetaMask does not give you all accounts, only the selected account
+      if (accounts.length !== 0) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const instanceThree = new ethers.Contract(
+          dappAddress,
+          abi,
+          signer
+        );
+        setInstanceThree(instanceThree);
+        setCurrentAccount(accounts[0]);
+
+        console.log("Got accounts", accounts);
+
+      } else {
+      }
+    } else {
+    }
+  }, [instanceThree, currentAccount]);
+
+  async function onConnect() {
+    try {
+      init();
+      console.log("Opening a dialog", web3Modal);
+    } catch (err) {
+      console.log(err);
+    }
+
+    let provider;
+    try {
+      provider = await web3Modal.connect();
+      location.reload();
+    } catch (err) {
+      console.log("Could not get a wallet connection", err);
+    }
+    // Subscribe to accounts change
+    try {
+    provider.on("accountsChanged", (accounts) => {
+      fetchAccountData();
+    });
+
+    // Subscribe to networkId change
+    provider.on("networkChanged", (networkId) => {
+      fetchAccountData();
+    });
+  } catch (err) {
+    console.log(err.message)
+  }
+  }
 
   const getPriceandFeed = async () => {
     let newPrice = [];
@@ -81,9 +195,28 @@ export default function Home() {
       }
   }, [pastTimestamp])
 
+  const submitNewTicker = async () => {
+    if (currentAccount) {
+      const overrides = {
+        value: ethers.utils.parseEther("0.1"), //sending one ether  
+  }
+  try {
+    await instanceThree.addEquity(formData.ticker, overrides)
+  } catch (err) {
+    console.log(err.message)
+  }
+    } else {
+      alert("PLEASE CONNECT WALLET!")
+    }
+}
+
   useEffect(() => {
     getEquities();
   }, []);
+
+  useEffect(() => {
+    fetchAccountData();
+  }, [fetchAccountData]);
 
   const [timer, setTimer] = useState();
 
@@ -132,7 +265,12 @@ export default function Home() {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className={styles.logo}><div className={styles.logoText}>Alpaca Feeds</div></div>
+      <div className={styles.logo}><div className={styles.logoText}>Alpaca Feeds</div>
+      {!currentAccount ? 
+      <button style={{marginRight:"10px"}} onClick={onConnect} className={styles.inputButton}>Connect</button>
+      : <div className={styles.address}>{currentAccount}</div>
+}
+      </div>
       <main className={styles.main}>
 
         
@@ -159,6 +297,10 @@ export default function Home() {
                   </div>
                 );
               })}
+               <div className={styles.card} style={{padding:"0"}}>
+                    <input className={styles.inputTicker} onChange={handleChange} name="ticker" id="ticker" placeholder="i.e. APPL" type="text" />
+                  <button className={styles.inputButton} onClick={submitNewTicker}>Submit Ticker Request</button>
+                  </div>
             </div>
             <div style={{width:"50%"}}></div>
           </div>
