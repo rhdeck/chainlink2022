@@ -133,9 +133,8 @@ export default function Home() {
       </Head>
       <div className={styles.logo}>Alpaca Feeds</div>
       <main className={styles.main}>
-        <h1>Alpaca Feeds</h1>
-        <h4>(Powered by PolyNodes)</h4>
-        <p style={{width:"50%", textAlign:"center"}}>Alpaca Market Feeds are updated continuously on the Polygon Blockchain via Chainlink nodes.</p>
+
+        
         {!price.length > 0 ? (
           <div className={styles.cardTwo}>
             {loader}
@@ -143,6 +142,11 @@ export default function Home() {
         ) : (
           <div>
           <div className={styles.gridTwo}>
+            <div>
+          <h1 className={styles.header1}>Alpaca Feeds</h1>
+        <h4 className={styles.header2}>(Powered by PolyNodes)</h4>
+        <p  className={styles.description}>Alpaca Market Feeds are updated continuously on the Polygon Blockchain via Chainlink nodes.</p>
+        </div>
             <div className={styles.grid}>
               {price.map((price, index) => {
                 return (
@@ -154,6 +158,7 @@ export default function Home() {
                 );
               })}
             </div>
+            <div style={{width:"50%"}}></div>
           </div>
   
           <div className={styles.timer}>
@@ -161,7 +166,7 @@ export default function Home() {
             <div className={styles.timerIcon}><div className={styles.timerHands}></div></div>
             <div className={styles.timerText}>{lastUpkeep[0]}<p style={{opacity:"60%", display:"inline-block"}}>H : </p> {lastUpkeep[1]}<p style={{opacity:"60%", display:"inline-block"}}>M : </p> {lastUpkeep[2]}<p style={{opacity:"60%", display:"inline-block"}}>S</p></div>
             </div>
-            <div style={{textAlign:"center", marginTop:".5rem"}}>Since Last Update</div>
+            <div style={{textAlign:"center", marginBottom:"3rem", fontSize:"20px"}}>Since Last Update</div>
           
           </div>
         )}
@@ -169,7 +174,7 @@ export default function Home() {
 
       <footer className={styles.footer}>
 
-          <button className={styles.finityButton} onClick={clickFooter}>Developed with <img src="https://assets.website-files.com/61f6b057c024d3274ee3a052/61f6e2b3e6ce5e8a000000bd_logoPurple.svg"></img></button>
+          <button className={styles.finityButton} onClick={clickFooter}>Developed with <img className={styles.finityLogo} src="https://assets.website-files.com/61f6b057c024d3274ee3a052/61f6e2b3e6ce5e8a000000bd_logoPurple.svg"></img></button>
 
       </footer>
     </div>
