@@ -94,7 +94,7 @@ export function stringifyDOTDefinition(
         : typeof value === "string"
         ? `"${escape(value.toString())}"`
         : value.toString();
-    console.log("RHD", key, stringVal, stringVal.startsWith("$"));
+    // console.log("RHD", key, stringVal, stringVal.startsWith("$"));
     return `${key}=${stringVal}`;
   });
   const totalLength = attrs.reduce((acc, cur) => acc + cur.length, 0);
@@ -151,15 +151,35 @@ const fetchObj: ChainlinkDOTGraphDefinitionObject = {
   data: fetchDOT,
 };
 
-const parseDOT: ChainlinkDOTGraphDefinition = {
-  type: "jsonparse",
-  path: "$(decode_cbor.path)",
-  data: "$(fetch)",
-};
-const parseObj: ChainlinkDOTGraphDefinitionObject = {
-  name: "parse",
-  data: parseDOT,
-};
+function bridgeDOT(
+  name: string,
+  requestData: Record<string, any>
+): ChainlinkDOTGraphDefinition {
+  return { type: "bridge", name, requestData };
+}
+
+function bridgeObj(
+  name: string,
+  requestData: Record<string, any>
+): ChainlinkDOTGraphDefinitionObject {
+  return { name, data: bridgeDOT(name, requestData) };
+}
+
+function parseDOT(previousStep: string): ChainlinkDOTGraphDefinition {
+  return {
+    type: "jsonparse",
+    path: "$(decode_cbor.path)",
+    data: `$(${previousStep})`,
+  };
+}
+function parseObj(
+  previousStep: string = "fetch"
+): ChainlinkDOTGraphDefinitionObject {
+  return {
+    name: "parse",
+    data: parseDOT(previousStep),
+  };
+}
 
 const multiplyDOT = (previous: string): ChainlinkDOTGraphDefinition => ({
   type: "multiply",
@@ -218,6 +238,7 @@ export const Steps = {
   decode_log: decodeLogObj,
   decode_cbor: dcodeCborObj,
   fetch: fetchObj,
+  bridge: bridgeObj,
   parse: parseObj,
   multiply: multiplyObj,
   encode_data_uint: encodeDataUintObj,

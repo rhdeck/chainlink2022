@@ -16,7 +16,8 @@
     "docs": "rm -rf docstemp && yarn docs:lib && yarn docs:bin && yarn docs:compile",
     "prepublishOnly": "yarn build && yarn docs && git commit README.md -m \"docs: updating docs\" && git push",
     "watch": "livelink watch",
-    "prepare": "install-peers"
+    "prepare": "install-peers",
+    "tn": "ts-node src/bin.ts"
   },
   "repository": {
     "type": "git",

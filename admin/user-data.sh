@@ -13,7 +13,7 @@ echo "user@example.com" >> /root/chainlink/.api
 echo "password" >> /root/chainlink/.api
 echo "ROOT=/chainlink" >> /root/chainlink/.env
 echo "LOG_LEVEL=debug" >> /root/chainlink/.env
-echo "ETH_CHAIN_ID=42" >> /root/chainlink/.env
+echo "ETH_CHAIN_ID=137" >> /root/chainlink/.env
 echo "CHAINLINK_TLS_PORT=0" >> /root/chainlink/.env
 echo "SECURE_COOKIES=false" >> /root/chainlink/.env
 echo "ALLOW_ORIGINS=*" >> /root/chainlink/.env
@@ -40,7 +40,7 @@ yarn
 sleep 10
 docker exec chainlink /bin/bash -c "\
    chainlink admin login --file /chainlink/.api && \
-    chainlink chains evm create -id 42 \"{}\" ;
+    chainlink chains evm create -id 137 \"{}\" ;
     chainlink nodes evm create \
        --name alchemy_polygon \
        --ws-url wss://polygon-mainnet.g.alchemy.com/v2/{{ALCHEMY_POLYGON_KEY}} \
