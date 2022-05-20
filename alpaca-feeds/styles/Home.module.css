@@ -210,6 +210,7 @@
   justify-content: center;
   flex-wrap: wrap;
   max-width: 400px;
+  margin-top: 150px;
 }
 
 .gridTwo {
@@ -229,7 +230,7 @@
   padding-top: 1rem;
   color: #4a23a4;
   border-radius: 4px;
-  min-height: 60px;
+  min-height: 72.5px;
   width: 600px;
   background-color: #ffff;
 }
@@ -526,14 +527,25 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1000px) {
   .grid {
     width: 100%;
     flex-direction: column;
+    margin-top: 40px;
   }
 
   .gridTwo {
     width: 100%;
     flex-direction: column;
   }
+
+  .card {
+    width:320px;
+  }
+
+  .inputButton {
+    width: 150px;
+    height:55px;
+  }
+
 }
