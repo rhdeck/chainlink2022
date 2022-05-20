@@ -1,0 +1,32 @@
+type = "directrequest"
+name = "testjob0012"
+schemaVersion = 1
+evmChainID = 137
+contractAddress = "0x0000000000000000000000000000000000000000"
+externalJobID = "f5fc08ef-ff8d-4415-b11c-7880127dcf48"
+observationSource = """
+decode_log   [type="ethabidecodelog"
+              abi="OracleRequest(bytes32 indexed specId, address requester, bytes32 requestId, uint256 payment, address callbackAddr, bytes4 callbackFunctionId, uint256 cancelExpiration, uint256 dataVersion, bytes data)"
+              data="$(jobRun.logData)"
+              topics="$(jobRun.logTopics)"
+             ]
+decode_cbor  [type="cborparse" data="$(decode_log.data)"]
+testbridge2  [type="bridge"
+              name="testbridge2"
+              requestData="{\\"id\\": $(jobSpec.externalJobId),\\"data\\": {\\"symbol\\": $(decode_cbor.symbol)}}"
+             ]
+parse        [type="jsonparse"
+              path="$(decode_cbor.path)"
+              data="$(testbridge2)"
+             ]
+encode_tx    [type="ethabiencode"
+              abi="fulfillOracleRequest(bytes32 requestId, uint256 payment, address callbackAddress, bytes4 callbackFunctionId, uint256 expiration, bytes32 data)"
+              data="{\\"requestId\\": $(decode_log.requestId),\\"payment\\": $(decode_log.payment),\\"callbackAddress\\": $(decode_log.callbackAddr),\\"callbackFunctionId\\": $(decode_log.callbackFunctionId),\\"expiration\\": $(decode_log.cancelExpiration),\\"data\\": $(encode_data)}"
+             ]
+submit_tx    [type="ethtx"
+              to="0x0000000000000000000000000000000000000000"
+              data="$(encode_tx)"
+             ]
+
+decode_log -> decode_cbor -> testbridge2 -> parse -> encode_tx -> submit_tx
+"""

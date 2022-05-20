@@ -20,12 +20,22 @@ echo "ALLOW_ORIGINS=*" >> /root/chainlink/.env
 echo "DATABASE_URL=postgresql://postgres:chainlink@172.17.0.2:5432/chainlink?sslmode=disable" >> /root/chainlink/.env
 docker create --expose 6688 -v ~/chainlink:/chainlink -it --env-file=/root/chainlink/.env --name chainlink -it smartcontract/chainlink:1.4.1-root local n -p /chainlink/.password -a /chainlink/.api
 docker create --expose 6688 -v ~/chainlink:/chainlink -it --env-file=/root/chainlink/.env --name secondary -it smartcontract/chainlink:1.4.1-root local n -p /chainlink/.password -a /chainlink/.api
-echo "#\!/bin/sh" >> /etc/init.d/polynodes 
+echo "#\!/bin/bash" >> /etc/init.d/polynodes 
+echo "### BEGIN INIT INFO" >> /etc/init.d/polynodes
+echo "# Provides:          polynodes" >> /etc/init.d/polynodes
+echo "# Required-Start:    $all" >> /etc/init.d/polynodes
+echo "# Required-Stop:" >> /etc/init.d/polynodes
+echo "# Default-Start:     2 3 4 5" >> /etc/init.d/polynodes
+echo "# Default-Stop:" >> /etc/init.d/polynodes
+echo "# Short-Description: Starts polynodes services" >> /etc/init.d/polynodes
+echo "### END INIT INFO" >> /etc/init.d/polynodes
 echo "docker start postgres" >> /etc/init.d/polynodes
 echo "docker start chainlink" >> /etc/init.d/polynodes
 echo "docker start secondary" >> /etc/init.d/polynodes
 echo "cd /root/repo/ExternalAdapterTemplate && yarn start >> /var/log/node.log 2>1 &" >> /etc/init.d/polynodes
 chmod +x /etc/init.d/polynodes
+update-rc.d polynodes defaults
+update-rc.d polynodes enable
 docker stop postgres
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list

@@ -3,19 +3,25 @@ import { generateKeyPair } from "crypto";
 import { ssh, pki } from "node-forge";
 import { readFileSync } from "fs";
 import { NodeSSH } from "node-ssh";
-import dotenv from "dotenv";
 import mustache from "mustache";
 import { join } from "path";
-dotenv.config();
+import { sleep } from "./utils";
+
 type KeyPair = {
   publicKey: string;
   privateKey: string;
   fingerprint: string;
 };
-const token = process.env.DO_TOKEN || "";
-if (!token) throw new Error("DO_TOKEN not set");
 const droplet_prefix = "polynodes";
 const STANDARD_IMAGE = "ubuntu-20-04-x64";
+async function createDOClient() {
+  const token = process.env.DO_TOKEN || "";
+  if (!token) throw new Error("DO_TOKEN not set");
+  const client = createApiClient({
+    token,
+  });
+  return client;
+}
 //#region Digital Ocean Droplet Creation
 async function makeKeyPair() {
   let reject = (reason: any) => {
@@ -68,19 +74,11 @@ async function makeKeyPair() {
   );
   return promise;
 }
-export async function sleep(ms: number) {
-  console.time("sleep");
-  return new Promise<void>((resolve) =>
-    setTimeout(() => {
-      console.timeEnd("sleep");
-      resolve();
-    }, ms)
-  );
-}
+
 let staticClient: Awaited<ReturnType<typeof createApiClient>> | undefined;
 async function getClient() {
   if (staticClient) return staticClient;
-  const dots = await createApiClient({ token });
+  const dots = await createDOClient();
   staticClient = dots;
   return dots;
 }
@@ -142,18 +140,25 @@ export async function rebuildDroplet(
   droplet_id: number,
   toImage: string | number = STANDARD_IMAGE
 ) {
-  const dots = await createApiClient({ token });
+  const dots = await createDOClient();
   await dots.droplet.rebuildDroplet({
     droplet_id,
     image: toImage,
   });
+}
+let getPrivateKey = (key: string): string => {
+  const privateKey = readFileSync(`${key}_root_private.key`, "utf-8");
+  return privateKey;
+};
+export function setGetPrivateKey(newFunc: typeof getPrivateKey) {
+  getPrivateKey = newFunc;
 }
 export async function sshTo(key: string) {
   //get the ID
   const droplet = await getDropletByKey(key);
   if (!droplet) throw new Error("No droplet found");
   const { id } = droplet;
-  const privateKey = readFileSync(`${key}_root_private.key`, "utf-8");
+  const privateKey = getPrivateKey(key);
   const obj = await sshToId(id, privateKey);
   return obj;
 }
@@ -186,51 +191,5 @@ export async function sshCommand(ssh: NodeSSH, command: string) {
   const result = await ssh.execCommand(command);
   console.log("returned", result);
   return result;
-}
-//#endregion
-//#region Managing external adapters
-export async function deployCode(options: {
-  droplet_id: number;
-  username: string;
-  privateKey: string;
-  hash: string;
-  path: string;
-}) {
-  const { droplet_id, hash, path, privateKey, username } = options;
-  const dots = await getClient();
-  const {
-    data: {
-      droplet: {
-        name: key,
-        networks: { v4: networks },
-      },
-    },
-  } = await dots.droplet.getDroplet({ droplet_id });
-  const ip_address = networks.find((network) => {
-    return network.type === "public";
-  })?.ip_address;
-  if (!ip_address) throw new Error("no ip address found");
-  const ssh = new NodeSSH();
-  try {
-    try {
-      await ssh.connect({
-        host: ip_address,
-        username,
-        privateKey,
-        hostHash: "sha1",
-        readyTimeout: 10000,
-        hostVerifier: (thisHash, resolve) => {
-          if (hash === thisHash) resolve(true);
-          resolve(false);
-        },
-      });
-    } catch (e) {}
-    // Now make a directory
-    await ssh.execCommand(`rm -rf /root/code`);
-    await ssh.mkdir(`/root/code`);
-    await ssh.execCommand(`cd /root/code`);
-    await ssh.putDirectory(path, "/root/code");
-    ssh.dispose();
-  } catch (e) {}
 }
 //#endregion

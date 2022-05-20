@@ -4,11 +4,8 @@ import { NodeSSH } from "node-ssh";
 import { basename } from "path";
 import { v4 } from "uuid";
 import { ChainlinkDOTGraph } from "./dotgraph";
-function escape(src: string) {
-  return src.replace(/"/g, '\\"');
-}
 
-//#region Chainlink interface
+//#region Chainlink core functions
 export async function login(ssh: NodeSSH) {
   const cmd = "admin login --file /chainlink/.api";
   const { stdout: result, stderr: err } = await command(ssh, cmd);
@@ -33,7 +30,28 @@ export async function copy(
   await ssh.execCommand(cpCommand);
   return temppath;
 }
-
+//#endregion
+//#region Chains
+export async function createEVMChain(
+  ssh: NodeSSH,
+  chainId: string,
+  options: Record<string, any> = {}
+) {
+  const { stdout: json } = await command(
+    ssh,
+    `chains evm create -id ${chainId} '${JSON.stringify(options)}'`
+  );
+  try {
+    return JSON.parse(json);
+  } catch (e) {
+    throw new Error(json);
+  }
+}
+export const Chains = {
+  evm: { create: createEVMChain },
+};
+//#endregion
+//#region Nodes
 export async function createEVMNode(
   ssh: NodeSSH,
   {
@@ -62,6 +80,12 @@ export async function createEVMNode(
   const obj = JSON.parse(json);
   return obj;
 }
+export const Nodes = {
+  evm: {
+    create: createEVMNode,
+  },
+};
+//#endregion
 //#region Bridges
 export type ChainlinkBridge = {
   name: string;
@@ -112,6 +136,12 @@ export async function listBridges(ssh: NodeSSH) {
   const obj = <ChainlinkBridge[]>JSON.parse(jsonOut);
   return obj;
 }
+export const Bridges = {
+  list: listBridges,
+  create: createBridge,
+  get: getBridge,
+  delete: deleteBridge,
+};
 //#endregion
 //#region Jobs
 export type ChainlinkJobDefinition = {
@@ -210,4 +240,10 @@ export async function getJob(ssh: NodeSSH, id: string) {
   const obj = JSON.parse(jsonOut);
   return obj;
 }
+export const Jobs = {
+  list: listJobs,
+  get: getJob,
+  create: createJob,
+  delete: deleteJob,
+};
 //#endregion

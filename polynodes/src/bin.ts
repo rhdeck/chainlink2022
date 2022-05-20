@@ -1,17 +1,13 @@
 #!/usr/bin/env node
-import commander, { command } from "commander";
+import commander from "commander";
 import { image, region } from "dots-wrapper/dist/modules";
 import fs, { writeFileSync } from "fs";
 import {
   createDroplet,
-  // createUser,
-  // deployCode,
   destroyDroplet,
   getDropletByKey,
   getDroplets,
   sshTo,
-  // initializeDroplet,
-  // sleep,
 } from "./do";
 import {
   ChainlinkJobDefinition,
@@ -22,6 +18,10 @@ import {
 } from "./chainlink";
 import { ChainlinkDOTGraph, Steps } from "./dotgraph";
 import { ChainlinkVariable } from "./chainlinkvariable";
+import { deployDirectory, yarnInstall } from "./externalAdapters";
+import { join } from "path";
+import dotenv from "dotenv";
+dotenv.config();
 commander.arguments("<keyname>");
 commander.description("Build test and destroy a droplet");
 commander
@@ -74,6 +74,26 @@ commander
     const out = createJobToml(job);
     writeFileSync("testjob.toml", out);
   });
+commander.command("deploy <key> <path>").action(async (key, path) => {
+  const { ssh, close } = await sshTo(key);
+  try {
+    // await login(ssh);
+    console.log(
+      "sending my code along from ",
+      path,
+      "to",
+      join("/", "root", path)
+    );
+    const targetPath = join("/", "root", path);
+    await deployDirectory(ssh, path, targetPath);
+    const output = await yarnInstall(ssh, targetPath);
+    console.log("result from deploy", output);
+  } catch (e) {
+    console.log("error", e);
+  }
+  close();
+  console.log("All closed up");
+});
 commander.command("build <key>").action(async (key) => {
   if (!key) {
     console.error("Cannot run without defining a name for all this");

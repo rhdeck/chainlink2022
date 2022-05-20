@@ -1,8 +1,7 @@
 import { ChainlinkVariable } from "./chainlinkvariable";
+import { escape } from "./utils";
 //#region DOT Notation
-function escape(src: string) {
-  return src.replace(/"/g, '\\"');
-}
+
 export type ChainlinkDOTGraphDefinition = Record<
   string,
   | string
