@@ -30,6 +30,7 @@
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
     "@openzeppelin/contracts": "^4.6.0",
     "cross-fetch": "^3.1.5",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "web3modal": "^1.9.5"
   }
 }
