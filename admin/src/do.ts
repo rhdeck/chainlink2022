@@ -87,9 +87,9 @@ async function getClient() {
 export async function getDroplets() {
   const dots = await getClient();
   const droplets = await dots.droplet.listDroplets({});
-  return droplets.data.droplets.filter((d) =>
-    d.name.startsWith(droplet_prefix)
-  );
+  return droplets.data.droplets
+    .filter((d) => d.name.startsWith(droplet_prefix))
+    .map((d) => ({ ...d, key: d.name.replace(`${droplet_prefix}-`, "") }));
 }
 export async function getDropletByName(name: string) {
   const droplets = await getDroplets();
@@ -148,7 +148,16 @@ export async function rebuildDroplet(
     image: toImage,
   });
 }
-export async function sshTo(droplet_id: number, privateKey: string) {
+export async function sshTo(key: string) {
+  //get the ID
+  const droplet = await getDropletByKey(key);
+  if (!droplet) throw new Error("No droplet found");
+  const { id } = droplet;
+  const privateKey = readFileSync(`${key}_root_private.key`, "utf-8");
+  const obj = await sshToId(id, privateKey);
+  return obj;
+}
+export async function sshToId(droplet_id: number, privateKey: string) {
   const dots = await getClient();
   const infoResponse = await dots.droplet.getDroplet({
     droplet_id,
