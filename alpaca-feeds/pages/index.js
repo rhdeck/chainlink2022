@@ -308,10 +308,12 @@ export default function Home() {
               <div>
                 <h1 className={styles.header1}>Alpaca Feeds</h1>
                 <h4 className={styles.header2}>(Powered by PolyNodes)</h4>
-                <p className={styles.description}>
+                <div className={styles.description}>
+                  <p>
                   Alpaca market feeds are updated continuously on the Polygon
-                  blockchain via Chainlink nodes.
+                  blockchain via Chainlink nodes.</p><p>Don't see a ticker? Submit one here.
                 </p>
+                </div>
               </div>
               <div className={styles.grid}>
                 {price.map((price, index) => {
