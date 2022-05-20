@@ -7,6 +7,7 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import abi from "../src/utils/Keepers.json";
 import { ethers } from "ethers";
+import { use } from "chai";
 
 export default function Home() {
   const [price, setPrice] = useState([]);
@@ -62,6 +63,7 @@ export default function Home() {
   let web3Modal;
 
   async function init() {
+    try {
     if (window !== undefined) {
       web3Modal = new Web3Modal({
         network: "matic",
@@ -72,11 +74,13 @@ export default function Home() {
       web3Modal.show = true;
     }
 
-    const instances = await web3Modal.connect();
+    await web3Modal.connect();
 
-    const provider = new ethers.providers.Web3Provider(instances);
-    const signer = provider.getSigner();
+  } catch (err) {
+    console.log(err.message)
   }
+  }
+  
 
   const fetchAccountData = useCallback(async () => {
     const { ethereum } = window;
@@ -112,7 +116,8 @@ export default function Home() {
 
   async function onConnect() {
     try {
-      init();
+      await init();
+      window.location.reload()
       console.log("Opening a dialog", web3Modal);
     } catch (err) {
       console.log(err);
@@ -121,7 +126,6 @@ export default function Home() {
     let provider;
     try {
       provider = await web3Modal.connect();
-      location.reload();
     } catch (err) {
       console.log("Could not get a wallet connection", err);
     }
@@ -217,6 +221,7 @@ export default function Home() {
 
         if (equities.includes(upperCase)) {
           setEquities([upperCase]);
+          alert("This ticker already exists!")
         } else {
           try {
             await instanceThree.addEquity(upperCase, overrides);
@@ -267,6 +272,10 @@ export default function Home() {
   useEffect(() => {
     getPriceandFeed();
   }, [equities]);
+  
+  useEffect(() => {
+    getPriceandFeed();
+  }, [currentAccount]);
 
   const clickFooter = useCallback(() => {
     window.location.href = "https://finity.polygon.technology/";
