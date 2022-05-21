@@ -21,6 +21,8 @@ import {
 } from "./chainlink";
 import { ChainlinkVariable as chainlinkvariable_ChainlinkVariable } from "./chainlinkvariable";
 import {
+  setPrefix as do_setPrefix,
+  getPrefix as do_getPrefix,
   getDroplets as do_getDroplets,
   getDropletByName as do_getDropletByName,
   getDropletByKey as do_getDropletByKey,
@@ -71,6 +73,8 @@ export {
   chainlink_getJob,
   chainlink_Jobs,
   chainlinkvariable_ChainlinkVariable,
+  do_setPrefix,
+  do_getPrefix,
   do_getDroplets,
   do_getDropletByName,
   do_getDropletByKey,
