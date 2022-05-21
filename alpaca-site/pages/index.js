@@ -364,8 +364,8 @@ export default function Home() {
                     className={styles.inputButton}
                     onClick={submitNewTicker}
                   >
-                    Submit Ticker Request {(Number(fee) / 10 ** 18).toFixed(2)}{" "}
-                    MATIC
+                    Submit Ticker Request ({(Number(fee) / 10 ** 18).toFixed(2)}{" "}
+                    MATIC)
                   </button>
                 </div>
                 {loading && (
