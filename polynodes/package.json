@@ -1,5 +1,5 @@
 {
-  "name": "polynodes",
+  "name": "@polynodes/core",
   "private": false,
   "version": "1.0.0",
   "description": "",
@@ -56,7 +56,8 @@
   },
   "files": [
     "src",
-    "lib"
+    "lib",
+    "assets"
   ],
   "dependencies": {
     "@iarna/toml": "^2.2.5",
