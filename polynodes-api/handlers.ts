@@ -16,7 +16,9 @@ import {
   getDropletByKey,
   sshTo,
   setGetPrivateKey,
-} from "polynodes/lib/do";
+  destroyDroplet,
+  createDroplet,
+} from "@polynodes/core/lib/do";
 //#region QLDB intialization
 const maxConcurrentTransactions = 10;
 const retryLimit = 4;
@@ -62,6 +64,21 @@ const makeTables = async () => {
     });
   }
 };
+const makeAPIFunc = (
+  func: Handler<APIGatewayProxyEvent, APIGatewayProxyResult>
+) => <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
+    event,
+    context,
+    callback
+  ) => {
+    if (!isAuthenticated(event)) {
+      return {
+        statusCode: 401,
+        body: "Unauthorized",
+      };
+    }
+    return func(event, context, callback);
+  });
 const isAuthenticated = (event: APIGatewayProxyEvent): boolean => {
   if (event.headers.Authorization == "Bearer " + process.env.internalKey) {
     return true;
@@ -84,10 +101,7 @@ setGetPrivateKey(async (key) => {
 export const listNodes = makeAPIGatewayLambda({
   path: "/nodes",
   method: "get",
-  func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-    event,
-    context
-  ) => {
+  func: makeAPIFunc(async (event) => {
     if (!isAuthenticated(event)) {
       return {
         statusCode: 401,
@@ -110,16 +124,7 @@ export const listNodes = makeAPIGatewayLambda({
 export const getNode = makeAPIGatewayLambda({
   path: "/nodes/{nodeId}",
   method: "get",
-  func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-    event,
-    context
-  ) => {
-    if (!isAuthenticated(event)) {
-      return {
-        statusCode: 401,
-        body: "Unauthorized",
-      };
-    }
+  func: makeAPIFunc(async (event) => {
     const nodeId = event.pathParameters?.nodeId;
     if (!nodeId) {
       return {
@@ -134,16 +139,7 @@ export const getNode = makeAPIGatewayLambda({
 export const ls = makeAPIGatewayLambda({
   path: "/ls/{nodeId}",
   method: "get",
-  func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-    event,
-    context
-  ) => {
-    if (!isAuthenticated(event)) {
-      return {
-        statusCode: 401,
-        body: "Unauthorized",
-      };
-    }
+  func: makeAPIFunc(async (event) => {
     const nodeId = event.pathParameters?.nodeId;
     if (!nodeId) {
       return {
@@ -160,29 +156,57 @@ export const ls = makeAPIGatewayLambda({
 });
 
 export const build = makeAPIGatewayLambda({
-  path: "/build",
+  path: "/nodes",
   method: "post",
-  func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-    event,
-    context
-  ) => {
-    if (!isAuthenticated(event)) {
+  func: makeAPIFunc(async (event) => {
+    if (!event.body) {
       return {
-        statusCode: 401,
-        body: "Unauthorized",
+        statusCode: 400,
+        body: "Missing body",
       };
     }
-    const body = JSON.parse(event.body);
-    const nodeId = body.nodeId;
+    const body = <{ key: string }>JSON.parse(event.body);
+    const key = body.key;
+
+    if (!key) {
+      return {
+        statusCode: 400,
+        body: "Missing key",
+      };
+    }
+    const { id, privateKey, ...rest } = await createDroplet(key);
+    //create new node with the key
+    await qldbDriver.executeLambda(async (txn) => {
+      await txn.execute(
+        `INSERT INTO Nodes (id, privateKey, nodeId) VALUES ('${key}', '${privateKey}', ${id})`
+      );
+    });
+    return httpSuccess({ key, id });
+  }),
+});
+
+export const deleteNode = makeAPIGatewayLambda({
+  path: "/nodes/{nodeId}",
+  method: "delete",
+  func: makeAPIFunc(async (event) => {
+    const nodeId = event.pathParameters?.nodeId;
     if (!nodeId) {
       return {
         statusCode: 400,
         body: "Missing nodeId",
       };
     }
+    const droplet = await getDropletByKey(nodeId);
+    if (!droplet) {
+      return {
+        statusCode: 404,
+        body: "Node not found",
+      };
+    }
+    await destroyDroplet(droplet.id);
+    return httpSuccess("OK");
   }),
 });
-
 // export const getCid = makeAPIGatewayLambda({
 //   path: "/cid/{cid}",
 //   method: "get",

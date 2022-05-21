@@ -68,4 +68,4 @@ docker exec chainlink /bin/bash -c "\
 docker stop secondary
 docker restart chainlink
 docker start secondary
-curl {{{ZAP_URL}}}?key={{key}} -H "Authorization: Bearer {{internalkey}}"
+curl {{{ZAP_URL}}}?key={{key}} 
