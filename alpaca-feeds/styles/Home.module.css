@@ -26,6 +26,10 @@
   font-size: GeneralSans-Regular;
 }
 
+.pulse {
+  animation: pulse 5s infinite;
+}
+
 .address {
   margin-right: 10px;
   font-size: 20px;
@@ -38,7 +42,6 @@
   align-items: center;
   text-align: right;
   width: 250px;
-  align-items: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -96,7 +99,7 @@
   max-width: 130px;
   background: #ffffff;
   /* Solid Colours/Brand/Primary/Primary-500 */
-
+  
   border: 1px solid #8247e5;
   /* State/Primary Focus */
 
@@ -138,7 +141,7 @@
 .inputButton {
   margin: auto;
   border-radius: 40px;
-  height: 40px;
+  height: 50px;
   border: 0;
   position: relative;
   display: flex;
@@ -147,7 +150,7 @@
   justify-content: center;
   align-items: center;
   font-size: 1rem;
-  width: 200px;
+  width: 220px;
   cursor: pointer;
   background-color: #8e40f2;
   box-shadow: 0 30px 15px rgba(0, 0, 0, 0.4);
@@ -233,6 +236,28 @@
   min-height: 72.5px;
   width: 600px;
   background-color: #ffff;
+  transition: transform 0.2s;
+
+}
+
+.cardTransaction {
+  display: flex;
+  margin: 0.25rem;
+  padding: 0 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+  align-items: center;
+  color: #4a23a4;
+  border-radius: 4px;
+  min-height: 72.5px;
+  width: 600px;
+  background-color: #ffff;
+  transition: transform 0.2s;
+
+}
+
+.card:hover {
+  transform: scale(1.05);
 }
 
 .cardTwo {
@@ -545,7 +570,7 @@
 
   .inputButton {
     width: 150px;
-    height:55px;
+    height:65px;
   }
 
 }

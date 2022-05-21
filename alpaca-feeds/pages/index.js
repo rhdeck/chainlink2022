@@ -16,8 +16,10 @@ export default function Home() {
   const [pastTimestamp, setPastTimestamp] = useState();
   const [currentAccount, setCurrentAccount] = useState();
   const [instanceThree, setInstanceThree] = useState();
+  const [fee, setFee] = useState();
+  const [loading, setLoading] = useState(false)
 
-  const dappAddress = "0x0ddFd0d1D2a31F3bE60ffD18882462EfE5882D71";
+  const dappAddress = "0x577079b8E3562FEa524Dc99Ea31Abbd58dd5e57a";
 
   const loader = (
     <div className={styles.overlay}>
@@ -30,11 +32,7 @@ export default function Home() {
     </div>
   );
 
-  const initialFormData = Object.freeze({
-    ticker: "",
-  });
-
-  const [formData, updateFormData] = useState(initialFormData);
+  const [ticker, setTicker] = useState("");
 
   const handleChange = async (e) => {
     const upperCase = e.target.value.toUpperCase();
@@ -42,15 +40,11 @@ export default function Home() {
       setEquities([upperCase]);
     } else if (
       !upperCase ||
-      (upperCase.length < formData.ticker.length && upperCase.length <= 2)
+      (upperCase.length < ticker.length && upperCase.length <= 2)
     ) {
       getEquities();
     }
-    updateFormData({
-      ...formData,
-
-      [e.target.name]: e.target.value,
-    });
+    setTicker(e.target.value);
   };
 
   const providerOptions = {
@@ -64,23 +58,21 @@ export default function Home() {
 
   async function init() {
     try {
-    if (window !== undefined) {
-      web3Modal = new Web3Modal({
-        network: "matic",
-        cacheProvider: true,
-        providerOptions,
-      });
+      if (window !== undefined) {
+        web3Modal = new Web3Modal({
+          network: "matic",
+          cacheProvider: true,
+          providerOptions,
+        });
 
-      web3Modal.show = true;
+        web3Modal.show = true;
+      }
+
+      await web3Modal.connect();
+    } catch (err) {
+      console.log(err.message);
     }
-
-    await web3Modal.connect();
-
-  } catch (err) {
-    console.log(err.message)
   }
-  }
-  
 
   const fetchAccountData = useCallback(async () => {
     const { ethereum } = window;
@@ -117,7 +109,7 @@ export default function Home() {
   async function onConnect() {
     try {
       await init();
-      window.location.reload()
+      window.location.reload();
       console.log("Opening a dialog", web3Modal);
     } catch (err) {
       console.log(err);
@@ -130,7 +122,6 @@ export default function Home() {
       console.log("Could not get a wallet connection", err);
     }
     // Subscribe to accounts change
-    try {
       provider.on("accountsChanged", (accounts) => {
         fetchAccountData();
       });
@@ -139,9 +130,6 @@ export default function Home() {
       provider.on("networkChanged", (networkId) => {
         fetchAccountData();
       });
-    } catch (err) {
-      console.log(err.message);
-    }
   }
 
   const getPriceandFeed = async () => {
@@ -151,7 +139,7 @@ export default function Home() {
     try {
       for (let i = 0; i < equities.length; i++) {
         priceBlock = await instance.getPriceandBlock(equities[i]);
-        newPrice.push(`$${Number(priceBlock[0] / 100)}`);
+        newPrice.push(`$${Number(priceBlock[0] / 100).toFixed(2)}`);
       }
 
       setPrice(newPrice);
@@ -161,7 +149,9 @@ export default function Home() {
   };
 
   const getEquities = async () => {
-   
+    const theFee = await instanceKeeper.EquityFee();
+
+    setFee(theFee);
     let timeStamp;
     try {
       timeStamp = await instanceKeeper.lastTimeStamp();
@@ -211,20 +201,31 @@ export default function Home() {
   }, [pastTimestamp]);
 
   const submitNewTicker = async () => {
-    if (formData.ticker) {
+    if (ticker) {
       if (currentAccount) {
         const overrides = {
-          value: ethers.utils.parseEther("0.1"), //sending one ether
+          value: fee.toString(),
+           //sending one ether
         };
+    
 
-        const upperCase = formData.ticker.toUpperCase();
+        console.log("overrides ", overrides)
+        const upperCase = ticker.toUpperCase();
+
+        const gas = await instanceThree.estimateGas.addEquity(upperCase, overrides)
+        console.log("gas ", gas)
 
         if (equities.includes(upperCase)) {
           setEquities([upperCase]);
-          alert("This ticker already exists!")
+          alert("This ticker already exists!");
         } else {
           try {
-            await instanceThree.addEquity(upperCase, overrides);
+            const receipt = await instanceThree.addEquity(upperCase, overrides);
+            setLoading(ticker)
+            setTicker("")
+            await receipt.wait()
+            getEquities()
+            setLoading(false)
           } catch (err) {
             console.log(err.message);
           }
@@ -272,7 +273,7 @@ export default function Home() {
   useEffect(() => {
     getPriceandFeed();
   }, [equities]);
-  
+
   useEffect(() => {
     getPriceandFeed();
   }, [currentAccount]);
@@ -319,19 +320,36 @@ export default function Home() {
                 <h4 className={styles.header2}>(Powered by PolyNodes)</h4>
                 <div className={styles.description}>
                   <p>
-                  Alpaca market feeds are updated continuously on the Polygon
-                  blockchain via Chainlink nodes.</p><p>Don't see a ticker? Submit one here.
-                </p>
+                    Alpaca market feeds are updated continuously on the Polygon
+                    blockchain via Chainlink nodes.
+                  </p>
+                  <p>Don't see a ticker? Submit one here.</p>
+                  <a href="https://mumbai.polygonscan.com/address/0xe934b71053845886a5F400E8ad289aA0B3E7B602#readContract">Polygonscan</a>
                 </div>
               </div>
               <div className={styles.grid}>
                 {price.map((price, index) => {
-                  return (
-                    <div key={index} className={styles.card}>
-                      <h2>{equities[index]}</h2>
-                      <p>{price}</p>
-                    </div>
-                  );
+                  if (price != "$0.00") {
+                    return (
+                      <div
+                        key={index}
+                        className={styles.card}
+                      >
+                        <h2>{equities[index]}</h2>
+                        <p>{price}</p>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div
+                        key={index}
+                        className={styles.card}
+                      >
+                        <h2>{equities[index]}</h2>
+                        <p className={styles.pulse}>Loading...</p>
+                      </div>
+                    );
+                  }
                 })}
                 <div className={styles.card} style={{ padding: "0" }}>
                   <input
@@ -339,17 +357,20 @@ export default function Home() {
                     onChange={handleChange}
                     name="ticker"
                     id="ticker"
+                    value={ticker}
                     placeholder="AAPL"
+                    autoComplete="off"
                     type="text"
-                    style={{textTransform:"uppercase"}}
+                    style={{ textTransform: "uppercase" }}
                   />
                   <button
                     className={styles.inputButton}
                     onClick={submitNewTicker}
                   >
-                    Submit Ticker Request
+                    Submit Ticker Request {(Number(fee)/(10**18)).toFixed(2)} MATIC
                   </button>
                 </div>
+                {loading && (<div className={styles.cardTransaction}>Submitting request for {loading}</div>)}
               </div>
               <div style={{ width: "50%" }}></div>
             </div>
@@ -378,7 +399,7 @@ export default function Home() {
 
       <footer className={styles.footer}>
         <button className={styles.finityButton} onClick={clickFooter}>
-          <div style={{ marginRight: "5px" }}>Developed with </div>
+          <div style={{ marginRight: "5px" }}>Created with </div>
           <img
             className={styles.finityLogo}
             src="https://assets.website-files.com/61f6b057c024d3274ee3a052/61f6e2b3e6ce5e8a000000bd_logoPurple.svg"
