@@ -98,7 +98,7 @@ commander.command("deploy <key> <name>").action(async (key, name) => {
     await deploy(ssh, path, targetPath);
     const output = await yarnInstall(ssh, targetPath);
     await restart(ssh, targetPath);
-    const compiled = compileTemplate(
+    const compiled = await compileTemplate(
       name,
       ` const result = await fetch("https://api.github.com/users/rhdeck");
     const data = await result.json();

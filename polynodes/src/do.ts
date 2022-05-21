@@ -5,7 +5,7 @@ import { readFileSync } from "fs";
 import { NodeSSH } from "node-ssh";
 import mustache from "mustache";
 import { join } from "path";
-
+import { loadStringAsset } from "@raydeck/local-assets";
 type KeyPair = {
   publicKey: string;
   privateKey: string;
@@ -101,11 +101,11 @@ export async function getDropletByName(name: string) {
 export async function getDropletByKey(key: string) {
   return getDropletByName(`${droplet_prefix}-${key}`);
 }
-function makeUserData(key: string) {
-  const userData = mustache.render(
-    readFileSync(join(__dirname, "..", "user-data.sh"), "utf8"),
-    { ...process.env, key }
-  );
+async function makeUserData(key: string) {
+  const userData = mustache.render(await loadStringAsset("user-data.sh"), {
+    ...process.env,
+    key,
+  });
   return userData;
 }
 export async function createDroplet(key: string) {
@@ -117,7 +117,7 @@ export async function createDroplet(key: string) {
     public_key: publicKey,
   });
   const id = keyResponse.data.ssh_key.id;
-  const user_data = makeUserData(key);
+  const user_data = await makeUserData(key);
   console.log(user_data);
   // process.exit();
   const response = await dots.droplet.createDroplet({

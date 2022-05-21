@@ -3,6 +3,7 @@
 import { readFileSync, writeFileSync } from "fs";
 import { NodeSSH } from "node-ssh";
 import { escape } from "./utils";
+import { loadStringAsset } from "@raydeck/local-assets";
 //copy a directory
 export async function deploy(ssh: NodeSSH, path: string, targetPath: string) {
   await ssh.putDirectory(path, targetPath);
@@ -40,8 +41,8 @@ export async function check(ssh: NodeSSH, path: string) {
   return output.stdout;
 }
 
-export function compileTemplate(name: string, sourceText: string) {
-  const template = readFileSync("app_template.js", "utf8");
+export async function compileTemplate(name: string, sourceText: string) {
+  const template = await loadStringAsset("app_template.js");
   const compiled = template.replace("//#mycode", sourceText);
   return compiled;
 }

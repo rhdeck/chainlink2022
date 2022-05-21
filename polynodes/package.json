@@ -57,10 +57,13 @@
   "files": [
     "src",
     "lib",
-    "assets"
+    "assets",
+    "nodeserver"
   ],
   "dependencies": {
     "@iarna/toml": "^2.2.5",
+    "@raydeck/local-assets": "^1.3.2",
+    "@raydeck/registry-manager": "^1.3.0",
     "commander": "^6.2.1",
     "cross-fetch": "^3.1.4",
     "dotenv": "^16.0.1",
