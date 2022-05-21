@@ -133,6 +133,8 @@ contract EquitiesKeeper is ChainlinkClient, KeeperCompatibleInterface, Ownable {
         require(msg.value == EquityFee, "Equity Fee is not paid");
         equities.push(_equity);
         numEquities = numEquities + 1;
+        EquitiesPriceFeed priceFeed = EquitiesPriceFeed(priceFeedContract);
+        priceFeed.requestPrice(equities[numEquities - 1]);
     }
 
     function setPriceFeedContract(address _priceFeedContract) public onlyOwner {
