@@ -10,13 +10,15 @@
     "build": "cp base.yml serverless.yml && serverless-lambda-builder serverless && serverless-yaml",
     "deploy": "yarn lint && serverless-stage deploy --force",
     "deployfnc": "yarn lint && serverless-stage deployskip -f",
+    "fulldeploy": "yarn build:dependency && yarn build && yarn deploy",
     "logs": "serverless-stage logs -t -f ",
     "undeploy": "serverless-stage remove",
     "rebuild": "yarn build && yarn deploy --force",
     "setup": "serverless-stage setup",
     "console": "serverless-console",
     "output": "serverless info",
-    "setapikey": "node setapikey.js"
+    "setapikey": "node setapikey.js",
+    "build:dependency": "(cd ../polynodes && yarn && yarn build) && livelink once"
   },
   "keywords": [],
   "author": "",
@@ -27,7 +29,6 @@
     "@raydeck/controller-manager": "^1.13.0",
     "@raydeck/event-manager": "^1.2.1",
     "@raydeck/registry-manager": "^1.3.0",
-    "@raydeck/serverless-console": "^1.0.0",
     "@raydeck/serverless-setup": "^3.1.2",
     "@raydeck/session-manager": "^1.4.0",
     "@types/node": "^17.0.21",
@@ -38,7 +39,7 @@
     "husky": "^7.0.4",
     "ion-js": "^4.2.1",
     "jsbi": "^4.2.0",
-    "polynodes": "../polynodes",
+    "polynodes": "../polynodes/package.tgz",
     "raw-loader": "^4.0.2",
     "serverless-api-gateway-throttling": "^1.0.1",
     "serverless-dotenv-plugin": "^4.0.1",
@@ -52,10 +53,12 @@
     "@raydeck/domino": "^1.1.1",
     "@raydeck/graphdoc": "^2.4.0",
     "@raydeck/graphql-schema-typescript": "^1.3.2",
+    "@raydeck/livelink": "^1.5.2",
     "@raydeck/merge-graphql": "^1.1.0",
     "@raydeck/serverless-base": "^1.0.4",
     "@raydeck/serverless-builder": "^2.0.2",
-    "@raydeck/serverless-lambda-builder": "^2.2.2",
+    "@raydeck/serverless-console": "^1.0.1",
+    "@raydeck/serverless-lambda-builder": "^2.5.0",
     "@raydeck/serverless-stage": "^3.1.1",
     "@raydeck/serverless-yaml": "^1.4.1",
     "@types/aws-lambda": "^8.10.59",
@@ -79,7 +82,8 @@
   },
   "liveLink": {
     "liveLinks": {
-      "polynodes": "../polynodes"
+      "polynodes": "../polynodes",
+      "@raydeck/serverless-console": "../../serverless-console"
     }
   }
 }

@@ -19,6 +19,8 @@
     "internalKey": "${self:custom.config.internalKey}"
     "ledgerName":
       "Ref": "QLDB"
+  "layers":
+    - "arn:aws:lambda:us-east-1:210049126456:layer:ssh2-lambda-layer:2"
 "plugins":
   - "serverless-webpack"
   - "serverless-api-gateway-throttling"
@@ -47,11 +49,7 @@
     "automatic": true
     "number": 1
   "webpack":
-    "includeModules":
-      "forceExclude":
-        - "aws-sdk"
-      "forceInclude":
-        - "ssh2"
+    "includeModules": false
   "QLDB":
     "deleteProtectionEnabled":
       "dev": false
@@ -63,6 +61,22 @@
     "events":
       - "http":
           "path": "/nodes"
+          "method": "get"
+          "cors": true
+          "private": false
+  "getNode":
+    "handler": "handlers.getNode"
+    "events":
+      - "http":
+          "path": "/nodes/{nodeId}"
+          "method": "get"
+          "cors": true
+          "private": false
+  "ls":
+    "handler": "handlers.ls"
+    "events":
+      - "http":
+          "path": "/ls/{nodeId}"
           "method": "get"
           "cors": true
           "private": false

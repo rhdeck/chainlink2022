@@ -1,5 +1,8 @@
 import "./core";
-import { makeAPIGatewayLambda } from "@raydeck/serverless-lambda-builder";
+import {
+  httpSuccess,
+  makeAPIGatewayLambda,
+} from "@raydeck/serverless-lambda-builder";
 import {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
@@ -8,7 +11,12 @@ import {
 import { Agent } from "https";
 import { QldbDriver, RetryConfig } from "amazon-qldb-driver-nodejs";
 import { v4 as uuid } from "uuid";
-import { getDroplets } from "polynodes/lib/do";
+import {
+  getDroplets,
+  getDropletByKey,
+  sshTo,
+  setGetPrivateKey,
+} from "polynodes/lib/do";
 //#region QLDB intialization
 const maxConcurrentTransactions = 10;
 const retryLimit = 4;
@@ -60,6 +68,17 @@ const isAuthenticated = (event: APIGatewayProxyEvent): boolean => {
   }
   return false;
 };
+setGetPrivateKey(async (key) => {
+  const rxResult = await qldbDriver.executeLambda(async (txn) => {
+    const result = await txn.execute(`SELECT * from Nodes WHERE id = '${key}'`);
+    return result.getResultList();
+  });
+  if (!rxResult) throw new Error("no key found");
+  const record = rxResult[0];
+  const privateKey = record.get("privateKey")?.stringValue();
+  if (!privateKey) throw new Error("no private key found");
+  return privateKey;
+});
 //#endregion
 //#region API Endpoints
 export const listNodes = makeAPIGatewayLambda({
@@ -80,21 +99,87 @@ export const listNodes = makeAPIGatewayLambda({
     const nodes = droplets
       .map((droplet) => {
         const network = droplet.networks.v4.find(
-          ({ type }) => type === "public"
+          ({ type }: { type: string }) => type === "public"
         );
         if (network) return { key: droplet.key, ip: network.ip_address };
       })
       .filter(Boolean);
+    return httpSuccess(nodes);
+  }),
+});
+export const getNode = makeAPIGatewayLambda({
+  path: "/nodes/{nodeId}",
+  method: "get",
+  func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
+    event,
+    context
+  ) => {
+    if (!isAuthenticated(event)) {
+      return {
+        statusCode: 401,
+        body: "Unauthorized",
+      };
+    }
+    const nodeId = event.pathParameters?.nodeId;
+    if (!nodeId) {
+      return {
+        statusCode: 400,
+        body: "Missing nodeId",
+      };
+    }
+    const droplet = await getDropletByKey(nodeId);
+    return httpSuccess(droplet);
+  }),
+});
+export const ls = makeAPIGatewayLambda({
+  path: "/ls/{nodeId}",
+  method: "get",
+  func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
+    event,
+    context
+  ) => {
+    if (!isAuthenticated(event)) {
+      return {
+        statusCode: 401,
+        body: "Unauthorized",
+      };
+    }
+    const nodeId = event.pathParameters?.nodeId;
+    if (!nodeId) {
+      return {
+        statusCode: 400,
+        body: "Missing nodeId",
+      };
+    }
+    // const droplet = await getDropletByKey(nodeId);
+    const { ssh, close } = await sshTo(nodeId);
+    const result = await ssh.execCommand(`ls -l`);
+    close();
+    return httpSuccess(result.stdout);
+  }),
+});
 
-    // return qldbDriver.executeLambda(async (txn) => {
-    //   const result = await txn.execute(
-    //     "SELECT * FROM Nodes WHERE owner = $1",
-    //     [event.requestContext.authorizer.claims.sub]
-    //   );
-    //   return {
-    //     statusCode: 200,
-    //     body: JSON.stringify(result.resultList),
-    //   };
+export const build = makeAPIGatewayLambda({
+  path: "/build",
+  method: "post",
+  func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
+    event,
+    context
+  ) => {
+    if (!isAuthenticated(event)) {
+      return {
+        statusCode: 401,
+        body: "Unauthorized",
+      };
+    }
+    const body = JSON.parse(event.body);
+    const nodeId = body.nodeId;
+    if (!nodeId) {
+      return {
+        statusCode: 400,
+        body: "Missing nodeId",
+      };
+    }
   }),
 });
 
