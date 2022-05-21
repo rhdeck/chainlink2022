@@ -7,7 +7,6 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import abi from "../src/utils/Keepers.json";
 import { ethers } from "ethers";
-import { use } from "chai";
 
 export default function Home() {
   const [price, setPrice] = useState([]);
@@ -17,7 +16,7 @@ export default function Home() {
   const [currentAccount, setCurrentAccount] = useState();
   const [instanceThree, setInstanceThree] = useState();
   const [fee, setFee] = useState();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const dappAddress = "0x577079b8E3562FEa524Dc99Ea31Abbd58dd5e57a";
 
@@ -122,14 +121,14 @@ export default function Home() {
       console.log("Could not get a wallet connection", err);
     }
     // Subscribe to accounts change
-      provider.on("accountsChanged", (accounts) => {
-        fetchAccountData();
-      });
+    provider.on("accountsChanged", (accounts) => {
+      fetchAccountData();
+    });
 
-      // Subscribe to networkId change
-      provider.on("networkChanged", (networkId) => {
-        fetchAccountData();
-      });
+    // Subscribe to networkId change
+    provider.on("networkChanged", (networkId) => {
+      fetchAccountData();
+    });
   }
 
   const getPriceandFeed = async () => {
@@ -205,15 +204,17 @@ export default function Home() {
       if (currentAccount) {
         const overrides = {
           value: fee.toString(),
-           //sending one ether
+          //sending one ether
         };
-    
 
-        console.log("overrides ", overrides)
+        console.log("overrides ", overrides);
         const upperCase = ticker.toUpperCase();
 
-        const gas = await instanceThree.estimateGas.addEquity(upperCase, overrides)
-        console.log("gas ", gas)
+        const gas = await instanceThree.estimateGas.addEquity(
+          upperCase,
+          overrides
+        );
+        console.log("gas ", gas);
 
         if (equities.includes(upperCase)) {
           setEquities([upperCase]);
@@ -221,11 +222,11 @@ export default function Home() {
         } else {
           try {
             const receipt = await instanceThree.addEquity(upperCase, overrides);
-            setLoading(ticker)
-            setTicker("")
-            await receipt.wait()
-            getEquities()
-            setLoading(false)
+            setLoading(ticker);
+            setTicker("");
+            await receipt.wait();
+            getEquities();
+            setLoading(false);
           } catch (err) {
             console.log(err.message);
           }
@@ -324,27 +325,23 @@ export default function Home() {
                     blockchain via Chainlink nodes.
                   </p>
                   <p>Don't see a ticker? Submit one here.</p>
-                  <a href="https://mumbai.polygonscan.com/address/0xe934b71053845886a5F400E8ad289aA0B3E7B602#readContract">Polygonscan</a>
+                  <a href="https://mumbai.polygonscan.com/address/0xe934b71053845886a5F400E8ad289aA0B3E7B602#readContract">
+                    Polygonscan
+                  </a>
                 </div>
               </div>
               <div className={styles.grid}>
                 {price.map((price, index) => {
                   if (price != "$0.00") {
                     return (
-                      <div
-                        key={index}
-                        className={styles.card}
-                      >
+                      <div key={index} className={styles.card}>
                         <h2>{equities[index]}</h2>
                         <p>{price}</p>
                       </div>
                     );
                   } else {
                     return (
-                      <div
-                        key={index}
-                        className={styles.card}
-                      >
+                      <div key={index} className={styles.card}>
                         <h2>{equities[index]}</h2>
                         <p className={styles.pulse}>Loading...</p>
                       </div>
@@ -367,10 +364,15 @@ export default function Home() {
                     className={styles.inputButton}
                     onClick={submitNewTicker}
                   >
-                    Submit Ticker Request {(Number(fee)/(10**18)).toFixed(2)} MATIC
+                    Submit Ticker Request {(Number(fee) / 10 ** 18).toFixed(2)}{" "}
+                    MATIC
                   </button>
                 </div>
-                {loading && (<div className={styles.cardTransaction}>Submitting request for {loading}</div>)}
+                {loading && (
+                  <div className={styles.cardTransaction}>
+                    Submitting request for {loading}
+                  </div>
+                )}
               </div>
               <div style={{ width: "50%" }}></div>
             </div>
