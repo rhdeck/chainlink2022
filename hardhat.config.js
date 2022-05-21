@@ -26,7 +26,7 @@ module.exports = {
       chainId: 1337,
     },
     polygonMumbai: {
-      url: "https://rpc-mumbai.maticvigil.com",
+      url: process.env.ALCHEMY_MUMBAI,
       accounts: [process.env.PK],
     },
     kovan: {

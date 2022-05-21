@@ -1093,8 +1093,8 @@
       ]
     },
     "/Users/akshayrakheja/Documents/chainlink2022/contracts/EquitiesPriceFeed.sol": {
-      "lastModificationDate": 1652750674468,
-      "contentHash": "b548074fd83058c1fe09df9374517d04",
+      "lastModificationDate": 1652752633210,
+      "contentHash": "07bd2a022b360f562bad3908059ea5d6",
       "sourceName": "contracts/EquitiesPriceFeed.sol",
       "solcConfig": {
         "version": "0.8.7",
