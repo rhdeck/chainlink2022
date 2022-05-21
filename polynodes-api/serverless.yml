@@ -80,3 +80,19 @@
           "method": "get"
           "cors": true
           "private": false
+  "build":
+    "handler": "handlers.build"
+    "events":
+      - "http":
+          "path": "/nodes"
+          "method": "post"
+          "cors": true
+          "private": false
+  "deleteNode":
+    "handler": "handlers.deleteNode"
+    "events":
+      - "http":
+          "path": "/nodes/{nodeId}"
+          "method": "delete"
+          "cors": true
+          "private": false
