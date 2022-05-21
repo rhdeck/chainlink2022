@@ -5,14 +5,19 @@ import { readFileSync } from "fs";
 import { NodeSSH } from "node-ssh";
 import mustache from "mustache";
 import { join } from "path";
-import { sleep } from "./utils";
 
 type KeyPair = {
   publicKey: string;
   privateKey: string;
   fingerprint: string;
 };
-const droplet_prefix = "polynodes";
+let droplet_prefix = "polynodes";
+export function setPrefix(prefix: string) {
+  droplet_prefix = prefix;
+}
+export function getPrefix() {
+  return droplet_prefix;
+}
 const STANDARD_IMAGE = "ubuntu-20-04-x64";
 async function createDOClient() {
   const token = process.env.DO_TOKEN || "";
