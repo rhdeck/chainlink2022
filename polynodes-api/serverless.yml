@@ -1,0 +1,68 @@
+"service": "${self:custom.config.name}"
+"useDotenv": true
+"provider":
+  "name": "aws"
+  "runtime": "nodejs16.x"
+  "memorySize": 1024
+  "timeout": 10
+  "iam":
+    "role":
+      "statements":
+        - "Effect": "Allow"
+          "Action": "*"
+          "Resource": "arn:aws:qldb:*:*:*"
+  "environment":
+    "DO_TOKEN": "${env:DO_TOKEN}"
+    "ALCHEMY_MUMBAI_KEY": "${env:ALCHEMY_MUMBAI_KEY}"
+    "ALCHEMY_POLYGON_KEY": "${env:ALCHEMY_POLYGON_KEY}"
+    "ZAP_URL": "${env:ZAP_URL}"
+    "internalKey": "${self:custom.config.internalKey}"
+    "ledgerName":
+      "Ref": "QLDB"
+"plugins":
+  - "serverless-webpack"
+  - "serverless-api-gateway-throttling"
+  - "serverless-plugin-info-json"
+  - "serverless-plugin-warmup"
+  - "serverless-prune-plugin"
+  - "serverless-dotenv-plugin"
+"resources":
+  "Description": "Interface for Quantum Ledger API"
+  "Resources":
+    "QLDB":
+      "Type": "AWS::QLDB::Ledger"
+      "Properties":
+        "Name": "polynodesLedger"
+        "PermissionsMode": "STANDARD"
+        "DeletionProtection": "${self:custom.QLDB.deleteProtectionEnabled.${opt:stage,
+          \"dev\"}, false}"
+"custom":
+  "config": "${file(./config.json)}"
+  "apiGatewayThrottling":
+    "maxRequestsPerSecond": 100
+    "maxConcurrentRequests": 50
+  "warmup":
+    "prewarm": true
+  "prune":
+    "automatic": true
+    "number": 1
+  "webpack":
+    "includeModules":
+      "forceExclude":
+        - "aws-sdk"
+      "forceInclude":
+        - "ssh2"
+  "QLDB":
+    "deleteProtectionEnabled":
+      "dev": false
+      "prod": true
+      "other": false
+"functions":
+  "listNodes":
+    "handler": "handlers.listNodes"
+    "events":
+      - "http":
+          "path": "/nodes"
+          "method": "get"
+          "cors": true
+          "private": false

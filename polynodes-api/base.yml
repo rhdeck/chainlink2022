@@ -1,0 +1,82 @@
+service: ${self:custom.config.name}
+useDotenv: true
+provider:
+  name: aws
+  runtime: nodejs16.x
+  memorySize: 1024
+  timeout: 10
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: "*"
+          Resource: "arn:aws:qldb:*:*:*"
+  environment:
+    DO_TOKEN: ${env:DO_TOKEN}
+    ALCHEMY_MUMBAI_KEY: ${env:ALCHEMY_MUMBAI_KEY}
+    ALCHEMY_POLYGON_KEY: ${env:ALCHEMY_POLYGON_KEY}
+    ZAP_URL: ${env:ZAP_URL}
+    internalKey: ${self:custom.config.internalKey}
+    ledgerName:
+      Ref: QLDB
+    # mainRole:
+    #   Fn::GetAtt:
+    #     - MainRole
+    #     - "Arn"
+plugins:
+  - serverless-webpack
+  - serverless-api-gateway-throttling
+  - serverless-plugin-info-json
+  - serverless-plugin-warmup
+  - serverless-prune-plugin
+  - serverless-dotenv-plugin
+resources:
+  Description: "Interface for Quantum Ledger API"
+  Resources:
+    QLDB:
+      Type: "AWS::QLDB::Ledger"
+      Properties:
+        Name: "polynodesLedger"
+        PermissionsMode: "STANDARD"
+        DeletionProtection: ${self:custom.QLDB.deleteProtectionEnabled.${opt:stage, "dev"}, false}
+        # Tags:
+        #   - Key: "Name"
+        #     Value: "Quantum Ledger API"
+    # MainRole:
+    #   Type: "AWS::IAM::Role"
+    #   Properties:
+    #     RoleName: "${self:service}-${opt:stage, self:provider.stage}-MainRole"
+    #     AssumeRolePolicyDocument:
+    #       Version: "2012-10-17"
+    #       Statement:
+    #         - Effect: "Allow"
+    #           Principal:
+    #             Service:
+    #               - "lambda.amazonaws.com"
+    #               - "apigateway.amazonaws.com"
+    #               - events.amazonaws.com
+    #           Action:
+    #             - "sts:AssumeRole"
+
+custom:
+  config: ${file(./config.json)}
+  apiGatewayThrottling:
+    maxRequestsPerSecond: 100
+    maxConcurrentRequests: 50
+  warmup:
+    prewarm: true
+    # role: MainRole
+  prune:
+    automatic: true
+    number: 1
+  webpack:
+    includeModules:
+      forceExclude:
+        - aws-sdk
+      forceInclude:
+        - ssh2
+  QLDB:
+    deleteProtectionEnabled:
+      dev: false
+      prod: true
+      other: false

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noEmitOnError": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2019",
+    "module": "CommonJS"
+  },
+  "include": ["./*.ts", "./*.js"],
+  "exclude": [
+    "templates",
+    "node_modules",
+    "assets",
+    "mapping-templates",
+    "_warmup",
+    "webpack.config.js"
+  ]
+}
