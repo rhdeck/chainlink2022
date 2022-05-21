@@ -10,15 +10,23 @@ import {
   sshTo,
 } from "./do";
 import {
+  Bridges,
   ChainlinkJobDefinition,
   createBridge,
   createJob,
   createJobToml,
+  Jobs,
   login,
 } from "./chainlink";
 import { ChainlinkDOTGraph, Steps } from "./dotgraph";
 import { ChainlinkVariable } from "./chainlinkvariable";
-import { deployDirectory, yarnInstall } from "./externalAdapters";
+import {
+  compileTemplate,
+  deploy,
+  restart,
+  uploadTemplate,
+  yarnInstall,
+} from "./externalAdapters";
 import { join } from "path";
 import dotenv from "dotenv";
 dotenv.config();
@@ -38,7 +46,7 @@ commander
       .add(Steps.decode_log)
       .add(Steps.decode_cbor)
       .add(
-        Steps.bridge(bridgeName, {
+        Steps.bridgeBase(bridgeName, {
           id: new ChainlinkVariable("jobSpec.externalJobId"),
           data: { symbol: new ChainlinkVariable("decode_cbor.symbol") },
         })
@@ -52,6 +60,7 @@ commander
       .add(Steps.submit_tx(contractAddress));
     const job: ChainlinkJobDefinition = {
       name: "testjob0012",
+      type: "directrequest",
       // externalJobID: "35256481-6b0b-4967-a023-f0a00ffc750f",
       contractAddress,
       evmChainID: 137,
@@ -74,19 +83,49 @@ commander
     const out = createJobToml(job);
     writeFileSync("testjob.toml", out);
   });
-commander.command("deploy <key> <path>").action(async (key, path) => {
+commander.command("deploy <key> <name>").action(async (key, name) => {
   const { ssh, close } = await sshTo(key);
   try {
+    const path = "assets";
     // await login(ssh);
     console.log(
       "sending my code along from ",
-      path,
+      "assets",
       "to",
       join("/", "root", path)
     );
     const targetPath = join("/", "root", path);
-    await deployDirectory(ssh, path, targetPath);
+    await deploy(ssh, path, targetPath);
     const output = await yarnInstall(ssh, targetPath);
+    await restart(ssh, targetPath);
+    const compiled = compileTemplate(
+      name,
+      ` const result = await fetch("https://api.github.com/users/rhdeck");
+    const data = await result.json();
+    const answer = data.followers;
+    return answer;`
+    );
+    await uploadTemplate(ssh, name, compiled);
+    await restart(ssh, targetPath);
+    await login(ssh);
+    await Bridges.create(ssh, { name, url: `http://172.17.0.1:8080/${name}` });
+    await Jobs.create(ssh, {
+      type: "directrequest",
+      contractAddress: "0x0000000000000000000000000000000000000000",
+      evmChainID: 137,
+      name,
+      graph: new ChainlinkDOTGraph()
+        .add(Steps.decode_log)
+        .add(Steps.decode_cbor)
+        .add(
+          Steps.friendlyBridge(name, {
+            symbol: new ChainlinkVariable("decode_cbor.symbol"),
+          })
+        )
+        .add(Steps.encode_data_uint(name))
+        .add(Steps.encode_tx)
+        .add(Steps.submit_tx("0x0000000000000000000000000000000000000000")),
+    });
     console.log("result from deploy", output);
   } catch (e) {
     console.log("error", e);

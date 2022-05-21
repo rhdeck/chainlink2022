@@ -1,15 +1,21 @@
 import { ChainlinkVariable } from "./chainlinkvariable";
 import { escape } from "./utils";
 //#region DOT Notation
-
-export type ChainlinkDOTGraphDefinition = Record<
+export type ChainlinkDOTGraphDefinitionBase = Record<
   string,
   | string
   | number
   | boolean
   | ChainlinkVariable
-  | Record<string, string | number | boolean | ChainlinkVariable>
-> & { type: string; escape?: true };
+  | Record<
+      string,
+      string | number | boolean | ChainlinkVariable | Record<string, any>
+    >
+>;
+export type ChainlinkDOTGraphDefinition = ChainlinkDOTGraphDefinitionBase & {
+  type: string;
+  escape?: true;
+};
 export type ChainlinkDOTGraphDefinitionObject = {
   name: string;
   data: ChainlinkDOTGraphDefinition;
@@ -163,6 +169,25 @@ function bridgeObj(
 ): ChainlinkDOTGraphDefinitionObject {
   return { name, data: bridgeDOT(name, requestData) };
 }
+function friendlyBridgeDOT(
+  name: string,
+  requestData: Record<string, any>
+): ChainlinkDOTGraphDefinition {
+  return {
+    type: "bridge",
+    name,
+    requestData: {
+      id: new ChainlinkVariable("jobSpec.externalJobId"),
+      data: requestData,
+    },
+  };
+}
+function friendlyBridgeObj(
+  name: string,
+  requestData: Record<string, any>
+): ChainlinkDOTGraphDefinitionObject {
+  return { name, data: friendlyBridgeDOT(name, requestData) };
+}
 
 function parseDOT(previousStep: string): ChainlinkDOTGraphDefinition {
   return {
@@ -237,11 +262,13 @@ export const Steps = {
   decode_log: decodeLogObj,
   decode_cbor: dcodeCborObj,
   fetch: fetchObj,
-  bridge: bridgeObj,
+  bridgeBase: bridgeObj,
+  friendlyBridge: friendlyBridgeObj,
   parse: parseObj,
   multiply: multiplyObj,
   encode_data_uint: encodeDataUintObj,
   encode_tx: encodeTxObj,
   submit_tx: submitTxObj,
 };
+export default Steps;
 //#endregion

@@ -20,7 +20,7 @@ echo "ALLOW_ORIGINS=*" >> /root/chainlink/.env
 echo "DATABASE_URL=postgresql://postgres:chainlink@172.17.0.2:5432/chainlink?sslmode=disable" >> /root/chainlink/.env
 docker create --expose 6688 -v ~/chainlink:/chainlink -it --env-file=/root/chainlink/.env --name chainlink -it smartcontract/chainlink:1.4.1-root local n -p /chainlink/.password -a /chainlink/.api
 docker create --expose 6688 -v ~/chainlink:/chainlink -it --env-file=/root/chainlink/.env --name secondary -it smartcontract/chainlink:1.4.1-root local n -p /chainlink/.password -a /chainlink/.api
-echo "#\!/bin/bash" >> /etc/init.d/polynodes 
+echo "#!/bin/bash" >> /etc/init.d/polynodes 
 echo "### BEGIN INIT INFO" >> /etc/init.d/polynodes
 echo "# Provides:          polynodes" >> /etc/init.d/polynodes
 echo "# Required-Start:    $all" >> /etc/init.d/polynodes
@@ -32,7 +32,7 @@ echo "### END INIT INFO" >> /etc/init.d/polynodes
 echo "docker start postgres" >> /etc/init.d/polynodes
 echo "docker start chainlink" >> /etc/init.d/polynodes
 echo "docker start secondary" >> /etc/init.d/polynodes
-echo "cd /root/repo/ExternalAdapterTemplate && yarn start >> /var/log/node.log 2>1 &" >> /etc/init.d/polynodes
+echo "cd /root/assets && yarn start >> /var/log/node.log 2>1 &" >> /etc/init.d/polynodes
 chmod +x /etc/init.d/polynodes
 update-rc.d polynodes defaults
 update-rc.d polynodes enable
@@ -43,9 +43,6 @@ curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 apt-get update 
 apt-get install -y nodejs
 apt-get install -y yarn
-git clone https://github.com/rhdeck/chainlink2022 /root/repo
-cd /root/repo/ExternalAdapterTemplate
-yarn
 /etc/init.d/polynodes 
 sleep 10
 docker exec chainlink /bin/bash -c "\
@@ -71,4 +68,4 @@ docker exec chainlink /bin/bash -c "\
 docker stop secondary
 docker restart chainlink
 docker start secondary
-curl {{{ZAP_URL}}}?key={{key}}
+curl {{{ZAP_URL}}}?key={{key}} -H "Authorization: Bearer {{internalkey}}"

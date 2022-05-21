@@ -9,7 +9,7 @@
     "setup": "./init-template.js",
     "pre-commit": "(git-branch-is --not main || (set -u && echo $ALLOWMAIN)) && yarn test",
     "test": "tsc --noEmit",
-    "build": "tsc && chmod +x lib/bin.js && yarn pack -f package.tgz",
+    "build": "tsc && ts-index-compiler && chmod +x lib/bin.js && yarn pack -f package.tgz",
     "docs:bin": "mkdir docstemp ; (commanderdoc markdown lib/bin.js -o docstemp/__cli.md --cli-name \"npx `jq -r .name package.json`\") ; ",
     "docs:lib": "typedoc --theme markdown --readme none --includeVersion --out docstemp src/ && rm README.md ; mv docstemp/README.md docstemp/_library.md",
     "docs:compile": "mkdir docstemp ; cp TOP.md docstemp/README.md ; concat-md docstemp > README.md && rm -rf docstemp",
@@ -37,6 +37,7 @@
     "@types/mustache": "^4.1.2",
     "@types/node": "^14.14.17",
     "@types/node-forge": "^0.10.9",
+    "@types/prettier": "^2.6.1",
     "@types/ssh2": "^0.5.48",
     "@types/uuid": "^8.3.4",
     "@types/validate-npm-package-name": "^3.0.2",
@@ -45,6 +46,8 @@
     "git-branch-is": "^4.0.0",
     "husky": "^4.3.6",
     "install-peers-cli": "^2.2.0",
+    "prettier": "^2.6.2",
+    "ts-index-compiler": "^1.1.3",
     "ts-node": "^10.4.0",
     "typedoc": "^0.22.10",
     "typedoc-plugin-markdown": "^3.11.0",
@@ -74,6 +77,9 @@
       "README.md",
       "docs/**",
       "docstemp/**"
-    ]
+    ],
+    "liveLinks": {
+      "ts-index-compiler": "../../ts-index-compiler"
+    }
   }
 }

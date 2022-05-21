@@ -116,10 +116,18 @@ export async function createBridge(
     confirmations,
     minimumContractPayment,
   });
-  const { stdout: jsonOut } = await command(ssh, `bridges create '${json}'`);
-  console.log("Raw output from bridge", jsonOut);
-  const bridge = <ChainlinkBridge>JSON.parse(jsonOut);
-  return bridge;
+  const { stdout: jsonOut, stderr: errorOut } = await command(
+    ssh,
+    `bridges create '${json}'`
+  );
+  try {
+    const bridge = <ChainlinkBridge>JSON.parse(jsonOut);
+    return bridge;
+  } catch (e) {
+    console.log("Error parsing bridge", e);
+    console.log("Raw output from bridge", jsonOut);
+    console.log("Raw error from bridge", errorOut);
+  }
 }
 export async function getBridge(ssh: NodeSSH, id: number) {
   const { stdout: jsonOut } = await command(ssh, `bridges show ${id}`);
@@ -133,8 +141,13 @@ export async function deleteBridge(ssh: NodeSSH, id: number) {
 }
 export async function listBridges(ssh: NodeSSH) {
   const { stdout: jsonOut } = await command(ssh, `bridges list`);
-  const obj = <ChainlinkBridge[]>JSON.parse(jsonOut);
-  return obj;
+  try {
+    const obj = <ChainlinkBridge[]>JSON.parse(jsonOut);
+    return obj;
+  } catch (e) {
+    console.error("Error output", jsonOut);
+    throw e;
+  }
 }
 export const Bridges = {
   list: listBridges,
@@ -145,7 +158,7 @@ export const Bridges = {
 //#endregion
 //#region Jobs
 export type ChainlinkJobDefinition = {
-  type?: string;
+  type: "directrequest";
   name: string;
   evmChainID: number;
   contractAddress: string;
@@ -188,7 +201,7 @@ export function createJobToml({
 export async function createJob(
   ssh: NodeSSH,
   o: {
-    type?: string;
+    type: ChainlinkJobDefinition["type"];
     name: string;
     evmChainID: number;
     contractAddress: string;

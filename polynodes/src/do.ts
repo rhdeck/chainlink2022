@@ -146,7 +146,7 @@ export async function rebuildDroplet(
     image: toImage,
   });
 }
-let getPrivateKey = (key: string): string => {
+let getPrivateKey = async (key: string): Promise<string> => {
   const privateKey = readFileSync(`${key}_root_private.key`, "utf-8");
   return privateKey;
 };
@@ -158,7 +158,7 @@ export async function sshTo(key: string) {
   const droplet = await getDropletByKey(key);
   if (!droplet) throw new Error("No droplet found");
   const { id } = droplet;
-  const privateKey = getPrivateKey(key);
+  const privateKey = await getPrivateKey(key);
   const obj = await sshToId(id, privateKey);
   return obj;
 }

@@ -1,13 +1,10 @@
 //#region Managing external adapters
 
+import { readFileSync, writeFileSync } from "fs";
 import { NodeSSH } from "node-ssh";
-
+import { escape } from "./utils";
 //copy a directory
-export async function deployDirectory(
-  ssh: NodeSSH,
-  path: string,
-  targetPath: string
-) {
+export async function deploy(ssh: NodeSSH, path: string, targetPath: string) {
   await ssh.putDirectory(path, targetPath);
   console.log("Hooray! Deployed directory");
 }
@@ -16,6 +13,49 @@ export async function yarnInstall(ssh: NodeSSH, path: string) {
   console.log("Hooray! Installed dependencies", output.stdout, output.stderr);
   return output.stdout;
 }
+export async function getEnvKeys(ssh: NodeSSH, path: string) {
+  const output = await ssh.execCommand(`cd ${path} && yarn -s keys`);
+  return output.stdout;
+}
+export async function addEnvKey(
+  ssh: NodeSSH,
+  path: string,
+  key: string,
+  value: string
+) {
+  const output = await ssh.execCommand(
+    `cd ${path} && echo "${key}=${escape(value)}" >> .env`
+  );
+  return output.stdout;
+}
+export async function restart(ssh: NodeSSH, path: string) {
+  const output = await ssh.execCommand(
+    `cd ${path} && yarn stop; yarn start > output.log 2>&1 &`
+  );
+  console.log("Hooray! Restarted adapter", output.stdout, output.stderr);
+  return output.stdout;
+}
+export async function check(ssh: NodeSSH, path: string) {
+  const output = await ssh.execCommand(`cd ${path} && yarn status`);
+  return output.stdout;
+}
+
+export function compileTemplate(name: string, sourceText: string) {
+  const template = readFileSync("app_template.js", "utf8");
+  const compiled = template.replace("//#mycode", sourceText);
+  return compiled;
+}
+export async function uploadTemplate(
+  ssh: NodeSSH,
+  name: string,
+  source: string
+) {
+  const tmpfile = `/tmp/${name}.js`;
+  writeFileSync(tmpfile, source);
+  const remoteFile = `/root/assets/endpoints/${name}.js`;
+  await ssh.putFile(tmpfile, remoteFile);
+}
+
 // export async function deployCode(options: {
 //   droplet_id: number;
 //   username: string;
