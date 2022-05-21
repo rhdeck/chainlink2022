@@ -27,7 +27,8 @@
 }
 
 .pulse {
-  animation: pulse 5s infinite;
+  animation: pulse 2s infinite;
+  animation-timing-function: linear;
 }
 
 .address {
@@ -198,6 +199,17 @@
   font-size: 1.25rem;
 }
 
+.polygonscan {
+  color: #cf9fff;
+}
+
+.polygonscan:active,
+.polygonscan:hover,
+.polygonscan:focus
+ {
+  color: #ffff;
+}
+
 .code {
   background: #fafafa;
   border-radius: 5px;
@@ -228,6 +240,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   margin: 0.25rem;
   padding: 0 1rem;
   padding-top: 1rem;
@@ -250,11 +263,25 @@
   color: #4a23a4;
   border-radius: 4px;
   min-height: 72.5px;
-  width: 600px;
+  max-width:600px;
   background-color: #ffff;
   transition: transform 0.2s;
-
+  animation: shadow 2s infinite;
 }
+
+@keyframes pulse {
+  100% {
+    color:#cf9fff;
+  }
+}
+
+@keyframes shadow {
+
+  50% {
+    opacity: 70%;
+  }
+}
+
 
 .card:hover {
   transform: scale(1.05);

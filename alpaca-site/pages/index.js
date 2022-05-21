@@ -207,20 +207,19 @@ export default function Home() {
           //sending one ether
         };
 
-        console.log("overrides ", overrides);
         const upperCase = ticker.toUpperCase();
 
         const gas = await instanceThree.estimateGas.addEquity(
           upperCase,
           overrides
         );
-        console.log("gas ", gas);
 
         if (equities.includes(upperCase)) {
           setEquities([upperCase]);
           alert("This ticker already exists!");
         } else {
           try {
+            setLoading(ticker);
             const receipt = await instanceThree.addEquity(upperCase, overrides);
             setLoading(ticker);
             setTicker("");
@@ -228,6 +227,8 @@ export default function Home() {
             getEquities();
             setLoading(false);
           } catch (err) {
+            setLoading(false);
+            setTicker("");
             console.log(err.message);
           }
         }
@@ -325,7 +326,7 @@ export default function Home() {
                     blockchain via Chainlink nodes.
                   </p>
                   <p>Don't see a ticker? Submit one here.</p>
-                  <a href="https://mumbai.polygonscan.com/address/0xe934b71053845886a5F400E8ad289aA0B3E7B602#readContract">
+                  <a className={styles.polygonscan} href="https://mumbai.polygonscan.com/address/0xe934b71053845886a5F400E8ad289aA0B3E7B602#readContract">
                     Polygonscan
                   </a>
                 </div>
@@ -370,7 +371,7 @@ export default function Home() {
                 </div>
                 {loading && (
                   <div className={styles.cardTransaction}>
-                    Submitting request for {loading}
+                    Submitting Request for {loading.toUpperCase()}
                   </div>
                 )}
               </div>
