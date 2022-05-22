@@ -64,6 +64,12 @@ const makeTables = async () => {
     });
   }
 };
+const isAuthenticated = (event: APIGatewayProxyEvent): boolean => {
+  if (event.headers.Authorization == "Bearer " + process.env.internalKey) {
+    return true;
+  }
+  return false;
+};
 const makeAPIFunc = (
   func: Handler<APIGatewayProxyEvent, APIGatewayProxyResult>
 ) => <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
@@ -77,14 +83,9 @@ const makeAPIFunc = (
         body: "Unauthorized",
       };
     }
+    await makeTables();
     return func(event, context, callback);
   });
-const isAuthenticated = (event: APIGatewayProxyEvent): boolean => {
-  if (event.headers.Authorization == "Bearer " + process.env.internalKey) {
-    return true;
-  }
-  return false;
-};
 setGetPrivateKey(async (key) => {
   const rxResult = await qldbDriver.executeLambda(async (txn) => {
     const result = await txn.execute(`SELECT * from Nodes WHERE id = '${key}'`);
@@ -174,12 +175,16 @@ export const build = makeAPIGatewayLambda({
         body: "Missing key",
       };
     }
+    console.log("Creating droplet");
     const { id, privateKey, ...rest } = await createDroplet(key);
+    console.log("I created the droplet, making query");
     //create new node with the key
+
     await qldbDriver.executeLambda(async (txn) => {
-      await txn.execute(
-        `INSERT INTO Nodes (id, privateKey, nodeId) VALUES ('${key}', '${privateKey}', ${id})`
-      );
+      const data = { id: key, nodeId: id, privateKey };
+      const query = `INSERT INTO Nodes ?`;
+      console.log("Running query", query);
+      await txn.execute(query, data);
     });
     return httpSuccess({ key, id });
   }),
