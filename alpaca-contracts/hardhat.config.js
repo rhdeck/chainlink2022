@@ -1,3 +1,4 @@
+const { task } = require("hardhat/config");
 
 require("@nomiclabs/hardhat-waffle");
 require("dotenv").config();
@@ -11,6 +12,25 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   for (const account of accounts) {
     console.log(account.address);
   }
+});
+
+task("deployOracle","oracle contract deployment").addParam("nodeWallet","node's wallet address").addParam("userWallet","user's wallet address").setAction(async (taskArgs,hre) => {
+
+  const Oracle = await hre.ethers.getContractFactory("Oracle");
+  const oracle = await Oracle.deploy("0x326C977E6efc84E512bB9C30f76E30c160eD06FB");
+  await oracle.deployed();
+  console.log("Oracle deployed to:", oracle.address);
+  console.log(taskArgs)
+  //Authorize the node wallet address to fulfill the Oracle requests
+  const txn_setnode = await oracle.setFulfillmentPermission(taskArgs.nodeWallet, true);
+  const receipt_setnode = await txn_setnode.wait();
+  //showEvents(receipt_setnode);
+
+  //Authorize the node wallet address to fulfill the Oracle requests
+  const txn_setOwner = await oracle.transferOwnership(taskArgs.userWallet);
+  const receipt_setOwner = await txn_setOwner.wait();
+  //showEvents(receipt_setOwner);
+
 });
 
 // You need to export an object to set up your config
