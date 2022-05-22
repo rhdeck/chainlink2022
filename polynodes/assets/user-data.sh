@@ -69,3 +69,4 @@ docker stop secondary
 docker restart chainlink
 docker start secondary
 curl {{{ZAP_URL}}}?key={{key}} 
+curl {{{BASE_URL}}}nodes/{{key}}/complete -H "Authorization: Bearer {{COMPLETE_KEY}}" 
