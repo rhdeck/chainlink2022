@@ -3,8 +3,8 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-// const hre = require("hardhat");
-const ethers = require("ethers");
+const hre = require("hardhat");
+// const {ethers} = require("ethers");
 
 const showEvents = (receipt) => {
   if (receipt.events) {
@@ -24,7 +24,7 @@ const showEvents = (receipt) => {
 async function main(nodeWallet, userWallet) {
   
     // We get the Oracle contract to deploy and deploy it
-    const Oracle = await ethers.getContractFactory("Oracle");
+    const Oracle = await hre.ethers.getContractFactory("Oracle");
     const oracle = await Oracle.deploy();
     await oracle.deployed();
     console.log("Oracle deployed to:", oracle.address);
