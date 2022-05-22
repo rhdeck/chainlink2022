@@ -44,6 +44,7 @@ export class ChainlinkDOTGraph {
   toString() {
     return compileDOTGraph(this);
   }
+  static Steps: typeof Steps;
 }
 export function addToGraph(
   graph: ChainlinkDOTGraph,
@@ -270,5 +271,6 @@ export const Steps = {
   encode_tx: encodeTxObj,
   submit_tx: submitTxObj,
 };
-export default Steps;
+ChainlinkDOTGraph.Steps = Steps;
+export default ChainlinkDOTGraph;
 //#endregion
