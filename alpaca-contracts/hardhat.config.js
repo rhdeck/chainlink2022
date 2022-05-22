@@ -14,10 +14,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-task("deployOracle","oracle contract deployment").addParam("nodeWallet","node's wallet address").addParam("userWallet","user's wallet address").setAction(async (taskArgs,hre) => {
+task("deployOracle","Deploys oracle contract, sets node fulfillment permission and transfers ownership to a user wallet").addParam("nodeWallet","Node's wallet address").addParam("userWallet","User's wallet address").setAction(async (taskArgs,hre) => {
 
   const Oracle = await hre.ethers.getContractFactory("Oracle");
-  const oracle = await Oracle.deploy("0x326C977E6efc84E512bB9C30f76E30c160eD06FB");
+  const oracle = await Oracle.deploy("0x326C977E6efc84E512bB9C30f76E30c160eD06FB"); //Polygon Mumbai Link token address
   await oracle.deployed();
   console.log("Oracle deployed to:", oracle.address);
   console.log(taskArgs)
