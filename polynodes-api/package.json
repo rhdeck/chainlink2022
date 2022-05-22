@@ -79,9 +79,6 @@
     "webpack": "^5.70.0",
     "webpack-aws-externals": "^2.0.1"
   },
-  "serverless": {
-    "internalKey": "POLYNODES"
-  },
   "liveLink": {
     "liveLinks": {
       "@raydeck/serverless-console": "../../serverless-console",
