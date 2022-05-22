@@ -24,13 +24,14 @@ task("deployOracle","Deploys oracle contract, sets node fulfillment permission a
   //Authorize the node wallet address to fulfill the Oracle requests
   const txn_setnode = await oracle.setFulfillmentPermission(taskArgs.nodeWallet, true);
   const receipt_setnode = await txn_setnode.wait();
-  //showEvents(receipt_setnode);
+  console.log("Fulfillment persmissions set for node address:",taskArgs.nodeWallet)
+
 
   //Authorize the node wallet address to fulfill the Oracle requests
   const txn_setOwner = await oracle.transferOwnership(taskArgs.userWallet);
   const receipt_setOwner = await txn_setOwner.wait();
-  //showEvents(receipt_setOwner);
-
+  console.log("Ownership transferred to user wallet:",taskArgs.userWallet)
+  
 });
 
 // You need to export an object to set up your config
