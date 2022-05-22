@@ -25,7 +25,7 @@ async function main(nodeWallet, userWallet) {
   
     // We get the Oracle contract to deploy and deploy it
     const Oracle = await hre.ethers.getContractFactory("Oracle");
-    const oracle = await Oracle.deploy();
+    const oracle = await Oracle.deploy(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
     await oracle.deployed();
     console.log("Oracle deployed to:", oracle.address);
 
