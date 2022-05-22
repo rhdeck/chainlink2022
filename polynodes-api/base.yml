@@ -15,8 +15,21 @@ provider:
     DO_TOKEN: ${env:DO_TOKEN}
     ALCHEMY_MUMBAI_KEY: ${env:ALCHEMY_MUMBAI_KEY}
     ALCHEMY_POLYGON_KEY: ${env:ALCHEMY_POLYGON_KEY}
+    BASE_URL:
+      {
+        "Fn::Join":
+          [
+            "",
+            [
+              " https://",
+              { "Ref": "ApiGatewayRestApi" },
+              ".execute-api.${self:custom.region}.amazonaws.com/${self:custom.stage}/",
+            ],
+          ],
+      }
     ZAP_URL: ${env:ZAP_URL}
-    internalKey: ${self:custom.config.internalKey}
+    internalKey: ${env:INTERNAL_KEY}
+    COMPLETED_KEY: ${env:COMPLETE_KEY}
     ledgerName:
       Ref: QLDB
     # mainRole:
@@ -73,6 +86,8 @@ custom:
     number: 1
   webpack:
     includeModules: false
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, self:provider.region, "us-east-1"}
   QLDB:
     deleteProtectionEnabled:
       dev: false

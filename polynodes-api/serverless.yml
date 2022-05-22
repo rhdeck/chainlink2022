@@ -15,8 +15,16 @@
     "DO_TOKEN": "${env:DO_TOKEN}"
     "ALCHEMY_MUMBAI_KEY": "${env:ALCHEMY_MUMBAI_KEY}"
     "ALCHEMY_POLYGON_KEY": "${env:ALCHEMY_POLYGON_KEY}"
+    "BASE_URL":
+      "Fn::Join":
+        - ""
+        - - " https://"
+          - "Ref": "ApiGatewayRestApi"
+          - ".execute-api.${self:custom.region}.amazonaws.com/${self:custom.sta\
+            ge}/"
     "ZAP_URL": "${env:ZAP_URL}"
-    "internalKey": "${self:custom.config.internalKey}"
+    "internalKey": "${env:INTERNAL_KEY}"
+    "COMPLETED_KEY": "${env:COMPLETE_KEY}"
     "ledgerName":
       "Ref": "QLDB"
   "layers":
@@ -50,6 +58,8 @@
     "number": 1
   "webpack":
     "includeModules": false
+  "stage": "${opt:stage, \"dev\"}"
+  "region": "${opt:region, self:provider.region, \"us-east-1\"}"
   "QLDB":
     "deleteProtectionEnabled":
       "dev": false
@@ -72,11 +82,27 @@
           "method": "get"
           "cors": true
           "private": false
+  "ip":
+    "handler": "handlers.ip"
+    "events":
+      - "http":
+          "path": "/nodes/{nodeId}/ip"
+          "method": "get"
+          "cors": true
+          "private": false
   "ls":
     "handler": "handlers.ls"
     "events":
       - "http":
-          "path": "/ls/{nodeId}"
+          "path": "/nodes/{nodeId}/ls"
+          "method": "get"
+          "cors": true
+          "private": false
+  "privateKey":
+    "handler": "handlers.privateKey"
+    "events":
+      - "http":
+          "path": "/nodes/{nodeId}/privateKey"
           "method": "get"
           "cors": true
           "private": false
@@ -88,11 +114,51 @@
           "method": "post"
           "cors": true
           "private": false
+  "completedNode":
+    "handler": "handlers.completedNode"
+    "events":
+      - "http":
+          "path": "/nodes/{nodeId}/completed"
+          "method": "get"
+          "cors": true
+          "private": false
   "deleteNode":
     "handler": "handlers.deleteNode"
     "events":
       - "http":
           "path": "/nodes/{nodeId}"
           "method": "delete"
+          "cors": true
+          "private": false
+  "getJob":
+    "handler": "handlers.getJob"
+    "events":
+      - "http":
+          "path": "/nodes/{nodeId}/jobs/{jobId}"
+          "method": "get"
+          "cors": true
+          "private": false
+  "getJobRuns":
+    "handler": "handlers.getJobRuns"
+    "events":
+      - "http":
+          "path": "/nodes/{nodeId}/jobs/{jobId}/runs"
+          "method": "get"
+          "cors": true
+          "private": false
+  "getJobRun":
+    "handler": "handlers.getJobRun"
+    "events":
+      - "http":
+          "path": "/nodes/{nodeId}/jobs/{jobId}/runs/{runId}"
+          "method": "get"
+          "cors": true
+          "private": false
+  "createJob":
+    "handler": "handlers.createJob"
+    "events":
+      - "http":
+          "path": "/nodes/{nodeId}/jobs"
+          "method": "post"
           "cors": true
           "private": false

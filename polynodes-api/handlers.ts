@@ -19,6 +19,12 @@ import {
   destroyDroplet,
   createDroplet,
 } from "@polynodes/core/lib/do";
+import { Jobs, Bridges } from "@polynodes/core/lib/chainlink";
+import { uploadTemplate } from "@polynodes/core/lib/externalAdapters";
+import DOTGraph from "@polynodes/core/lib/dotgraph";
+import { compileTemplate, deploy } from "@polynodes/core/lib/externalAdapters";
+import { ChainlinkVariable } from "@polynodes/core/lib/chainlinkvariable";
+import { getAssetPath } from "@raydeck/local-assets";
 //#region QLDB intialization
 const maxConcurrentTransactions = 10;
 const retryLimit = 4;
@@ -64,20 +70,25 @@ const makeTables = async () => {
     });
   }
 };
-const isAuthenticated = (event: APIGatewayProxyEvent): boolean => {
-  if (event.headers.Authorization == "Bearer " + process.env.internalKey) {
+const isAuthenticated = (
+  event: APIGatewayProxyEvent,
+  apiKey?: string
+): boolean => {
+  if (!apiKey) apiKey = process.env.internalKey;
+  if (event.headers.Authorization == "Bearer " + apiKey) {
     return true;
   }
   return false;
 };
 const makeAPIFunc = (
-  func: Handler<APIGatewayProxyEvent, APIGatewayProxyResult>
+  func: Handler<APIGatewayProxyEvent, APIGatewayProxyResult>,
+  apiKey?: string
 ) => <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
     event,
     context,
     callback
   ) => {
-    if (!isAuthenticated(event)) {
+    if (!isAuthenticated(event, apiKey)) {
       return {
         statusCode: 401,
         body: "Unauthorized",
@@ -86,17 +97,22 @@ const makeAPIFunc = (
     await makeTables();
     return func(event, context, callback);
   });
-setGetPrivateKey(async (key) => {
+const getNodeRecord = async (key: string) => {
   const rxResult = await qldbDriver.executeLambda(async (txn) => {
     const result = await txn.execute(`SELECT * from Nodes WHERE id = '${key}'`);
     return result.getResultList();
   });
   if (!rxResult) throw new Error("no key found");
   const record = rxResult[0];
+  return record;
+};
+const getPrivateKey = async (key: string) => {
+  const record = await getNodeRecord(key);
   const privateKey = record.get("privateKey")?.stringValue();
   if (!privateKey) throw new Error("no private key found");
   return privateKey;
-});
+};
+setGetPrivateKey(getPrivateKey);
 //#endregion
 //#region API Endpoints
 export const listNodes = makeAPIGatewayLambda({
@@ -122,6 +138,7 @@ export const listNodes = makeAPIGatewayLambda({
     return httpSuccess(nodes);
   }),
 });
+
 export const getNode = makeAPIGatewayLambda({
   path: "/nodes/{nodeId}",
   method: "get",
@@ -137,8 +154,31 @@ export const getNode = makeAPIGatewayLambda({
     return httpSuccess(droplet);
   }),
 });
+
+export const ip = makeAPIGatewayLambda({
+  path: "/nodes/{nodeId}/ip",
+  method: "get",
+  func: makeAPIFunc(async (event) => {
+    const nodeId = event.pathParameters?.nodeId;
+    if (!nodeId) {
+      return {
+        statusCode: 400,
+        body: "Missing nodeId",
+      };
+    }
+    const droplet = await getDropletByKey(nodeId);
+    if (!droplet) return { statusCode: 404, body: "Node not found" };
+    const network = droplet.networks.v4.find(
+      ({ type }: { type: string }) => type === "public"
+    );
+    if (!network) return { statusCode: 404, body: "Network IP not found" };
+
+    return { statusCode: 200, body: network.ip_address };
+  }),
+});
+
 export const ls = makeAPIGatewayLambda({
-  path: "/ls/{nodeId}",
+  path: "/nodes/{nodeId}/ls",
   method: "get",
   func: makeAPIFunc(async (event) => {
     const nodeId = event.pathParameters?.nodeId;
@@ -150,9 +190,26 @@ export const ls = makeAPIGatewayLambda({
     }
     // const droplet = await getDropletByKey(nodeId);
     const { ssh, close } = await sshTo(nodeId);
-    const result = await ssh.execCommand(`ls -l`);
+    const result = await ssh.execCommand(`ls -mF`);
+    const files = result.stdout.split(", ");
     close();
-    return httpSuccess(result.stdout);
+    return httpSuccess(files);
+  }),
+});
+
+export const privateKey = makeAPIGatewayLambda({
+  path: "/nodes/{nodeId}/privateKey",
+  method: "get",
+  func: makeAPIFunc(async (event) => {
+    const nodeId = event.pathParameters?.nodeId;
+    if (!nodeId) {
+      return {
+        statusCode: 400,
+        body: "Missing nodeId",
+      };
+    }
+    const privateKey = await getPrivateKey(nodeId);
+    return { statusCode: 200, body: privateKey };
   }),
 });
 
@@ -166,8 +223,9 @@ export const build = makeAPIGatewayLambda({
         body: "Missing body",
       };
     }
-    const body = <{ key: string }>JSON.parse(event.body);
-    const key = body.key;
+    const { key, defaultChainId = 80001 } = <
+      { key: string; defaultChainId?: number }
+    >JSON.parse(event.body);
 
     if (!key) {
       return {
@@ -181,13 +239,40 @@ export const build = makeAPIGatewayLambda({
     //create new node with the key
 
     await qldbDriver.executeLambda(async (txn) => {
-      const data = { id: key, nodeId: id, privateKey };
+      const data = {
+        id: key,
+        nodeId: id,
+        privateKey,
+        status: "uninitialized",
+        defaultChainId,
+      };
       const query = `INSERT INTO Nodes ?`;
       console.log("Running query", query);
       await txn.execute(query, data);
     });
     return httpSuccess({ key, id });
   }),
+});
+
+export const completedNode = makeAPIGatewayLambda({
+  path: "/nodes/{nodeId}/completed",
+  method: "get",
+  func: makeAPIFunc(async (event) => {
+    const nodeId = event.pathParameters?.nodeId;
+    if (!nodeId) {
+      return {
+        statusCode: 400,
+        body: "Missing nodeId",
+      };
+    }
+    const droplet = await getDropletByKey(nodeId);
+    if (!droplet) return { statusCode: 404, body: "Node not found" };
+    await qldbDriver.executeLambda(async (txn) => {
+      const query = `UPDATE Nodes SET status = 'completed' WHERE id = '${nodeId}'`;
+      await txn.execute(query);
+    });
+    return { statusCode: 200, body: "completed" };
+  }, process.env.COMPLETED_KEY),
 });
 
 export const deleteNode = makeAPIGatewayLambda({
@@ -212,356 +297,197 @@ export const deleteNode = makeAPIGatewayLambda({
     return httpSuccess("OK");
   }),
 });
-// export const getCid = makeAPIGatewayLambda({
-//   path: "/cid/{cid}",
-//   method: "get",
-//   func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-//     event: APIGatewayProxyEvent
-//   ) => {
-//     if (!isAuthenticated(event))
-//       return { statusCode: 401, body: "Unauthorized" };
-//     await makeTables();
-//     const cid = event.pathParameters?.cid;
-//     if (!cid) return { statusCode: 400, body: "No cid provided" };
-//     const txResult = await qldbDriver.executeLambda(async (txn) => {
-//       const result = txn.execute(
-//         `SELECT * from Transmissions WHERE cid = '${cid}'`
-//       );
-//       return (await result).getResultList();
-//     });
-//     const rxResult = await qldbDriver.executeLambda(async (txn) => {
-//       const result = await txn.execute(
-//         `SELECT * from Receipts WHERE cid = '${cid}'`
-//       );
-//       return result.getResultList();
-//     });
-//     const uploadResult = await qldbDriver.executeLambda(async (txn) => {
-//       const result = await txn.execute(
-//         `SELECT * from Uploads WHERE cid = '${cid}'`
-//       );
-//       return result.getResultList();
-//     });
-//     const result = {
-//       transmissions: txResult,
-//       receipts: rxResult,
-//       uploads: uploadResult.length ? uploadResult[0] : undefined,
-//     };
-//     return { statusCode: 200, body: JSON.stringify(result) };
-//   }),
-// });
-// export const getUser = makeAPIGatewayLambda({
-//   path: "/user/{user}",
-//   method: "get",
-//   func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-//     event: APIGatewayProxyEvent
-//   ) => {
-//     if (!isAuthenticated(event))
-//       return { statusCode: 401, body: "Unauthorized" };
-//     await makeTables();
-//     const user = event.pathParameters?.user;
-//     if (!user) return { statusCode: 400, body: "No user provided" };
-//     const txResult = await qldbDriver.executeLambda(async (txn) => {
-//       const result = await txn.execute(
-//         `SELECT * from Transmissions WHERE sender = '${user}' OR recipient = '${user}'`
-//       );
-//       return result.getResultList();
-//     });
-//     const rxResult = await qldbDriver.executeLambda(async (txn) => {
-//       const result = await txn.execute(
-//         `SELECT * from Receipts WHERE recipient = '${user}'`
-//       );
-//       return result.getResultList();
-//     });
-//     const cids = [
-//       ...rxResult.map((v) => v.get("cid")),
-//       ...txResult.map((v) => v.get("cid")),
-//     ];
-//     const uploadResult = await qldbDriver.executeLambda(async (txn) => {
-//       const result = await txn.execute(
-//         `SELECT * from Uploads WHERE cid IN ('${cids.join(
-//           "','"
-//         )}') OR sender='${user}'`
-//       );
-//       return result.getResultList();
-//     });
-//     const result = {
-//       user: user,
-//       transmissions: txResult,
-//       receipts: rxResult,
-//       uploads: uploadResult,
-//     };
-//     return { statusCode: 200, body: JSON.stringify(result) };
-//   }),
-// });
 
-// export const getTransaction = makeAPIGatewayLambda({
-//   path: "/transaction/{id}",
-//   method: "get",
-//   func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-//     event: APIGatewayProxyEvent
-//   ) => {
-//     if (!isAuthenticated(event))
-//       return { statusCode: 401, body: "Unauthorized" };
-//     await makeTables();
-//     const id = event.pathParameters?.id;
-//     if (!id) return { statusCode: 400, body: "No id provided" };
-//     const [type] = id.split("-");
-//     const result = await qldbDriver.executeLambda(async (txn) => {
-//       switch (type) {
-//         case "transmit":
-//           const txResult = await txn.execute(
-//             `SELECT * from Transmissions WHERE id = '${id}'`
-//           );
-//           const tlist = txResult.getResultList();
-//           return tlist.length
-//             ? {
-//                 statusCode: 200,
-//                 body: JSON.stringify({ type: "transmit", data: tlist[0] }),
-//               }
-//             : { statusCode: 404, body: "Not found" };
-//           break;
-//         case "receive":
-//           const rxResult = await txn.execute(
-//             `SELECT * from Receipts WHERE id = '${id}'`
-//           );
-//           const rlist = rxResult.getResultList();
-//           return rlist.length
-//             ? {
-//                 statusCode: 200,
-//                 body: JSON.stringify({ type: "receive", data: rlist[0] }),
-//               }
-//             : { statusCode: 404, body: "Not found" };
-//           break;
-//         case "upload":
-//           const uploadResult = await txn.execute(
-//             `SELECT * from Uploads WHERE id = '${id}'`
-//           );
-//           const ulist = uploadResult.getResultList();
-//           return ulist.length
-//             ? {
-//                 statusCode: 200,
-//                 body: JSON.stringify({ type: "upload", data: ulist[0] }),
-//               }
-//             : { statusCode: 404, body: "Not found: " + id };
-//           break;
-//         default:
-//           return { statusCode: 400, body: "Invalid type" };
-//       }
-//     });
-//     return result;
-//   }),
-// });
+export const getJob = makeAPIGatewayLambda({
+  path: "/nodes/{nodeId}/jobs/{jobId}",
+  method: "get",
+  func: makeAPIFunc(async (event) => {
+    const nodeId = event.pathParameters?.nodeId;
+    if (!nodeId) {
+      return {
+        statusCode: 400,
+        body: "Missing nodeId",
+      };
+    }
+    const jobId = event.pathParameters?.jobId;
+    if (!jobId) {
+      return {
+        statusCode: 400,
+        body: "Missing jobId",
+      };
+    }
+    const results = await qldbDriver.executeLambda((txn) => {
+      const query = `SELECT * FROM Jobs WHERE id = '${nodeId}-${jobId}'`;
+      return txn.execute(query);
+    });
+    const record = results.getResultList()[0];
 
-// export const postUpload = makeAPIGatewayLambda({
-//   path: "/upload",
-//   method: "post",
-//   func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-//     event: APIGatewayProxyEvent
-//   ) => {
-//     if (!isAuthenticated(event))
-//       return { statusCode: 401, body: "Unauthorized" };
-//     const { body } = event;
-//     if (!body) return { statusCode: 400, body: "No body provided" };
-//     await makeTables();
-//     const { cid: _cid, sender: _sender, name: _name } = <
-//       { cid: string; sender: string; name: string }
-//     >JSON.parse(body);
-//     if (!_sender) return { statusCode: 400, body: "No sender provided" };
-//     if (!_cid) return { statusCode: 400, body: "No cid provided" };
+    //Get the job
+    return httpSuccess(record);
+  }),
+});
 
-//     if (!_name) return { statusCode: 400, body: "No name provided" };
-//     const sender = _sender.toString();
-//     const cid = _cid.toString();
-//     const name = _name.toString();
-//     const date = new Date().toISOString();
-//     const id = "upload-" + uuid();
-//     const result = await qldbDriver.executeLambda(async (txn) => {
-//       const dupCheck = await txn.execute(
-//         `SELECT * FROM Uploads WHERE id = '${id}'`
-//       );
-//       if (dupCheck.getResultList().length === 0) {
-//         const doc = { id, cid, sender, name, date };
-//         await txn.execute(`INSERT INTO Uploads ?`, doc);
-//         return {
-//           statusCode: 200,
-//           body: JSON.stringify({ id, cid, sender, name, date }),
-//         };
-//       } else {
-//         return {
-//           statusCode: 400,
-//           body: "Document with this already uploaded",
-//         };
-//       }
-//     });
-//     return result;
-//   }),
-// });
-// export const getUpload = makeAPIGatewayLambda({
-//   path: "/upload/{id}",
-//   method: "get",
-//   func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-//     event: APIGatewayProxyEvent
-//   ) => {
-//     if (!isAuthenticated(event))
-//       return { statusCode: 401, body: "Unauthorized" };
-//     const id = event.pathParameters?.id;
-//     if (!id) return { statusCode: 400, body: "No id provided" };
-//     const result = await qldbDriver.executeLambda(async (txn) => {
-//       const uploadResult = await txn.execute(
-//         `SELECT * from Uploads WHERE id = '${id}'`
-//       );
-//       const ulist = uploadResult.getResultList();
-//       return ulist.length
-//         ? {
-//             statusCode: 200,
-//             body: JSON.stringify(ulist[0]),
-//           }
-//         : { statusCode: 404, body: "Not found: " + id };
-//     });
+export const getJobRuns = makeAPIGatewayLambda({
+  path: "/nodes/{nodeId}/jobs/{jobId}/runs",
+  method: "get",
+  func: makeAPIFunc(async (event) => {
+    const nodeId = event.pathParameters?.nodeId;
+    if (!nodeId) {
+      return {
+        statusCode: 400,
+        body: "Missing nodeId",
+      };
+    }
+    const jobId = event.pathParameters?.jobId;
+    if (!jobId) {
+      return {
+        statusCode: 400,
+        body: "Missing jobId",
+      };
+    }
+    const { ssh, close } = await sshTo(nodeId);
+    close();
+    //Get the job
+    return httpSuccess({});
+  }),
+});
 
-//     return result;
-//   }),
-// });
-// export const postTransmit = makeAPIGatewayLambda({
-//   path: "/transmit",
-//   method: "post",
-//   func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-//     event: APIGatewayProxyEvent
-//   ) => {
-//     if (!isAuthenticated(event))
-//       return { statusCode: 401, body: "Unauthorized" };
-//     const { body } = event;
-//     if (!body) return { statusCode: 400, body: "No body provided" };
-//     await makeTables();
-//     const { cid: _cid, sender: _sender, recipient: _recipient } = <
-//       { cid: string; sender: string; recipient: string }
-//     >JSON.parse(body);
-//     if (!_sender) return { statusCode: 400, body: "No sender provided" };
-//     if (!_cid) return { statusCode: 400, body: "No cid provided" };
-//     if (!_recipient) return { statusCode: 400, body: "No recipient provided" };
-//     const sender = _sender.toString();
-//     const cid = _cid.toString();
-//     const recipient = _recipient.toString();
-//     const date = new Date().toISOString();
-//     const id = "transmit-" + uuid();
+export const getJobRun = makeAPIGatewayLambda({
+  path: "/nodes/{nodeId}/jobs/{jobId}/runs/{runId}",
+  method: "get",
+  func: makeAPIFunc(async (event) => {
+    const nodeId = event.pathParameters?.nodeId;
+    if (!nodeId) {
+      return {
+        statusCode: 400,
+        body: "Missing nodeId",
+      };
+    }
+    const jobId = event.pathParameters?.jobId;
+    if (!jobId) {
+      return {
+        statusCode: 400,
+        body: "Missing jobId",
+      };
+    }
+    const runId = event.pathParameters?.runId;
+    if (!runId) {
+      return {
+        statusCode: 400,
+        body: "Missing runId",
+      };
+    }
+    const { ssh, close } = await sshTo(nodeId);
+    close();
+    //Get the job
+    return httpSuccess({});
+  }),
+});
 
-//     const result = await qldbDriver.executeLambda(async (txn) => {
-//       const uploadCheck = await txn.execute(
-//         `SELECT * FROM Uploads WHERE cid = '${cid}'`
-//       );
-//       if (uploadCheck.getResultList().length === 0) {
-//         return { statusCode: 400, body: "No such CID uploaded" };
-//       }
-//       const dupCheck = await txn.execute(
-//         `SELECT * FROM Transmissions WHERE id='${id}'` //cid = '${cid}' AND sender = '${sender}' AND recipient = '${recipient}'`
-//       );
-//       if (dupCheck.getResultList().length > 0) {
-//         return { statusCode: 400, body: "Duplicate transmission" }; //@TODO RHD Should we allow second transmissions maybe?
-//       }
-//       const doc = { id, cid, sender, recipient, date };
-//       await txn.execute(`INSERT INTO Transmissions ?`, doc);
-//       return {
-//         statusCode: 200,
-//         body: JSON.stringify({ id, cid, sender, recipient, date }),
-//       };
-//     });
-//     return result;
-//   }),
-// });
-// export const getTransmit = makeAPIGatewayLambda({
-//   path: "/transmit/{id}",
-//   method: "get",
-//   func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-//     event: APIGatewayProxyEvent
-//   ) => {
-//     if (!isAuthenticated(event))
-//       return { statusCode: 401, body: "Unauthorized" };
-//     const id = event.pathParameters?.id;
-//     if (!id) return { statusCode: 400, body: "No id provided" };
-//     const result = await qldbDriver.executeLambda(async (txn) => {
-//       const uploadResult = await txn.execute(
-//         `SELECT * from Transmissions WHERE id = '${id}'`
-//       );
-//       const ulist = uploadResult.getResultList();
-//       return ulist.length
-//         ? {
-//             statusCode: 200,
-//             body: JSON.stringify(ulist[0]),
-//           }
-//         : { statusCode: 404, body: "Not found: " + id };
-//     });
+export const createJob = makeAPIGatewayLambda({
+  path: "/nodes/{nodeId}/jobs",
+  method: "post",
+  func: makeAPIFunc(async (event) => {
+    const nodeId = event.pathParameters?.nodeId;
+    if (!nodeId) {
+      return {
+        statusCode: 400,
+        body: "Missing nodeId",
+      };
+    }
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        body: "Missing body",
+      };
+    }
+    const nodeRecord = await getNodeRecord(nodeId);
+    const defaultChainId =
+      nodeRecord.get("defaultChainId")?.numberValue() || 80001;
 
-//     return result;
-//   }),
-// });
-// export const postReceive = makeAPIGatewayLambda({
-//   path: "/receive",
-//   method: "post",
-//   func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-//     event: APIGatewayProxyEvent
-//   ) => {
-//     if (!isAuthenticated(event))
-//       return { statusCode: 401, body: "Unauthorized" };
-//     const { body } = event;
-//     if (!body) return { statusCode: 400, body: "No body provided" };
-//     await makeTables();
-//     const { cid: _cid, recipient: _recipient } = <
-//       { cid: string; recipient: string }
-//     >JSON.parse(body);
-//     if (!_cid) return { statusCode: 400, body: "No cid provided" };
-//     if (!_recipient) return { statusCode: 400, body: "No recipient provided" };
-//     const recipient = _recipient.toString();
-//     const cid = _cid.toString();
-//     const date = new Date().toISOString();
-//     const id = "receive-" + uuid();
+    const defaultOracle =
+      nodeRecord.get("oracles")?.get(defaultChainId)?.stringValue() || "";
 
-//     const result = await qldbDriver.executeLambda(async (txn) => {
-//       const txCheck = await txn.execute(
-//         `SELECT * FROM Transmissions WHERE cid = '${cid}'`
-//       );
-//       if (txCheck.getResultList().length === 0) {
-//         return { statusCode: 400, body: "No such transmission" };
-//       }
-//       const dupCheck = await txn.execute(
-//         `SELECT * FROM Receipts WHERE id='${id}'` //`cid = '${cid}' AND recipient = '${recipient}'`
-//       );
-//       if (dupCheck.getResultList().length > 0) {
-//         return { statusCode: 400, body: "Duplicate receipt" }; //@TODO RHD Should we allow second receipts maybe?
-//       }
-//       const doc = { id, cid, recipient, date };
-//       await txn.execute(`INSERT INTO Receipts ?`, doc);
-//       return {
-//         statusCode: 200,
-//         body: JSON.stringify({ id, cid, recipient, date }),
-//       };
-//     });
-//     return result;
-//   }),
-// });
-// export const getReceive = makeAPIGatewayLambda({
-//   path: "/receive/{id}",
-//   method: "get",
-//   func: <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
-//     event: APIGatewayProxyEvent
-//   ) => {
-//     if (!isAuthenticated(event))
-//       return { statusCode: 401, body: "Unauthorized" };
-//     const id = event.pathParameters?.id;
-//     if (!id) return { statusCode: 400, body: "No id provided" };
-//     const result = await qldbDriver.executeLambda(async (txn) => {
-//       const uploadResult = await txn.execute(
-//         `SELECT * from Receipts WHERE id = '${id}'`
-//       );
-//       const ulist = uploadResult.getResultList();
-//       return ulist.length
-//         ? {
-//             statusCode: 200,
-//             body: JSON.stringify(ulist[0]),
-//           }
-//         : { statusCode: 404, body: "Not found: " + id };
-//     });
+    const {
+      name,
+      oracleAddress = defaultOracle,
+      chainId = defaultChainId,
+      allowedRequesters = [],
+      source,
+      minPayment = 0,
+      parameters = [],
+      confirmations = 0,
+      // language = "javascript", // Not using this yet
+    } = <
+      {
+        name: string;
+        oracleAddress?: string;
+        chainId?: number;
+        allowedRequesters?: string[];
+        source: string;
+        minPayment: number;
+        language?: "javascript" | "python";
+        parameters?: string[];
+        confirmations?: number;
+      }
+    >JSON.parse(event.body);
+    //Compile the code
+    compileTemplate(name, source);
+    await qldbDriver.executeLambda(async (txn) => {
+      const data = {
+        id: `${nodeId}-${name}`,
+        nodeId,
+        name,
+        chainId,
+        oracleAddress,
+        allowedRequesters,
+        minPayment: 0,
+        status: "uninitialized",
+      };
+      const query = `INSERT INTO Jobs ?`;
+      await txn.execute(query, data);
+    });
+    const externalJobID = uuid();
+    //great, now let's ride
+    const { ssh, close } = await sshTo(nodeId);
+    //Upload the compiled code
+    //Restart the node server
+    await uploadTemplate(ssh, name, source);
+    await //Add the bridge
+    await Bridges.create(ssh, {
+      name,
+      url: `http://1727.0.1:8080/${name}`,
+      confirmations,
+    });
+    //Add the job
+    const requestData = parameters.reduce(
+      (o, key) => ({ ...o, [key]: new ChainlinkVariable(key) }),
+      {}
+    );
+    const graph = new DOTGraph()
+      .add(DOTGraph.Steps.decode_log)
+      .add(DOTGraph.Steps.decode_cbor)
+      .add(DOTGraph.Steps.friendlyBridge(name, requestData))
+      .add(DOTGraph.Steps.encode_data_uint(name))
+      .add(DOTGraph.Steps.encode_tx);
 
-//     return result;
-//   }),
-// });
+    const _ = await Jobs.create(ssh, {
+      externalJobID,
+      contractAddress: oracleAddress,
+      evmChainID: chainId,
+      name,
+      requesters: allowedRequesters,
+      type: "directrequest",
+      graph,
+      minContractPaymentLinkJuels: Math.floor(minPayment * 10 ** 18),
+    });
+    close();
+    //Finish by updating the database with status
+    await qldbDriver.executeLambda(async (txn) => {
+      const query = `UPDATE Jobs set status = 'ready'  WHERE id = '${nodeId}-${name}'`;
+      await txn.execute(query);
+    });
+    return httpSuccess({ key: nodeId, name });
+  }),
+});
 //#endregion
