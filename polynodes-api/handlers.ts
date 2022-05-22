@@ -64,6 +64,12 @@ const makeTables = async () => {
     });
   }
 };
+const isAuthenticated = (event: APIGatewayProxyEvent): boolean => {
+  if (event.headers.Authorization == "Bearer " + process.env.internalKey) {
+    return true;
+  }
+  return false;
+};
 const makeAPIFunc = (
   func: Handler<APIGatewayProxyEvent, APIGatewayProxyResult>
 ) => <Handler<APIGatewayProxyEvent, APIGatewayProxyResult>>(async (
@@ -77,14 +83,9 @@ const makeAPIFunc = (
         body: "Unauthorized",
       };
     }
+    await makeTables();
     return func(event, context, callback);
   });
-const isAuthenticated = (event: APIGatewayProxyEvent): boolean => {
-  if (event.headers.Authorization == "Bearer " + process.env.internalKey) {
-    return true;
-  }
-  return false;
-};
 setGetPrivateKey(async (key) => {
   const rxResult = await qldbDriver.executeLambda(async (txn) => {
     const result = await txn.execute(`SELECT * from Nodes WHERE id = '${key}'`);
