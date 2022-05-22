@@ -132,9 +132,17 @@ export const listNodes = makeAPIGatewayLambda({
         const network = droplet.networks.v4.find(
           ({ type }: { type: string }) => type === "public"
         );
-        if (network) return { key: droplet.key, ip: network.ip_address };
+        if (network)
+          return { key: droplet.key, ip: network.ip_address, status: "" };
+        else return { key: droplet.key, ip: "", status: "" };
       })
-      .filter(Boolean);
+      .filter(({ ip }) => ip !== "");
+    for (const node of nodes) {
+      try {
+        const record = await getNodeRecord(node.key);
+        node.status = record.get("status")?.stringValue() || "";
+      } catch (e) {}
+    }
     return httpSuccess(nodes);
   }),
 });
@@ -151,7 +159,15 @@ export const getNode = makeAPIGatewayLambda({
       };
     }
     const droplet = await getDropletByKey(nodeId);
-    return httpSuccess(droplet);
+    const record = await getNodeRecord(nodeId);
+    const fields = record
+      .allFields()
+      .reduce((o, [field, value]) => ({ ...o, [field]: value }), {});
+    delete (fields as { privateKey: any }).privateKey;
+    return httpSuccess({
+      ...fields,
+      droplet,
+    });
   }),
 });
 
@@ -257,6 +273,7 @@ export const build = makeAPIGatewayLambda({
 export const completedNode = makeAPIGatewayLambda({
   path: "/nodes/{nodeId}/completed",
   method: "get",
+  timeout: 25,
   func: makeAPIFunc(async (event) => {
     const nodeId = event.pathParameters?.nodeId;
     if (!nodeId) {
@@ -267,10 +284,36 @@ export const completedNode = makeAPIGatewayLambda({
     }
     const droplet = await getDropletByKey(nodeId);
     if (!droplet) return { statusCode: 404, body: "Node not found" };
+    try {
+      const nodeRecord = await getNodeRecord(nodeId);
+      if (nodeRecord.get("status")?.stringValue() !== "uninitialized") {
+        return { statusCode: 400, body: "Node is not in uninitialized state" };
+      }
+    } catch (e) {
+      return { statusCode: 404, body: "Node not found" };
+    }
+    await qldbDriver.executeLambda(async (txn) => {
+      console.log("Running completing query");
+      const query = `UPDATE Nodes SET status = 'completing' WHERE id = '${nodeId}'`;
+      await txn.execute(query);
+      console.log("Ran completing query");
+    });
+    //Let's upload that code state
+    const { ssh, close } = await sshTo(nodeId);
+    await deploy(ssh, getAssetPath("nodeserver"), "nodeserver");
+    await ssh.execCommand(
+      "cd nodeserver && yarn && yarn start > out.log 2>&1 &"
+    );
+    console.log("Closing");
+    close();
+    console.log("Closed");
     await qldbDriver.executeLambda(async (txn) => {
       const query = `UPDATE Nodes SET status = 'completed' WHERE id = '${nodeId}'`;
+      console.log("Running completed query");
       await txn.execute(query);
+      console.log("Ran completed query");
     });
+    console.log("Returning success");
     return { statusCode: 200, body: "completed" };
   }, process.env.COMPLETED_KEY),
 });
@@ -383,7 +426,17 @@ export const getJobRun = makeAPIGatewayLambda({
     return httpSuccess({});
   }),
 });
-
+type PolyNodesJobRequest = {
+  name: string;
+  oracleAddress?: string;
+  chainId?: number;
+  allowedRequesters?: string[];
+  source: string;
+  minPayment: number;
+  language?: "javascript" | "python";
+  parameters?: string[];
+  confirmations?: number;
+};
 export const createJob = makeAPIGatewayLambda({
   path: "/nodes/{nodeId}/jobs",
   method: "post",
@@ -402,6 +455,13 @@ export const createJob = makeAPIGatewayLambda({
       };
     }
     const nodeRecord = await getNodeRecord(nodeId);
+    const completed = nodeRecord.get("status")?.stringValue() === "completed";
+    if (!completed) {
+      return {
+        statusCode: 400,
+        body: "Node is not ready to receive jobs",
+      };
+    }
     const defaultChainId =
       nodeRecord.get("defaultChainId")?.numberValue() || 80001;
 
@@ -418,19 +478,7 @@ export const createJob = makeAPIGatewayLambda({
       parameters = [],
       confirmations = 0,
       // language = "javascript", // Not using this yet
-    } = <
-      {
-        name: string;
-        oracleAddress?: string;
-        chainId?: number;
-        allowedRequesters?: string[];
-        source: string;
-        minPayment: number;
-        language?: "javascript" | "python";
-        parameters?: string[];
-        confirmations?: number;
-      }
-    >JSON.parse(event.body);
+    } = <PolyNodesJobRequest>JSON.parse(event.body);
     //Compile the code
     compileTemplate(name, source);
     await qldbDriver.executeLambda(async (txn) => {
