@@ -131,6 +131,14 @@
           "method": "delete"
           "cors": true
           "private": false
+  "getJobs":
+    "handler": "handlers.getJobs"
+    "events":
+      - "http":
+          "path": "/nodes/{nodeId}/jobs"
+          "method": "get"
+          "cors": true
+          "private": false
   "getJob":
     "handler": "handlers.getJob"
     "events":
