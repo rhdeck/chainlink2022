@@ -702,8 +702,8 @@
       ]
     },
     "/Users/akshayrakheja/Documents/chainlink2022/alpaca-contracts/contracts/EquitiesPriceFeed.sol": {
-      "lastModificationDate": 1653361713688,
-      "contentHash": "06a4cd9e8b7aa2def4eb2da14f558aba",
+      "lastModificationDate": 1653408850585,
+      "contentHash": "f0528c2c7f3eeb1112a641b4a8096b6d",
       "sourceName": "contracts/EquitiesPriceFeed.sol",
       "solcConfig": {
         "version": "0.8.7",
