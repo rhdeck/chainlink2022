@@ -54,20 +54,20 @@ const deploy = async () => {
   console.log(`Contract deployed at address: ${contract.address}`);
 
   // Authorize the node wallet address to fulfill the Oracle requests
-  // console.log(process.argv[2]);
-  //   const txn_setnode = await contract.setFulfillmentPermission(
-  //     process.argv[2],
-  //     true,{gasLimit: 250000});
-  //   const receipt_setnode = await txn_setnode.wait();
-  //   console.log(
-  //     "Fulfillment persmissions set for node address:",
-  //     process.argv[2]
-  //   );
+  console.log(process.argv[2]);
+  const txn_setnode = await contract.setFulfillmentPermission(
+    process.argv[2],
+    true,{gasLimit: 250000});
+  const receipt_setnode = await txn_setnode.wait();
+  console.log(
+    "Fulfillment persmissions set for node address:",
+    process.argv[2]
+  );
 
-  //   //Authorize the node wallet address to fulfill the Oracle requests
-  //   const txn_setOwner = await contract.transferOwnership(process.argv[3]);
-  //   const receipt_setOwner = await txn_setOwner.wait();
-  //   console.log("Ownership transferred to user wallet:", process.argv[3]);
+  //Authorize the node wallet address to fulfill the Oracle requests
+  const txn_setOwner = await contract.transferOwnership(process.argv[3]);
+  const receipt_setOwner = await txn_setOwner.wait();
+  console.log("Ownership transferred to user wallet:", process.argv[3]);
 
 };
 
