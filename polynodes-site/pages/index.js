@@ -2,15 +2,18 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import { ethers } from "ethers";
+import { useRouter } from "next/router";
 
 export default function Home() {
+
+  const router = useRouter();
 
   const clickFooter = useCallback(() => {
     window.location.href = "https://finity.polygon.technology/";
   }, []);
 
   const goToNodes = useCallback(() => {
-    window.location.href = "./nodes";
+    router.replace("/nodes")
   }, []);
 
   return (
