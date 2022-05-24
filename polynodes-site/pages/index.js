@@ -12,10 +12,6 @@ export default function Home() {
     window.location.href = "https://finity.polygon.technology/";
   }, []);
 
-  const goToNodes = useCallback(() => {
-    router.replace("/nodes")
-  }, []);
-
   return (
     <div className={styles.container}>
       <Head>
@@ -36,12 +32,12 @@ export default function Home() {
           With the click of a button, users can create and deploy Polygon nodes to run on Chainlink. Users 
           can then create jobs to run 
           on those nodes.</p>
-    <button className={styles.finityButton} onClick={() => goToNodes()}>Start Exploring Nodes</button>
+    <button className={styles.finityButton} onClick={goToNodes}>Start Exploring Nodes</button>
           
       </main>
 
       <footer className={styles.footer}>
-        <button className={styles.finityButton} onClick={clickFooter}>
+        <button className={styles.finityButton} onClick={() => router.replace("/nodes")}>
           <div style={{ marginRight: "5px" }}>Created with </div>
           <img
             className={styles.finityLogo}
@@ -52,3 +48,4 @@ export default function Home() {
     </div>
   );
 }
+
