@@ -119,12 +119,6 @@ export const listNodes = makeAPIGatewayLambda({
   path: "/nodes",
   method: "get",
   func: makeAPIFunc(async (event) => {
-    if (!isAuthenticated(event)) {
-      return {
-        statusCode: 401,
-        body: "Unauthorized",
-      };
-    }
     //list them all
     const droplets = await getDroplets();
     const nodes = droplets
@@ -337,7 +331,40 @@ export const deleteNode = makeAPIGatewayLambda({
       };
     }
     await destroyDroplet(droplet.id);
+    await qldbDriver.executeLambda(async (txn) => {
+      const query = `DELETE FROM Nodes WHERE id = '${nodeId}'`;
+      await txn.execute(query);
+    });
+
     return httpSuccess("OK");
+  }),
+});
+export const getJobs = makeAPIGatewayLambda({
+  path: "/nodes/{nodeId}/jobs",
+  method: "get",
+  func: makeAPIFunc(async (event) => {
+    const nodeId = event.pathParameters?.nodeId;
+    if (!nodeId) {
+      return {
+        statusCode: 400,
+        body: "Missing nodeId",
+      };
+    }
+    const droplet = await getDropletByKey(nodeId);
+    if (!droplet) {
+      return {
+        statusCode: 404,
+        body: "Node not found",
+      };
+    }
+    const results = await qldbDriver.executeLambda(async (txn) => {
+      const query = `SELECT * FROM Jobs WHERE nodeId = '${nodeId}'`;
+      console.log("Running query", query);
+      const result = await txn.execute(query);
+      console.log("Ran query");
+      return result;
+    });
+    return httpSuccess(results.getResultList());
   }),
 });
 
@@ -454,7 +481,9 @@ export const createJob = makeAPIGatewayLambda({
         body: "Missing body",
       };
     }
+    console.log("Getting noderecord", nodeId);
     const nodeRecord = await getNodeRecord(nodeId);
+    console.log("checking status on noderecord", nodeRecord.allFields());
     const completed = nodeRecord.get("status")?.stringValue() === "completed";
     if (!completed) {
       return {
@@ -462,12 +491,13 @@ export const createJob = makeAPIGatewayLambda({
         body: "Node is not ready to receive jobs",
       };
     }
+    console.log("I am completed, let's ride");
     const defaultChainId =
       nodeRecord.get("defaultChainId")?.numberValue() || 80001;
-
+    console.log("Got default chain id", defaultChainId);
     const defaultOracle =
       nodeRecord.get("oracles")?.get(defaultChainId)?.stringValue() || "";
-
+    console.log("Got default oracle address", defaultOracle);
     const {
       name,
       oracleAddress = defaultOracle,
@@ -479,6 +509,13 @@ export const createJob = makeAPIGatewayLambda({
       confirmations = 0,
       // language = "javascript", // Not using this yet
     } = <PolyNodesJobRequest>JSON.parse(event.body);
+    console.log("I got the body parsed");
+    if (!name) return { statusCode: 400, body: "Missing name" };
+    if (!oracleAddress)
+      return { statusCode: 400, body: "Missing oracleAddress" };
+    if (!chainId) return { statusCode: 400, body: "Missing chainId" };
+    if (!source) return { statusCode: 400, body: "Missing source" };
+    console.log("I made it past these checks");
     //Compile the code
     compileTemplate(name, source);
     await qldbDriver.executeLambda(async (txn) => {
