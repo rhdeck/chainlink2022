@@ -49,11 +49,11 @@ const deploy = async () => {
   console.log(`Attempting to deploy from account: ${wallet.address}`);
 
   // 8. Send tx (initial value set to 5) and wait for receipt
-  const contract = await oracle.deploy("0x326C977E6efc84E512bB9C30f76E30c160eD06FB",{gasLimit: 250000});
+  const contract = await oracle.deploy("0x326C977E6efc84E512bB9C30f76E30c160eD06FB");
   await contract.deployed();
   console.log(`Contract deployed at address: ${contract.address}`);
 
-  //Authorize the node wallet address to fulfill the Oracle requests
+  // Authorize the node wallet address to fulfill the Oracle requests
   // console.log(process.argv[2]);
   //   const txn_setnode = await contract.setFulfillmentPermission(
   //     process.argv[2],
