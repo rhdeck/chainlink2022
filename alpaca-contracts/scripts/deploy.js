@@ -24,7 +24,7 @@ async function main() {
   const new_signer = await hre.ethers.getSigners();
   console.log("Signer is :",new_signer.address);
   // We get the contract to deploy
-  const PriceFeed = await hre.ethers.getContractFactory("EquitiesKeeper");
+  const PriceFeed = await hre.ethers.getContractFactory("EquitiesPriceFeed");
   const priceFeed = await PriceFeed.deploy();
 
   await priceFeed.deployed();

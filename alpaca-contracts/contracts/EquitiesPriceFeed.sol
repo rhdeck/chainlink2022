@@ -51,7 +51,7 @@ contract EquitiesPriceFeed is ChainlinkClient, Ownable {
         requesters[msg.sender] = true;
         setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB); // for mumbai network
         oracle = 0xE3a98D9FAAB4a4B338B40A6dF6273Ab520152b8c;
-        priceJobId = "33da4f9ee62c46edb6cc3e9ab1c26ef7";
+        priceJobId = "4279b7e4dc484650b7b7e2f97a8c8098";
         fee = 0.1 * 10**18; // (Varies by network and job)
     }
 
@@ -70,7 +70,7 @@ contract EquitiesPriceFeed is ChainlinkClient, Ownable {
             this.fulfill.selector
         );
 
-        request.add("symbol", _symbol);
+        request.add("ticker", _symbol);
         // Sends the request
         bytes32 _requestId = sendChainlinkRequestTo(oracle, request, fee);
         requests[_requestId] = _symbol;
