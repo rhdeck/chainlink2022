@@ -57,27 +57,27 @@ module.exports = {
     hardhat: {
       chainId: 1337,
     },
-    // polygonMumbai: {
-    //   url: process.env.ALCHEMY_MUMBAI,
-    //   accounts: [process.env.PK],
-    // },
-    // kovan: {
-    //   url: process.env.ALCHEMY_KOVAN,
-    //   accounts: [process.env.PK],
-    // },
-    // polygon:{
-    //   url: process.env.ALCHEMY_POLYGON,
-    //   accounts: [process.env.PK],
-    // }
+    polygonMumbai: {
+      url: process.env.ALCHEMY_MUMBAI,
+      accounts: [process.env.PK],
+    },
+    kovan: {
+      url: process.env.ALCHEMY_KOVAN,
+      accounts: [process.env.PK],
+    },
+    polygon:{
+      url: process.env.ALCHEMY_POLYGON,
+      accounts: [process.env.PK],
+    }
   },
   contractSizer: {
     runOnCompile: true,
   },
-  // etherscan: {
-  //   apiKey: {
-  //     polygonMumbai: process.env.POLYGON_API,
-  //     kovan: process.env.KOVAN_API,
-  //     polygon: process.env.POLYGON_API,
-  //   },
-  // },
+  etherscan: {
+    apiKey: {
+      polygonMumbai: process.env.POLYGON_API,
+      kovan: process.env.KOVAN_API,
+      polygon: process.env.POLYGON_API,
+    },
+  },
 };

@@ -52,7 +52,7 @@ contract EquitiesPriceFeed is ChainlinkClient, Ownable {
         setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB); // for mumbai network
         oracle = 0xE3a98D9FAAB4a4B338B40A6dF6273Ab520152b8c;
         priceJobId = "e94cc2e6281545058d45470bb3a9ae16";
-        fee = 0.345 * 10**18; // (Varies by network and job)
+        fee = 0.1 * 10**18; // (Varies by network and job)
     }
 
     /**

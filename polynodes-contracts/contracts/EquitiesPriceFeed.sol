@@ -38,7 +38,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract EquitiesPriceFeed is ChainlinkClient, Ownable {
     using Chainlink for Chainlink.Request;
 
-    address private oracle;
+    address public oracle;
     bytes32 public priceJobId;
     uint256 public fee;
     mapping(string => uint256) public prices;
@@ -51,7 +51,7 @@ contract EquitiesPriceFeed is ChainlinkClient, Ownable {
         requesters[msg.sender] = true;
         setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB); // for mumbai network
         oracle = 0xE3a98D9FAAB4a4B338B40A6dF6273Ab520152b8c;
-        priceJobId = "e94cc2e6281545058d45470bb3a9ae16";
+        priceJobId = "c7fbb7667ff6407d9c0e6e3a845efaaa";
         fee = 0.345 * 10**18; // (Varies by network and job)
     }
 
@@ -65,6 +65,10 @@ contract EquitiesPriceFeed is ChainlinkClient, Ownable {
 
     function setFee(uint256 _fee) public onlyRequester {
         fee = _fee;
+    }
+
+    function setOracle(address _oracle) public onlyRequester {
+        oracle = _oracle;
     }
 
     function requestPrice(string memory _symbol)

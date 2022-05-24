@@ -1,0 +1,708 @@
+.container {
+  padding: 0 2rem;
+  background-image: url("../public/images/abstract.png");
+  background-position: right;
+  background-repeat: no-repeat;
+}
+
+.main {
+  min-height: 100vh;
+  padding: 5rem 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+
+}
+
+.header1 {
+  margin-bottom: 20px;
+  font-size: 5rem;
+  width: 200px;
+}
+
+.header2 {
+  font-size: 1.75rem;
+  text-align: left;
+  margin: 20px 0;
+  font-size: GeneralSans-Regular;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+  animation-timing-function: linear;
+}
+
+.address {
+  margin-right: 10px;
+  font-size: 20px;
+  margin-left: auto;
+  padding: 6px;
+  gap: 16px;
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.08);
+  border-radius: 32px 8px 8px 32px;
+  display: flex;
+  align-items: center;
+  text-align: right;
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: GeneralSans-Regular;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 160%;
+}
+
+.footer {
+  display: flex;
+  flex: 1;
+  padding: 2rem 0;
+  border-top: 1px solid #eaeaea;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.finityButton {
+  border-radius: 40px;
+  height: 70px;
+  border: 0;
+  position: relative;
+  display: flex;
+  font-family: GeneralSans-SemiBold;
+  color: #8e40f2;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  width: 200px;
+  cursor: pointer;
+  background-color: #cf9fff;
+  background-color: hsla(0, 0%, 100%, 0.6);
+  box-shadow: 0 30px 15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s;
+}
+
+.finityButton:active {
+  background-image: none;
+  box-shadow: none;
+}
+.finityButton:hover {
+  background-image: none;
+  transform: scale(1.05);
+}
+
+.exploreButton {
+  border-radius: 40px;
+  height: 70px;
+  border: 0;
+  position: relative;
+  display: flex;
+  font-family: GeneralSans-SemiBold;
+  color: #8e40f2;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  width: 200px;
+  cursor: pointer;
+  background-color: #cf9fff;
+  background-color: hsla(0, 0%, 100%, 0.6);
+  box-shadow: 0 30px 15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s;
+}
+
+.exploreButton:active {
+  background-image: none;
+  box-shadow: none;
+}
+.exploreButton:hover {
+  background-image: none;
+  transform: scale(1.05);
+}
+
+.inputTicker {
+  max-width: 200px;
+  background: #ffffff;
+  /* Solid Colours/Brand/Primary/Primary-500 */
+  border: 1px solid #8247e5;
+  /* State/Primary Focus */
+
+  box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #dcd4ff;
+  border-radius: 3px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: space-around;
+  height: 40px;
+  width: auto;
+  margin:20px 20px 0 0px;
+}
+
+.inputArea {
+  max-width: 400px;
+  background: #ffffff;
+  /* Solid Colours/Brand/Primary/Primary-500 */
+
+  border: 1px solid #8247e5;
+  /* State/Primary Focus */
+
+  box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #dcd4ff;
+  border-radius: 3px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: space-around;
+  height: 400px;
+  width: auto;
+  margin-right:20px;
+  margin-top: 20px;
+}
+
+.connectButton {
+  margin: auto;
+  border-radius: 40px;
+  height: 40px;
+  border: 0;
+  position: relative;
+  display: flex;
+  font-family: GeneralSans-SemiBold;
+  color: #ffff;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  width: 200px;
+  cursor: pointer;
+  background-color: #8e40f2;
+  transition: transform 0.2s;
+}
+
+.nodeButton {
+  margin: 10px 10px;
+  border-radius: 10px;
+  height: 40px;
+  border: 0;
+  position: relative;
+  display: flex;
+  font-family: GeneralSans-SemiBold;
+  color: #8e40f2;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  width: 200px;
+  cursor: pointer;
+  background-color: #ffff;
+  transition: transform 0.2s;
+}
+
+.inputButton {
+  margin: 15px;
+  border-radius: 40px;
+  padding: 9px;
+  border: 0;
+  position: relative;
+  display: flex;
+  font-family: GeneralSans-SemiBold;
+  color: #8e40f2;
+  font-size: 1rem;
+  width: auto;
+  cursor: pointer;
+  box-shadow: 0 30px 15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s;
+}
+
+.inputButton:active {
+  background-image: none;
+  box-shadow: none;
+}
+.inputButton:hover {
+  background-image: none;
+  transform: scale(1.05);
+}
+
+.title a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+.title a:hover,
+.title a:focus,
+.title a:active {
+  text-decoration: underline;
+}
+
+.title {
+  margin: 0;
+  padding-bottom: 4rem;
+  color: #ffff;
+  line-height: 1.15;
+  font-size: 2rem;
+}
+
+.title,
+.description {
+  text-align: left;
+  font-family: GeneralSans-SemiBold;
+  width: 70%;
+}
+
+.description {
+  height:150px;
+  line-height: 1.5;
+  font-size: 1.25rem;
+}
+
+.polygonscan {
+  color: #cf9fff;
+}
+
+.polygonscan:active,
+.polygonscan:hover,
+.polygonscan:focus
+ {
+  color: #ffff;
+}
+
+.code {
+  background: #fafafa;
+  border-radius: 5px;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+    Bitstream Vera Sans Mono, Courier New, monospace;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-left: 50px;
+}
+
+.gridTwo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 90vw;
+}
+
+.gridThree {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin-left: 2px;
+  justify-content: flex-start;
+  max-width: 500px;
+}
+
+.card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  padding-top: 1rem;
+  color: #4a23a4;
+  border-radius: 4px;
+  min-height: 72.5px;
+  width: 400px;
+  background-color: #ffff;
+  transition: transform 0.2s;
+  margin-bottom: 10px;
+
+}
+
+
+.cardJob {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  padding-top: 1rem;
+  font-size: 1rem;
+  color: #4a23a4;
+  border-radius: 4px;
+  min-height: 72.5px;
+  width: 400px;
+  background-color: #ffff;
+  transition: transform 0.2s;
+  margin-bottom: 40px;
+
+}
+
+.cardTransaction {
+  display: flex;
+  margin: 0.25rem;
+  padding: 0 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+  align-items: center;
+  color: #4a23a4;
+  border-radius: 4px;
+  min-height: 72.5px;
+  max-width:600px;
+  background-color: #ffff;
+  transition: transform 0.2s;
+  animation: shadow 2s infinite;
+}
+
+@keyframes pulse {
+  100% {
+    color:#cf9fff;
+  }
+}
+
+@keyframes shadow {
+
+  50% {
+    opacity: 70%;
+  }
+}
+
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.cardTwo {
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  max-width: 300px;
+}
+
+.card h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.card p {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.logo {
+  position: absolute;
+  font-size: 1.25rem;
+  width: 100%;
+  height: 70px;
+  left: 0px;
+  top: 0px;
+  display: flex;
+  padding-left: 30px;
+  justify-content: flex-start;
+  align-items: center;
+  color: #8e40f2;
+  font-size: 30px;
+  align-items: center;
+  background-color: hsla(0, 0%, 100%, 0.6);
+}
+
+.logoText {
+  color: #8e40f2;
+  background: -webkit-linear-gradient(#8e40f2, #8e40f2, #cf9fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.overlay {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-color: #8e40f2;
+}
+
+.overlay__inner {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.overlay__content {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.spinner {
+  width: 300px;
+  height: 300px;
+  text-align: center;
+  display: inline-block;
+  animation: spin 3s infinite linear;
+}
+
+.updateText {
+  text-align: center;
+  margin-bottom: 3rem;
+  font-size: 18px;
+  font-family: GeneralSans-Regular;
+}
+
+.indexText {
+  text-align: left;
+  margin-bottom: 3rem;
+  font-size: 1.25rem;
+  width:500px;
+  font-family: GeneralSans-Regular;
+}
+
+.timer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
+  margin-bottom: 10px;
+  padding: 2px;
+  height: 30px;
+  gap: 16px;
+  background: #ebfcd5;
+  width: 170px;
+  border-radius: 4px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.timerText {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 160%;
+  /* identical to box height, or 26px */
+
+  /* Solid Colours/Standard/Black */
+
+  color: #000000;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+.timerIcon {
+  border: 1.5px solid #747c90;
+  border-radius: 100%;
+  width: 16px;
+  height: 16px;
+}
+
+.timerHands {
+  width: 6px;
+  height: 8px;
+  margin-top: 8%;
+  margin-left: 43%;
+  border-bottom: 1.5px solid #747c90;
+  border-left: 1.5px solid #747c90;
+}
+
+@font-face {
+  font-family: "GeneralSans-Variable";
+  src: url("./fonts/GeneralSans-Variable.woff2") format("woff2"),
+    url("./fonts/GeneralSans-Variable.woff") format("woff"),
+    url("./fonts/GeneralSans-Variable.ttf") format("truetype");
+  font-weight: 200 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+/**
+* This is a variable font
+* You can controll variable axes as shown below:
+* font-variation-settings: 'wght' 700.0;
+*
+* available axes:
+
+* 'wght' (range from 200.0 to 700.0)
+
+*/
+
+@font-face {
+  font-family: "GeneralSans-VariableItalic";
+  src: url("./fonts/GeneralSans-VariableItalic.woff2") format("woff2"),
+    url("./fonts/GeneralSans-VariableItalic.woff") format("woff"),
+    url("./fonts/GeneralSans-VariableItalic.ttf") format("truetype");
+  font-weight: 200 700;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "GeneralSans-Extralight";
+  src: url("./fonts/GeneralSans-Extralight.woff2") format("woff2"),
+    url("./fonts/GeneralSans-Extralight.woff") format("woff"),
+    url("./fonts/GeneralSans-Extralight.ttf") format("truetype");
+  font-weight: 200;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "GeneralSans-ExtralightItalic";
+  src: url("./fonts/GeneralSans-ExtralightItalic.woff2") format("woff2"),
+    url("./fonts/GeneralSans-ExtralightItalic.woff") format("woff"),
+    url("./fonts/GeneralSans-ExtralightItalic.ttf") format("truetype");
+  font-weight: 200;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "GeneralSans-Light";
+  src: url("./fonts/GeneralSans-Light.woff2") format("woff2"),
+    url("./fonts/GeneralSans-Light.woff") format("woff"),
+    url("./fonts/GeneralSans-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "GeneralSans-LightItalic";
+  src: url("./fonts/GeneralSans-LightItalic.woff2") format("woff2"),
+    url("./fonts/GeneralSans-LightItalic.woff") format("woff"),
+    url("./fonts/GeneralSans-LightItalic.ttf") format("truetype");
+  font-weight: 300;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "GeneralSans-Regular";
+  src: url("./fonts/GeneralSans-Regular.woff2") format("woff2"),
+    url("./fonts/GeneralSans-Regular.woff") format("woff"),
+    url("./fonts/GeneralSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "GeneralSans-Italic";
+  src: url("./fonts/GeneralSans-Italic.woff2") format("woff2"),
+    url("./fonts/GeneralSans-Italic.woff") format("woff"),
+    url("./fonts/GeneralSans-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "GeneralSans-Medium";
+  src: url("./fonts/GeneralSans-Medium.woff2") format("woff2"),
+    url("./fonts/GeneralSans-Medium.woff") format("woff"),
+    url("./fonts/GeneralSans-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "GeneralSans-MediumItalic";
+  src: url("./fonts/GeneralSans-MediumItalic.woff2") format("woff2"),
+    url("./fonts/GeneralSans-MediumItalic.woff") format("woff"),
+    url("./fonts/GeneralSans-MediumItalic.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "GeneralSans-Semibold";
+  src: url("./fonts/GeneralSans-Semibold.woff2") format("woff2"),
+    url("./fonts/GeneralSans-Semibold.woff") format("woff"),
+    url("./fonts/GeneralSans-Semibold.ttf") format("truetype");
+  font-weight: 600;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "GeneralSans-SemiboldItalic";
+  src: url("./fonts/GeneralSans-SemiboldItalic.woff2") format("woff2"),
+    url("./fonts/GeneralSans-SemiboldItalic.woff") format("woff"),
+    url("./fonts/GeneralSans-SemiboldItalic.ttf") format("truetype");
+  font-weight: 600;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "GeneralSans-Bold";
+  src: url("./fonts/GeneralSans-Bold.woff2") format("woff2"),
+    url("./fonts/GeneralSans-Bold.woff") format("woff"),
+    url("./fonts/GeneralSans-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "GeneralSans-BoldItalic";
+  src: url("./fonts/GeneralSans-BoldItalic.woff2") format("woff2"),
+    url("./fonts/GeneralSans-BoldItalic.woff") format("woff"),
+    url("./fonts/GeneralSans-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+  font-style: italic;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    width: 100%;
+    flex-direction: column;
+    margin-top: 40px;
+  }
+
+  .gridTwo {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .card {
+    width:320px;
+  }
+
+  .inputButton {
+    width: 160px;
+    height:65px;
+    border-radius: 30px;
+  }
+
+}
