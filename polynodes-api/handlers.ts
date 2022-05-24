@@ -606,7 +606,7 @@ export const createJob = makeAPIGatewayLambda({
       .add(DOTGraph.Steps.parse(name, "output"))
       .add(DOTGraph.Steps.encode_data_uint("parse"))
       .add(DOTGraph.Steps.encode_tx)
-      .add(DOTGraph.Steps.submit_tx(contractAddress));
+      .add(DOTGraph.Steps.submit_tx(contractAddress, chainId.toString()));
 
     const id = await Jobs.create(ssh, {
       externalJobID,

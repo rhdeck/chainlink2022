@@ -326,7 +326,7 @@ export default function Home() {
                     blockchain via Chainlink nodes.
                   </p>
                   <p>Don't see a ticker? Submit one here.</p>
-                  <a className={styles.polygonscan} href="https://mumbai.polygonscan.com/address/0xe934b71053845886a5F400E8ad289aA0B3E7B602#readContract">
+                  <a className={styles.polygonscan} href="https://mumbai.polygonscan.com/address/0xe934b71053845886a5F400E8ad289aA0B3E7B602">
                     Polygonscan
                   </a>
                 </div>
