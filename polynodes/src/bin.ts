@@ -57,7 +57,7 @@ commander
       // .add(Steps.encode_data_uint("fetch"))
       .add(Steps.parse(bridgeName))
       .add(Steps.encode_tx)
-      .add(Steps.submit_tx(contractAddress));
+      .add(Steps.submit_tx(contractAddress, "80001"));
     const job: ChainlinkJobDefinition = {
       name: "testjob0012",
       type: "directrequest",
@@ -124,7 +124,9 @@ commander.command("deploy <key> <name>").action(async (key, name) => {
         )
         .add(Steps.encode_data_uint(name))
         .add(Steps.encode_tx)
-        .add(Steps.submit_tx("0x0000000000000000000000000000000000000000")),
+        .add(
+          Steps.submit_tx("0x0000000000000000000000000000000000000000", "80001")
+        ),
     });
     console.log("result from deploy", output);
   } catch (e) {

@@ -283,16 +283,21 @@ const encodeTxObj: ChainlinkDOTGraphDefinitionObject = {
   data: encodeTxDOT,
 };
 
-const submitTxDOT = (oracleAddr: string): ChainlinkDOTGraphDefinition => ({
+const submitTxDOT = (
+  oracleAddr: string,
+  chainId: string
+): ChainlinkDOTGraphDefinition => ({
   type: "ethtx",
   to: oracleAddr,
+  evmchainid: chainId,
   data: new ChainlinkVariable("encode_tx", true),
 });
 const submitTxObj = (
-  oracleAddr: string
+  oracleAddr: string,
+  chainId: string
 ): ChainlinkDOTGraphDefinitionObject => ({
   name: "submit_tx",
-  data: submitTxDOT(oracleAddr),
+  data: submitTxDOT(oracleAddr, chainId),
 });
 
 export const Steps = {
