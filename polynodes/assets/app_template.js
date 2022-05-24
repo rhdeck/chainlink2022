@@ -1,5 +1,6 @@
 const { fetch } = require("cross-fetch");
-module.exports = async () => {
+//#name
+module.exports = async (inputData) => {
   const thisFunc = async (callback) => {
     //#mycode
   };

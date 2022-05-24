@@ -32,7 +32,8 @@ echo "### END INIT INFO" >> /etc/init.d/polynodes
 echo "docker start postgres" >> /etc/init.d/polynodes
 echo "docker start chainlink" >> /etc/init.d/polynodes
 echo "docker start secondary" >> /etc/init.d/polynodes
-echo "cd /root/assets && yarn start >> /var/log/node.log 2>1 &" >> /etc/init.d/polynodes
+echo "mv /var/log/node.log /var/log/node.log.1" >> /etc/init.d/polynodes
+echo "cd /root/nodeserver && yarn start >> /var/log/node.log 2>1 &" >> /etc/init.d/polynodes
 chmod +x /etc/init.d/polynodes
 update-rc.d polynodes defaults
 update-rc.d polynodes enable

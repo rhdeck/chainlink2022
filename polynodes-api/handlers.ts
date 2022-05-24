@@ -19,12 +19,14 @@ import {
   destroyDroplet,
   createDroplet,
 } from "@polynodes/core/lib/do";
-import { Jobs, Bridges } from "@polynodes/core/lib/chainlink";
-import { uploadTemplate } from "@polynodes/core/lib/externalAdapters";
+import { Jobs, Bridges, login, Keys } from "@polynodes/core/lib/chainlink";
+import { restart, uploadTemplate } from "@polynodes/core/lib/externalAdapters";
 import DOTGraph from "@polynodes/core/lib/dotgraph";
 import { compileTemplate, deploy } from "@polynodes/core/lib/externalAdapters";
 import { ChainlinkVariable } from "@polynodes/core/lib/chainlinkvariable";
 import { getAssetPath } from "@raydeck/local-assets";
+import { ethers } from "ethers";
+import { join } from "path";
 //#region QLDB intialization
 const maxConcurrentTransactions = 10;
 const retryLimit = 4;
@@ -118,7 +120,7 @@ setGetPrivateKey(getPrivateKey);
 export const listNodes = makeAPIGatewayLambda({
   path: "/nodes",
   method: "get",
-  func: makeAPIFunc(async (event) => {
+  func: makeAPIFunc(async () => {
     //list them all
     const droplets = await getDroplets();
     const nodes = droplets
@@ -157,9 +159,14 @@ export const getNode = makeAPIGatewayLambda({
     const fields = record
       .allFields()
       .reduce((o, [field, value]) => ({ ...o, [field]: value }), {});
+    const { ssh, close } = await sshTo(nodeId);
+    await login(ssh);
+    const ethKeys = await Keys.listEth(ssh);
+    close();
     delete (fields as { privateKey: any }).privateKey;
     return httpSuccess({
       ...fields,
+      keys: ethKeys,
       droplet,
     });
   }),
@@ -244,7 +251,7 @@ export const build = makeAPIGatewayLambda({
       };
     }
     console.log("Creating droplet");
-    const { id, privateKey, ...rest } = await createDroplet(key);
+    const { id, privateKey } = await createDroplet(key);
     console.log("I created the droplet, making query");
     //create new node with the key
 
@@ -254,6 +261,7 @@ export const build = makeAPIGatewayLambda({
         nodeId: id,
         privateKey,
         status: "uninitialized",
+        statusDate: Date.now(),
         defaultChainId,
       };
       const query = `INSERT INTO Nodes ?`;
@@ -288,7 +296,11 @@ export const completedNode = makeAPIGatewayLambda({
     }
     await qldbDriver.executeLambda(async (txn) => {
       console.log("Running completing query");
-      const query = `UPDATE Nodes SET status = 'completing' WHERE id = '${nodeId}'`;
+      const query = `UPDATE Nodes 
+      SET 
+        status = 'completing', 
+        statusDate: ${Date.now()}    
+      WHERE id = '${nodeId}'`;
       await txn.execute(query);
       console.log("Ran completing query");
     });
@@ -302,7 +314,11 @@ export const completedNode = makeAPIGatewayLambda({
     close();
     console.log("Closed");
     await qldbDriver.executeLambda(async (txn) => {
-      const query = `UPDATE Nodes SET status = 'completed' WHERE id = '${nodeId}'`;
+      const query = `UPDATE Nodes SET 
+        status = 'completed'  ,      
+        statusDate: ${Date.now()}
+      WHERE 
+        id = '${nodeId}'`;
       console.log("Running completed query");
       await txn.execute(query);
       console.log("Ran completed query");
@@ -415,7 +431,7 @@ export const getJobRuns = makeAPIGatewayLambda({
         body: "Missing jobId",
       };
     }
-    const { ssh, close } = await sshTo(nodeId);
+    const { close } = await sshTo(nodeId);
     close();
     //Get the job
     return httpSuccess({});
@@ -447,7 +463,7 @@ export const getJobRun = makeAPIGatewayLambda({
         body: "Missing runId",
       };
     }
-    const { ssh, close } = await sshTo(nodeId);
+    const { close } = await sshTo(nodeId);
     close();
     //Get the job
     return httpSuccess({});
@@ -467,6 +483,7 @@ type PolyNodesJobRequest = {
 export const createJob = makeAPIGatewayLambda({
   path: "/nodes/{nodeId}/jobs",
   method: "post",
+  timeout: 30,
   func: makeAPIFunc(async (event) => {
     const nodeId = event.pathParameters?.nodeId;
     if (!nodeId) {
@@ -491,6 +508,7 @@ export const createJob = makeAPIGatewayLambda({
         body: "Node is not ready to receive jobs",
       };
     }
+    //check for duplicate job
     console.log("I am completed, let's ride");
     const defaultChainId =
       nodeRecord.get("defaultChainId")?.numberValue() || 80001;
@@ -509,56 +527,90 @@ export const createJob = makeAPIGatewayLambda({
       confirmations = 0,
       // language = "javascript", // Not using this yet
     } = <PolyNodesJobRequest>JSON.parse(event.body);
+    let contractAddress = "";
+    try {
+      contractAddress = ethers.utils.getAddress(oracleAddress);
+    } catch (e) {
+      return { statusCode: 400, body: "Invalid oracle address" };
+    }
     console.log("I got the body parsed");
     if (!name) return { statusCode: 400, body: "Missing name" };
-    if (!oracleAddress)
-      return { statusCode: 400, body: "Missing oracleAddress" };
     if (!chainId) return { statusCode: 400, body: "Missing chainId" };
     if (!source) return { statusCode: 400, body: "Missing source" };
+    const dupeCheck = await qldbDriver.executeLambda(async (txn) => {
+      const query = `SELECT * FROM Jobs WHERE id = '${nodeId}-${name}'`;
+      console.log("Running query", query);
+      const result = await txn.execute(query);
+      console.log("Ran query");
+      return result;
+    });
+    if (dupeCheck.getResultList().length > 0) {
+      return {
+        statusCode: 400,
+        body: "Job already exists",
+      };
+    }
+
     console.log("I made it past these checks");
     //Compile the code
     compileTemplate(name, source);
+    const externalJobID = uuid();
     await qldbDriver.executeLambda(async (txn) => {
       const data = {
         id: `${nodeId}-${name}`,
         nodeId,
         name,
         chainId,
-        oracleAddress,
+        contractAddress,
         allowedRequesters,
-        minPayment: 0,
+        minPayment,
         status: "uninitialized",
+        statusDate: Date.now(),
+        parameters,
+        source,
+        externalJobID,
       };
       const query = `INSERT INTO Jobs ?`;
       await txn.execute(query, data);
     });
-    const externalJobID = uuid();
     //great, now let's ride
     const { ssh, close } = await sshTo(nodeId);
     //Upload the compiled code
     //Restart the node server
-    await uploadTemplate(ssh, name, source);
-    await //Add the bridge
+    console.log("trying to deploy");
+    await deploy(ssh, join(getAssetPath(), "nodeserver"));
+    console.log("I have deployed");
+    const compiled = await compileTemplate(name, source);
+    await uploadTemplate(ssh, name, compiled);
+    await restart(ssh);
+    //log in
+    await login(ssh);
+    //Add the bridge
     await Bridges.create(ssh, {
       name,
-      url: `http://1727.0.1:8080/${name}`,
+      url: `http://172.17.0.1:8080/${name}`,
       confirmations,
     });
     //Add the job
     const requestData = parameters.reduce(
-      (o, key) => ({ ...o, [key]: new ChainlinkVariable(key) }),
+      (o, key) => ({
+        ...o,
+        [key]: new ChainlinkVariable("decode_cbor." + key),
+      }),
       {}
     );
     const graph = new DOTGraph()
       .add(DOTGraph.Steps.decode_log)
       .add(DOTGraph.Steps.decode_cbor)
       .add(DOTGraph.Steps.friendlyBridge(name, requestData))
-      .add(DOTGraph.Steps.encode_data_uint(name))
-      .add(DOTGraph.Steps.encode_tx);
+      .add(DOTGraph.Steps.parse(name, "output"))
+      .add(DOTGraph.Steps.encode_data_uint("parse"))
+      .add(DOTGraph.Steps.encode_tx)
+      .add(DOTGraph.Steps.submit_tx(contractAddress));
 
-    const _ = await Jobs.create(ssh, {
+    const id = await Jobs.create(ssh, {
       externalJobID,
-      contractAddress: oracleAddress,
+      contractAddress,
       evmChainID: chainId,
       name,
       requesters: allowedRequesters,
@@ -569,10 +621,15 @@ export const createJob = makeAPIGatewayLambda({
     close();
     //Finish by updating the database with status
     await qldbDriver.executeLambda(async (txn) => {
-      const query = `UPDATE Jobs set status = 'ready'  WHERE id = '${nodeId}-${name}'`;
+      const query = `UPDATE Jobs SET 
+        status = 'ready', 
+        statusDate=${Date.now()},
+        jobId='${id}'
+      WHERE 
+        id = '${nodeId}-${name}'`;
       await txn.execute(query);
     });
-    return httpSuccess({ key: nodeId, name });
+    return httpSuccess({ node: nodeId, job: name, externalJobID });
   }),
 });
 //#endregion

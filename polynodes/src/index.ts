@@ -18,6 +18,8 @@ import {
   listJobs as chainlink_listJobs,
   getJob as chainlink_getJob,
   Jobs as chainlink_Jobs,
+  listEthKeys as chainlink_listEthKeys,
+  Keys as chainlink_Keys,
 } from "./chainlink";
 import { ChainlinkVariable as chainlinkvariable_ChainlinkVariable } from "./chainlinkvariable";
 import {
@@ -72,6 +74,8 @@ export {
   chainlink_listJobs,
   chainlink_getJob,
   chainlink_Jobs,
+  chainlink_listEthKeys,
+  chainlink_Keys,
   chainlinkvariable_ChainlinkVariable,
   do_setPrefix,
   do_getPrefix,

@@ -9,7 +9,7 @@ import { ChainlinkDOTGraph } from "./dotgraph";
 export async function login(ssh: NodeSSH) {
   const cmd = "admin login --file /chainlink/.api";
   const { stdout: result, stderr: err } = await command(ssh, cmd);
-  if (err) console.error("error from login", err);
+  if (err.includes("[ERROR]")) console.error("error from login", err);
   return result;
 }
 export function command(ssh: NodeSSH, command: string) {
@@ -212,6 +212,7 @@ export async function createJob(
   }
 ) {
   const toml = createJobToml(o);
+  console.log("Creating job with toml", toml);
   const jobFile = `/tmp/${o.name}.toml`;
   writeFileSync(jobFile, toml);
   const temppath: string = await copy(ssh, jobFile);
@@ -234,7 +235,9 @@ export async function createJob(
       .join("; ");
     throw new Error(message);
   }
-  return JSON.parse(json);
+
+  const obj = <{ id: string }>JSON.parse(json);
+  return obj.id;
   // const { externalJobID } = <{ externalJobID: string }>JSON.parse(json);
   // return externalJobID.replace(/-/g, "");
 }
@@ -258,5 +261,23 @@ export const Jobs = {
   get: getJob,
   create: createJob,
   delete: deleteJob,
+};
+export type ChainlinkKeyObject = {
+  evmChainId: string;
+  address: string;
+  ethBalance: string;
+  linkBalanace: string;
+  isFunding: boolean;
+  createdAt: string;
+  updatedAt: string;
+  maxGasPriceWei: string;
+};
+export const listEthKeys = async (ssh: NodeSSH) => {
+  const { stdout: jsonOut } = await command(ssh, `keys eth list`);
+  const obj = <ChainlinkKeyObject[]>JSON.parse(jsonOut);
+  return obj;
+};
+export const Keys = {
+  listEth: listEthKeys,
 };
 //#endregion

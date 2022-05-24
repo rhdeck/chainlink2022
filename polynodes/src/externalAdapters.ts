@@ -5,7 +5,11 @@ import { NodeSSH } from "node-ssh";
 import { escape } from "./utils";
 import { loadStringAsset } from "@raydeck/local-assets";
 //copy a directory
-export async function deploy(ssh: NodeSSH, path: string, targetPath: string) {
+export async function deploy(
+  ssh: NodeSSH,
+  path: string,
+  targetPath: string = "/root/nodeserver"
+) {
   await ssh.putDirectory(path, targetPath);
   console.log("Hooray! Deployed directory");
 }
@@ -29,11 +33,15 @@ export async function addEnvKey(
   );
   return output.stdout;
 }
-export async function restart(ssh: NodeSSH, path: string) {
-  const output = await ssh.execCommand(
-    `cd ${path} && yarn stop; yarn start > output.log 2>&1 &`
-  );
-  console.log("Hooray! Restarted adapter", output.stdout, output.stderr);
+export async function restart(ssh: NodeSSH, path: string = "/root/nodeserver") {
+  const cmd = `yarn stop`;
+  console.log("Running stop cmd", cmd);
+  const output = await ssh.execCommand(cmd, { cwd: path, execOptions: {} });
+  console.log("On our way! Stopped adapter", output.stdout, output.stderr);
+  const cmd2 = `nohup yarn start  >> /var/log/node.log 2>&1 < /dev/null &`;
+  console.log("Running start cmd", cmd2);
+  const output2 = await ssh.execCommand(cmd2, { cwd: path });
+  console.log("Hooray! Restarted adapter", output2.stdout, output2.stderr);
   return output.stdout;
 }
 export async function check(ssh: NodeSSH, path: string) {
@@ -43,17 +51,21 @@ export async function check(ssh: NodeSSH, path: string) {
 
 export async function compileTemplate(name: string, sourceText: string) {
   const template = await loadStringAsset("app_template.js");
-  const compiled = template.replace("//#mycode", sourceText);
+
+  const compiled = template
+    .replace("//#mycode", sourceText)
+    .replace("//#name", `//Name of Endpoint: ${name}`);
   return compiled;
 }
 export async function uploadTemplate(
   ssh: NodeSSH,
   name: string,
-  source: string
+  source: string,
+  path: string = "/root/nodeserver"
 ) {
   const tmpfile = `/tmp/${name}.js`;
   writeFileSync(tmpfile, source);
-  const remoteFile = `/root/assets/endpoints/${name}.js`;
+  const remoteFile = `${path}/endpoints/${name}.js`;
   await ssh.putFile(tmpfile, remoteFile);
 }
 

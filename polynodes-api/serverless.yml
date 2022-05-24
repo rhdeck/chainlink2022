@@ -165,6 +165,7 @@
           "private": false
   "createJob":
     "handler": "handlers.createJob"
+    "timeout": 30
     "events":
       - "http":
           "path": "/nodes/{nodeId}/jobs"

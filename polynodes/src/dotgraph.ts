@@ -1,3 +1,4 @@
+import { accessSync } from "fs";
 import { ChainlinkVariable } from "./chainlinkvariable";
 import { escape } from "./utils";
 //#region DOT Notation
@@ -170,6 +171,7 @@ function bridgeObj(
 ): ChainlinkDOTGraphDefinitionObject {
   return { name, data: bridgeDOT(name, requestData) };
 }
+
 function friendlyBridgeDOT(
   name: string,
   requestData: Record<string, any>
@@ -178,7 +180,7 @@ function friendlyBridgeDOT(
     type: "bridge",
     name,
     requestData: {
-      id: new ChainlinkVariable("jobSpec.externalJobId"),
+      id: new ChainlinkVariable("jobSpec.externalJobID"),
       data: requestData,
     },
   };
@@ -190,19 +192,53 @@ function friendlyBridgeObj(
   return { name, data: friendlyBridgeDOT(name, requestData) };
 }
 
-function parseDOT(previousStep: string): ChainlinkDOTGraphDefinition {
+function friendlierBridgeDOT(
+  name: string,
+  requestFields: string[]
+): ChainlinkDOTGraphDefinition {
+  return friendlyBridgeDOT(
+    name,
+    requestFields.reduce(
+      (acc, cur) => ({
+        ...acc,
+        [cur]: new ChainlinkVariable(`decode_cbor.${cur}`),
+      }),
+      {}
+    )
+  );
+}
+
+function friendlerBridgeObj(
+  name: string,
+  requestFields: string[]
+): ChainlinkDOTGraphDefinitionObject {
+  return {
+    name,
+    data: friendlierBridgeDOT(name, requestFields),
+  };
+}
+
+function parseDOT(
+  previousStep: string,
+  parsePath: string | ChainlinkVariable = new ChainlinkVariable(
+    "decode_cbor.path"
+  )
+): ChainlinkDOTGraphDefinition {
   return {
     type: "jsonparse",
-    path: "$(decode_cbor.path)",
-    data: `$(${previousStep})`,
+    path: parsePath,
+    data: new ChainlinkVariable(previousStep, true),
   };
 }
 function parseObj(
-  previousStep: string = "fetch"
+  previousStep: string = "fetch",
+  parsePath: string | ChainlinkVariable = new ChainlinkVariable(
+    "decode_cbor.path"
+  )
 ): ChainlinkDOTGraphDefinitionObject {
   return {
     name: "parse",
-    data: parseDOT(previousStep),
+    data: parseDOT(previousStep, parsePath),
   };
 }
 
@@ -265,6 +301,7 @@ export const Steps = {
   fetch: fetchObj,
   bridgeBase: bridgeObj,
   friendlyBridge: friendlyBridgeObj,
+  friendlerBridge: friendlerBridgeObj,
   parse: parseObj,
   multiply: multiplyObj,
   encode_data_uint: encodeDataUintObj,
