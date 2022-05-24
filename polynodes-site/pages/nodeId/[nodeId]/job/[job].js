@@ -2,7 +2,8 @@ import Head from "next/head";
 import styles from "../../../../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import { ethers } from "ethers";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
+import Link from 'next/link'
 
 function Node() {
 
@@ -35,39 +36,9 @@ function Node() {
     }
   };
 
-
-  const backUp = async () => {
-    try {
-      const data = await fetch(
-        `https://4nxj58hwac.execute-api.us-east-1.amazonaws.com/dev/nodes/${nodeId}/jobs`,
-        {
-          headers: {
-          Authorization: "Bearer POLYNODES"
-          }
-        }
-      );
-      const jobs = await data.json();
-      jobs.map((job) => {
-        if (jobId == job.id) {
-          setJobs(job)
-        }
-      })
- 
-    } catch (err) {
-      console.log(err.message);
-      
-    }
-  };
-  console.log("jobs ", job)
-
   const clickFooter = useCallback(() => {
     window.location.href = "https://finity.polygon.technology/";
   }, []);
-
-  const goToJob = useCallback((id) => {
-    window.location.href = `./node/${id}/job/${id}`;
-  }, []);
-
 
   useEffect(() => {
     listJob(jobId, nodeId)
@@ -84,11 +55,11 @@ function Node() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={styles.logo}>
-      <div className={styles.logoText}><a href="/">PolyNodes</a></div>
+      <div className={styles.logoText}><Link href="/">PolyNodes</Link></div>
       </div>
       <main className={styles.main}>
         <h1 className={styles.header1}>PolyNodes</h1>
-        <a className={styles.polygonscan} style={{fontSize:"1.25rem"}} href={"/node/"+ nodeId}>Back to Jobs</a>
+        <Link className={styles.polygonscan} style={{fontSize:"1.25rem"}} href={"/node/"+ nodeId}>Back to Jobs</Link>
         <div  className={styles.grid}>
           {!job ? 
                   <div className={styles.overlay}>
