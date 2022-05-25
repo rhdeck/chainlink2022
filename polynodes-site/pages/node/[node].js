@@ -119,7 +119,7 @@ function Node() {
               <div className={styles.overlay__inner}>
                 <div className={styles.overlay__content}>
                   <img
-                    src="../images/abstract.png"
+                    src="../../images/abstract.png"
                     className={styles.spinner}
                   ></img>
                   <div style={{ textAlign: "center" }}>Retrieving {nodeId} Jobs</div>
