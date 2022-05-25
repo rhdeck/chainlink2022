@@ -1,75 +1,71 @@
-// import { ethers } from "ethers" assert {type: "module"};
-// import {bytecode} from '../config.json';
-// import {ethers} from 'ethers';
-// import '../config.json';
-const config = require("../config.json");
-// const abi_file = require("../Oracle_abi2.json");
+const config = require("./config.js");
 const ethers = require('ethers');
-require('dotenv').config();
 
-// 1. Import the contract file
-// import { bytecode, abi } from '../config.js';
-// import {abi} from '../Oracle_abi.json';
-// const config = require('../config.json');
-// const ethers = require('ethers');
-
-// 2. Add the Ethers provider logic here:
-// {...}
-// console.log(config);
-// provider = new ethers.AlchemyProvider("maticmum", process.env.ALCHEMY_MUMBAI_KEY);
-// console.log(bytecode_file.bytecode);
-bytecode = config.bytecode;
-abi = config.abi;
-console.log(bytecode);
-console.log(abi);
-const provider = new ethers.providers.AlchemyProvider("maticmum", process.env.ALCHEMY_MUMBAI_KEY);
-// console.log(provider);
-
-// 3. Create account variables
-const account_from = {
-  privateKey: process.env.PK,
-};
-
-// console.log(config);
-// 4. Save the bytecode and ABI
-// const bytecode = config.bytecode;
-// const abi = config.abi;
-// console.log(bytecode);
-// 5. Create wallet
-let wallet = new ethers.Wallet(account_from.privateKey, provider);
-
-// 6. Create contract instance with signer
-const oracle = new ethers.ContractFactory(abi, bytecode, wallet);
-
-// const dappAddress = "0xdDFBCE490Afda6a4B952609216CB8E3bA64CD261";
-// const contract = new ethers.Contract(dappAddress, abi, wallet);
-
-// 7. Create deploy function
-const deploy = async () => {
+module.exports.deployMumbai = async (nodeWallet, userWallet) => {
+  bytecode = config.bytecode;
+  abi = config.abi;
+  const provider = new ethers.providers.AlchemyProvider("maticmum", process.env.ALCHEMY_MUMBAI_KEY);
+  const account_from = {
+    privateKey: process.env.PK,
+  };
+  let wallet = new ethers.Wallet(account_from.privateKey, provider);
+  const oracle = new ethers.ContractFactory(abi, bytecode, wallet);
   console.log(`Attempting to deploy from account: ${wallet.address}`);
-
-  // 8. Send tx (initial value set to 5) and wait for receipt
-  const contract = await oracle.deploy("0x326C977E6efc84E512bB9C30f76E30c160eD06FB");
+  const contract = await oracle.deploy("0x326C977E6efc84E512bB9C30f76E30c160eD06FB"); //Polygon Mumbai Link token address
   await contract.deployed();
   console.log(`Contract deployed at address: ${contract.address}`);
 
   // Authorize the node wallet address to fulfill the Oracle requests
-  console.log(process.argv[2]);
   const txn_setnode = await contract.setFulfillmentPermission(
-    process.argv[2],
+    nodeWallet,
     true,{gasLimit: 250000});
   const receipt_setnode = await txn_setnode.wait();
   console.log(
     "Fulfillment persmissions set for node address:",
-    process.argv[2]
+    nodeWallet
   );
 
   //Authorize the node wallet address to fulfill the Oracle requests
-  const txn_setOwner = await contract.transferOwnership(process.argv[3]);
+  const txn_setOwner = await contract.transferOwnership(userWallet);
   const receipt_setOwner = await txn_setOwner.wait();
-  console.log("Ownership transferred to user wallet:", process.argv[3]);
+  console.log("Ownership transferred to user wallet:", userWallet);
 
 };
 
-// 9. Call the deploy function
-deploy();
+module.exports.deployMatic = async (nodeWallet, userWallet) => {
+  console.log("Hi i m deployMatic!");
+  bytecode = config.bytecodeMatic;
+  abi = config.abi;
+  const provider = new ethers.providers.AlchemyProvider("matic", process.env.ALCHEMY_MATIC_KEY);
+  const account_from = {
+    privateKey: process.env.PK,
+  };
+  let wallet = new ethers.Wallet(account_from.privateKey, provider);
+  const oracle = new ethers.ContractFactory(abi, bytecode, wallet);
+  console.log(`Attempting to deploy from account: ${wallet.address}`);
+  const maxPriorityFeePerGas = ethers.BigNumber.from(100*10**9);
+  const maxFeePerGas = ethers.BigNumber.from(100*10**9);
+  const gasLimit = ethers.BigNumber.from(2500000);
+  const linkAddress = "0xb0897686c545045aFc77CF20eC7A532E3120E0F1";
+  console.log(`Deploying the Link address": ${linkAddress}`);
+  const contract = await oracle.deploy(linkAddress,{maxFeePerGas, gasLimit, maxPriorityFeePerGas}); //Polygon Mainnet Link token address
+  await contract.deployed();
+  console.log(`Contract deployed at address: ${contract.address}`);
+
+  // Authorize the node wallet address to fulfill the Oracle requests
+  const txn_setnode = await contract.setFulfillmentPermission(
+    nodeWallet,
+    true,{gasLimit, maxFeePerGas, maxPriorityFeePerGas});
+  const receipt_setnode = await txn_setnode.wait();
+  console.log(
+    "Fulfillment persmissions set for node address:",
+    nodeWallet
+  );
+
+  //Authorize the node wallet address to fulfill the Oracle requests
+  const txn_setOwner = await contract.transferOwnership(userWallet, {gasLimit, maxFeePerGas, maxPriorityFeePerGas});
+  const receipt_setOwner = await txn_setOwner.wait();
+  console.log("Ownership transferred to user wallet:", userWallet);
+  
+  return contract.address;
+};
