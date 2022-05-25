@@ -2,10 +2,14 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import { ethers } from "ethers";
+import { useRouter } from "next/router";
+import Link from 'next/link'
 
 function Nodes() {
 
   const [nodes, setNodes] = useState();
+
+  const router = useRouter();
 
   const listNodes = async () => {
     try {
@@ -50,12 +54,12 @@ listNodes()
       </Head>
 
       <div className={styles.logo}>
-      <div className={styles.logoText}><a href="/">PolyNodes</a></div>
+      <div className={styles.logoText}><Link href="/">PolyNodes</Link></div>
       </div>
       <div>
       <main className={styles.main}>
         <h1 className={styles.header1}>PolyNodes
-        <button className={styles.exploreButton} style={{marginBottom:"20px"}} onClick={() => createNode()}>Create Node</button></h1>
+        <button className={styles.exploreButton} style={{marginBottom:"20px"}} onClick={() => router.replace('./node')}>Create Node</button></h1>
     
         <div  className={styles.grid} >
           {!nodes ? 
@@ -69,7 +73,7 @@ listNodes()
                 </div> :
           nodes.map((node) => {
             return(
-              <div key={node.key} className={styles.card} onClick={() => goToNode(node.key)} style={{cursor:"pointer"}}>
+              <div key={node.key} className={styles.card} onClick={() => router.replace(`/node/${node.key}`)} style={{cursor:"pointer"}}>
                 <h3>{node.key}</h3>
                 <h4>Status: {node.status}</h4>
             </div>

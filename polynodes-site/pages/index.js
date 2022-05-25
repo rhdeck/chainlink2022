@@ -2,15 +2,15 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import { ethers } from "ethers";
+import { useRouter } from "next/router";
+import Link from 'next/link'
 
 export default function Home() {
 
+  const router = useRouter();
+
   const clickFooter = useCallback(() => {
     window.location.href = "https://finity.polygon.technology/";
-  }, []);
-
-  const goToNodes = useCallback(() => {
-    window.location.href = "./nodes";
   }, []);
 
   return (
@@ -24,7 +24,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={styles.logo}>
-        <div className={styles.logoText}><a href="/">PolyNodes</a></div>
+        <div className={styles.logoText}><Link href="/">PolyNodes</Link></div>
       </div>
       <main className={styles.main}>
         <h1 className={styles.header1}>PolyNodes</h1>
@@ -33,12 +33,12 @@ export default function Home() {
           With the click of a button, users can create and deploy Polygon nodes to run on Chainlink. Users 
           can then create jobs to run 
           on those nodes.</p>
-    <button className={styles.finityButton} onClick={() => goToNodes()}>Start Exploring Nodes</button>
+    <button className={styles.finityButton} onClick={() => router.replace('./nodes')}>Start Exploring Nodes</button>
           
       </main>
 
       <footer className={styles.footer}>
-        <button className={styles.finityButton} onClick={clickFooter}>
+        <button className={styles.finityButton} onClick={() => router.replace("/nodes")}>
           <div style={{ marginRight: "5px" }}>Created with </div>
           <img
             className={styles.finityLogo}
@@ -49,3 +49,4 @@ export default function Home() {
     </div>
   );
 }
+

@@ -3,6 +3,7 @@ import styles from "../../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
+import Link from 'next/link'
 
 function Node() {
   const [jobs, setJobs] = useState();
@@ -91,12 +92,12 @@ console.log(jobs)
       </Head>
       <div className={styles.logo}>
         <div className={styles.logoText}>
-          <a href="/">PolyNodes</a>
+        <Link href="/">PolyNodes</Link>
         </div>
       </div>
       <main className={styles.main}>
         <h1 className={styles.header1}>PolyNodes</h1>
-        <a className={styles.polygonscan} style={{fontSize:"1.25rem"}} href="../nodes">Back to Nodes</a>
+        <Link className={styles.polygonscan} style={{fontSize:"1.25rem"}} href="../nodes">Back to Nodes</Link>
         {!node ? <div></div> :
         <div className={styles.gridThree}>
           <div style={{fontSize:"1.25rem"}}>
@@ -104,7 +105,7 @@ console.log(jobs)
         <p>Status: {node.status}</p>
         <p>Chain: {node.defaultChainId}</p>
         </div>
-        <button  style={{margin:"auto"}} className={styles.exploreButton} href={"../nodeId/" + nodeId}>Create Job</button>
+        <button  style={{margin:"auto"}} className={styles.exploreButton} onClick={() => router.replace(`../nodeId/" + nodeId`)}>Create Job</button>
         </div>
   }
        
@@ -128,7 +129,7 @@ console.log(jobs)
                 <div
                   key={index}
                   className={styles.card}
-                  onClick={() => goToJob(job.name)}
+                  onClick={() => router.replace(`../nodeId/${nodeId}/job/${job.name}`)}
                   style={{ cursor: "pointer" }}
                 >
                   <h4>{job.name}</h4>

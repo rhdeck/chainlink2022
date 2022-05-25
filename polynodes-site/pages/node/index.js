@@ -2,6 +2,7 @@ import Head from "next/head";
 import styles from "../../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from 'next/router';
+import Link from 'next/link'
 
 export default function Home() {
 
@@ -62,12 +63,12 @@ export default function Home() {
       </Head>
       <div className={styles.logo}>
         <div className={styles.logoText}>
-          <a href="/">PolyNodes</a>
+        <Link href="/">PolyNodes</Link>
         </div>
       </div>
       <main className={styles.main}>
         <h1 className={styles.header1}>PolyNodes</h1>
-        <a className={styles.polygonscan} style={{fontSize:"1.25rem"}} href="../nodes">Back to Nodes</a>
+        <Link style={{fontSize:"1.25rem"}} href="../nodes">Back to Nodes</Link>
         <div className={styles.grid} style={{alignItems:"center"}}>
           <div className={styles.header2}>Create Node</div>
           <div className={styles.gridTwo}>
