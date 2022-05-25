@@ -54,7 +54,11 @@ import {
   compileTemplate as externalAdapters_compileTemplate,
   uploadTemplate as externalAdapters_uploadTemplate,
 } from "./externalAdapters";
-import { sleep as utils_sleep, escape as utils_escape } from "./utils";
+import {
+  sleep as utils_sleep,
+  escape as utils_escape,
+  validateKey as utils_validateKey,
+} from "./utils";
 export {
   chainlink_login,
   chainlink_command,
@@ -106,4 +110,5 @@ export {
   externalAdapters_uploadTemplate,
   utils_sleep,
   utils_escape,
+  utils_validateKey,
 };

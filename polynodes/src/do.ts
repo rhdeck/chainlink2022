@@ -6,6 +6,7 @@ import { NodeSSH } from "node-ssh";
 import mustache from "mustache";
 import { join } from "path";
 import { loadStringAsset } from "@raydeck/local-assets";
+import { validateKey } from "./utils";
 type KeyPair = {
   publicKey: string;
   privateKey: string;
@@ -109,6 +110,8 @@ async function makeUserData(key: string) {
   return userData;
 }
 export async function createDroplet(key: string) {
+  if (!validateKey(key))
+    throw new Error("invalid key - must be letters and numbers only");
   const dots = await getClient();
   const { publicKey, privateKey, fingerprint } = await makeKeyPair();
   // console.log("Public key is ", publicKey);

@@ -10,3 +10,7 @@ export async function sleep(ms: number) {
 export function escape(src: string) {
   return src.replace(/"/g, '\\"');
 }
+
+export function validateKey(src: string) {
+  return /^[a-z0-9]+$/i.test(src);
+}

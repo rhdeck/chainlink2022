@@ -24,9 +24,11 @@ import { restart, uploadTemplate } from "@polynodes/core/lib/externalAdapters";
 import DOTGraph from "@polynodes/core/lib/dotgraph";
 import { compileTemplate, deploy } from "@polynodes/core/lib/externalAdapters";
 import { ChainlinkVariable } from "@polynodes/core/lib/chainlinkvariable";
+import { validateKey } from "@polynodes/core/lib/utils";
 import { getAssetPath } from "@raydeck/local-assets";
 import { ethers } from "ethers";
 import { join } from "path";
+import { execSync } from "child_process";
 //#region QLDB intialization
 const maxConcurrentTransactions = 10;
 const retryLimit = 4;
@@ -248,6 +250,12 @@ export const build = makeAPIGatewayLambda({
       return {
         statusCode: 400,
         body: "Missing key",
+      };
+    }
+    if (!validateKey(key)) {
+      return {
+        statusCode: 400,
+        body: "Invalid key",
       };
     }
     console.log("Creating droplet");
@@ -581,6 +589,15 @@ export const createJob = makeAPIGatewayLambda({
     await deploy(ssh, join(getAssetPath(), "nodeserver"));
     console.log("I have deployed");
     const compiled = await compileTemplate(name, source);
+    // try {
+    //   execSync(`node --check ${compiled}`);
+    // } catch (e) {
+    //   //No good
+    //   return {
+    //     statusCode: 400,
+    //     body: "Could not compile this code",
+    //   };
+    // }
     await uploadTemplate(ssh, name, compiled);
     await restart(ssh);
     //log in
@@ -602,7 +619,7 @@ export const createJob = makeAPIGatewayLambda({
     const graph = new DOTGraph()
       .add(DOTGraph.Steps.decode_log)
       .add(DOTGraph.Steps.decode_cbor)
-      .add(DOTGraph.Steps.friendlyBridge(name, requestData))
+      .add(DOTGraph.Steps.friendlyBridge(name.toLowerCase(), requestData))
       .add(DOTGraph.Steps.parse(name, "output"))
       .add(DOTGraph.Steps.encode_data_uint("parse"))
       .add(DOTGraph.Steps.encode_tx)

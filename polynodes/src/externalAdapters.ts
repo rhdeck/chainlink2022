@@ -2,7 +2,7 @@
 
 import { readFileSync, writeFileSync } from "fs";
 import { NodeSSH } from "node-ssh";
-import { escape } from "./utils";
+import { escape, validateKey } from "./utils";
 import { loadStringAsset } from "@raydeck/local-assets";
 //copy a directory
 export async function deploy(
@@ -50,6 +50,9 @@ export async function check(ssh: NodeSSH, path: string) {
 }
 
 export async function compileTemplate(name: string, sourceText: string) {
+  if (!validateKey(name))
+    throw new Error("invalid key - must be letters and numbers only");
+
   const template = await loadStringAsset("app_template.js");
 
   const compiled = template
