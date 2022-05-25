@@ -37,10 +37,13 @@ function Node() {
           },
         }
       );
-      let jobs = await data.json();
-      jobs = jobs.sort( compare );
-      setJobs(jobs)
-console.log(jobs)
+      let jobList = await data.json();
+      if (jobList.length == 0) {
+        setJobs("No Jobs Created")
+        return;
+      }
+      jobList = jobList.sort( compare );
+      setJobs(jobList)
     } catch (err) {
       console.log(err.message);
     }
@@ -56,9 +59,8 @@ console.log(jobs)
           },
         }
       );
-      const nodeData = await data.json();
-        setNode(nodeData)
-        console.log(nodeData)
+      let nodeData = await data.json();
+      setNode(nodeData)
     } catch (err) {
       console.log(err.message);
     }
@@ -68,12 +70,9 @@ console.log(jobs)
     window.location.href = "https://finity.polygon.technology/";
   }, []);
 
-  const goToJob = useCallback(
-    (name) => {
-      window.location.href = `../nodeId/${nodeId}/job/${name}`;
-    },
-    [nodeId]
-  );
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
   useEffect(() => {
     listJobs();
@@ -96,13 +95,15 @@ console.log(jobs)
         </div>
       </div>
       <main className={styles.main}>
-        <h1 className={styles.header1}>PolyNodes</h1>
-        <Link className={styles.polygonscan} style={{fontSize:"1.25rem"}} href="../nodes">Back to Nodes</Link>
+        <h1 className={styles.header1}>PolyNodes<button className={styles.connectButton} style={{marginLeft:"0", fontSize:"1.25rem", textDecoration:"underline", backgroundColor:"inherit"}} onClick={() => router.replace(`/nodes`)}>Back to Nodes</button></h1>
+        <div className={styles.polygonscan} >
+        
+        </div>
         {!node ? <div></div> :
         <div className={styles.gridThree}>
           <div style={{fontSize:"1.25rem"}}>
         <p>{nodeId}</p>
-        <p>Status: {node.status}</p>
+        <p>Status: {capitalizeFirstLetter(String(node.status))}</p>
         <p>Chain: {node.defaultChainId}</p>
         </div>
         <button  style={{margin:"auto"}} className={styles.exploreButton} onClick={() => router.replace(`../nodeId/${nodeId}`)}>Create Job</button>
@@ -110,7 +111,7 @@ console.log(jobs)
   }
        
         <div className={styles.grid}>
-          <h2>Jobs</h2>
+          <h2 style={{textDecoration:"underline", width:"400px"}}>Jobs List</h2>
           {!jobs || !node ? (
             <div className={styles.overlay}>
               <div className={styles.overlay__inner}>
@@ -124,6 +125,8 @@ console.log(jobs)
               </div>
             </div>
           ) : (
+            jobs == "No Jobs Created" ?
+            <h2>{jobs}</h2> :
             jobs.map((job, index) => {
               return (
                 <div
@@ -132,8 +135,8 @@ console.log(jobs)
                   onClick={() => router.replace(`../nodeId/${nodeId}/job/${job.name}`)}
                   style={{ cursor: "pointer" }}
                 >
-                  <h4>{job.name}</h4>
-                  <h5>Status: {job.status}</h5>
+                  <h3>{job.name}</h3>
+                  <h4>Status: {capitalizeFirstLetter(String(job.status))}</h4>
                 </div>
               );
             })

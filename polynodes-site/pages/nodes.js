@@ -37,6 +37,10 @@ function Nodes() {
     window.location.href = `./node`;
   }, []);
 
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
 
   useEffect(() => {
 listNodes()
@@ -59,7 +63,7 @@ listNodes()
       <div>
       <main className={styles.main}>
         <h1 className={styles.header1}>PolyNodes
-        <button className={styles.exploreButton} style={{marginBottom:"20px"}} onClick={() => router.replace('./node')}>Create Node</button></h1>
+        <button className={styles.exploreButton} style={{margin:"20px 0"}} onClick={() => router.replace('./node')}>Create Node</button></h1>
     
         <div  className={styles.grid} >
           {!nodes ? 
@@ -74,8 +78,9 @@ listNodes()
           nodes.map((node) => {
             return(
               <div key={node.key} className={styles.card} onClick={() => router.replace(`/node/${node.key}`)} style={{cursor:"pointer"}}>
-                <h3>{node.key}</h3>
-                <h4>Status: {node.status}</h4>
+                 
+                <h3><div>Job: </div>{node.key}</h3>
+                <h4><div>Status: </div>{capitalizeFirstLetter(node.status)}</h4>
             </div>
            )  
           })}

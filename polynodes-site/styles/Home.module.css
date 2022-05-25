@@ -17,7 +17,7 @@
 
 .header1 {
   margin-bottom: 20px;
-  font-size: 5rem;
+  font-size: 4rem;
   width: 200px;
 }
 
@@ -194,6 +194,14 @@
   transition: transform 0.2s;
 }
 
+.connnectButton:active {
+  color:#dcd4ff;
+}
+.connectButton:hover {
+  color:#cf9fff;
+
+}
+
 .nodeButton {
   margin: 10px 10px;
   border-radius: 10px;
@@ -315,14 +323,14 @@
 
 .card {
   display: flex;
+  border:#cf9fff 4px solid;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 1rem;
-  padding-top: 1rem;
+  padding: 2px 1rem;
   color: #4a23a4;
-  border-radius: 4px;
-  min-height: 72.5px;
+  border-radius: 20px;
+  height:70px;
   width: 400px;
   background-color: #ffff;
   transition: transform 0.2s;
@@ -332,6 +340,7 @@
 
 
 .cardJob {
+  border:#cf9fff 4px solid;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -340,7 +349,7 @@
   padding-top: 1rem;
   font-size: 1rem;
   color: #4a23a4;
-  border-radius: 4px;
+  border-radius: 40px;
   min-height: 72.5px;
   width: 400px;
   background-color: #ffff;

@@ -17,6 +17,7 @@ export default function Home() {
   });
 
   const [formData, updateFormData] = useState(initialFormData);
+  const [feedback, setFeedback] = useState(false);
 
   const handleChange = async (e) => {
     updateFormData({
@@ -27,7 +28,7 @@ export default function Home() {
   };
 
   const createNode = async () => {
-   
+    setFeedback(true)
     const newBody = {
       key: formData.name
     }
@@ -51,6 +52,19 @@ export default function Home() {
     router.replace(`../nodes`)
   };
 
+  let showFeedback;
+
+  if (feedback) {
+    showFeedback =    <div className={styles.overlay}>
+    <div className={styles.overlay__inner}>
+      <div className={styles.overlay__content}>
+        <div style={{ textAlign: "center" }}>Creating Job...</div>
+      </div>
+    </div>
+  </div>
+  }
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -67,28 +81,25 @@ export default function Home() {
         </div>
       </div>
       <main className={styles.main}>
-        <h1 className={styles.header1}>PolyNodes</h1>
-        <Link style={{fontSize:"1.25rem"}} href="../nodes">Back to Nodes</Link>
-        <div className={styles.grid} style={{alignItems:"center"}}>
-          <div className={styles.header2}>Create Node</div>
-          <div className={styles.gridTwo}>
+      {showFeedback}
+        <h1 className={styles.header1}>PolyNodes <h2 className={styles.header2}>(Create Node)</h2> </h1>
             <input
               className={styles.inputTicker}
               onChange={handleChange}
-              style={{margin:"auto"}}
               name="name"
               id="name"
               placeholder="Node Name"
               autoComplete="off"
               type="text"
             />
-            </div>
+
           <div>
             <button className={styles.exploreButton} style={{marginTop:"15px"}} onClick={createNode}>
               Create Node
             </button>
-          </div>
+          
         </div>
+        <button className={styles.connectButton} style={{marginLeft:"0px", fontSize:"1.25rem", textDecoration:"underline", backgroundColor:"inherit"}} onClick={() => router.replace("/nodes")}>Back to Nodes</button>
       </main>
 
       <footer className={styles.footer}>

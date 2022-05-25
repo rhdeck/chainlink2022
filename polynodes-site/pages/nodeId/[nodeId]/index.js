@@ -6,6 +6,8 @@ import Link from 'next/link'
 
 export default function Home() {
 
+  const [feedback, setFeedback] = useState(false);
+
   const clickFooter = useCallback(() => {
     window.location.href = "https://finity.polygon.technology/";
   }, []);
@@ -34,6 +36,7 @@ export default function Home() {
   };
 
   const createJob = async () => {
+    setFeedback(true)
     const newParams = formData.parameters.split(",").map(s => s.trim())
     const newBody = {
       "name": formData.name,
@@ -64,6 +67,18 @@ export default function Home() {
     router.replace(`../node/${nodeId}`)
   };
 
+  let showFeedback;
+
+  if (feedback) {
+    showFeedback =    <div className={styles.overlay}>
+    <div className={styles.overlay__inner}>
+      <div className={styles.overlay__content}>
+        <div style={{ textAlign: "center" }}>Creating Job...</div>
+      </div>
+    </div>
+  </div>
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -80,10 +95,8 @@ export default function Home() {
         </div>
       </div>
       <main className={styles.main}>
-        <h1 className={styles.header1}>PolyNodes</h1>
-        <button className={styles.connectButton} style={{fontSize:"1.25rem", textDecoration:"underline", backgroundColor:"inherit"}} onClick={() => router.replace(`/node/${nodeId}`)}>Back to Jobs</button>
-        <div className={styles.grid}>
-          <div className={styles.header2}>Create Job</div>
+        {showFeedback}
+        <h1 className={styles.header1}>PolyNodes<h2 className={styles.header2}>(Create Job)</h2> </h1>
           <div className={styles.gridTwo}>
             <input
               className={styles.inputTicker}
@@ -142,11 +155,11 @@ export default function Home() {
             autoComplete="off"
           />
           <div>
-            <button className={styles.inputButton} onClick={createJob}>
+            <button className={styles.exploreButton} style={{margin:"25px 0"}} onClick={createJob}>
               Create Job
             </button>
           </div>
-        </div>
+        <button className={styles.connectButton} style={{marginLeft:"0",fontSize:"1.25rem", textDecoration:"underline", backgroundColor:"inherit"}} onClick={() => router.replace(`/node/${nodeId}`)}>Back to Jobs</button>
       </main>
 
       <footer className={styles.footer}>
