@@ -22,6 +22,7 @@ import {
   Keys as chainlink_Keys,
 } from "./chainlink";
 import { ChainlinkVariable as chainlinkvariable_ChainlinkVariable } from "./chainlinkvariable";
+import config from "./config";
 import {
   setPrefix as do_setPrefix,
   getPrefix as do_getPrefix,
@@ -29,6 +30,8 @@ import {
   getDropletByName as do_getDropletByName,
   getDropletByKey as do_getDropletByKey,
   createDroplet as do_createDroplet,
+  removeTag as do_removeTag,
+  addTag as do_addTag,
   destroyDroplet as do_destroyDroplet,
   rebuildDroplet as do_rebuildDroplet,
   setGetPrivateKey as do_setGetPrivateKey,
@@ -54,6 +57,10 @@ import {
   compileTemplate as externalAdapters_compileTemplate,
   uploadTemplate as externalAdapters_uploadTemplate,
 } from "./externalAdapters";
+import {
+  deployMumbai as oracle_deployMumbai,
+  deployMatic as oracle_deployMatic,
+} from "./oracle";
 import {
   sleep as utils_sleep,
   escape as utils_escape,
@@ -81,12 +88,15 @@ export {
   chainlink_listEthKeys,
   chainlink_Keys,
   chainlinkvariable_ChainlinkVariable,
+  config,
   do_setPrefix,
   do_getPrefix,
   do_getDroplets,
   do_getDropletByName,
   do_getDropletByKey,
   do_createDroplet,
+  do_removeTag,
+  do_addTag,
   do_destroyDroplet,
   do_rebuildDroplet,
   do_setGetPrivateKey,
@@ -108,6 +118,8 @@ export {
   externalAdapters_check,
   externalAdapters_compileTemplate,
   externalAdapters_uploadTemplate,
+  oracle_deployMumbai,
+  oracle_deployMatic,
   utils_sleep,
   utils_escape,
   utils_validateKey,
