@@ -79,7 +79,7 @@ listNodes()
             return(
               <div key={node.key} className={styles.card} onClick={() => router.replace(`/node/${node.key}`)} style={{cursor:"pointer"}}>
                  
-                <h3><div>Job: </div>{node.key}</h3>
+                <h3><div>Node: </div>{node.key}</h3>
                 <h4><div>Status: </div>{capitalizeFirstLetter(node.status)}</h4>
             </div>
            )  

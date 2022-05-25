@@ -45,11 +45,15 @@ function Node() {
       jobList = jobList.sort( compare );
       setJobs(jobList)
     } catch (err) {
+      setJobs("No Jobs Created")
       console.log(err.message);
     }
   };
 
   const nodeDetails = async () => {
+    if (!nodeId) {
+      return;
+    }
     try {
       const data = await fetch(
         `https://4nxj58hwac.execute-api.us-east-1.amazonaws.com/dev/nodes/${nodeId}`,
