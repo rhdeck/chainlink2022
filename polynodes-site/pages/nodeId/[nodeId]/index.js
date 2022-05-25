@@ -81,6 +81,7 @@ export default function Home() {
       </div>
       <main className={styles.main}>
         <h1 className={styles.header1}>PolyNodes</h1>
+        <button className={styles.connectButton} style={{fontSize:"1.25rem", textDecoration:"underline", backgroundColor:"inherit"}} onClick={() => router.replace(`/node/${nodeId}`)}>Back to Jobs</button>
         <div className={styles.grid}>
           <div className={styles.header2}>Create Job</div>
           <div className={styles.gridTwo}>

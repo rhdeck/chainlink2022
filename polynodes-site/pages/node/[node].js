@@ -105,7 +105,7 @@ console.log(jobs)
         <p>Status: {node.status}</p>
         <p>Chain: {node.defaultChainId}</p>
         </div>
-        <button  style={{margin:"auto"}} className={styles.exploreButton} onClick={() => router.replace(`../nodeId/" + nodeId`)}>Create Job</button>
+        <button  style={{margin:"auto"}} className={styles.exploreButton} onClick={() => router.replace(`../nodeId/${nodeId}`)}>Create Job</button>
         </div>
   }
        
@@ -119,7 +119,7 @@ console.log(jobs)
                     src="../images/abstract.png"
                     className={styles.spinner}
                   ></img>
-                  <div style={{ textAlign: "center" }}>Retrieving {nodeId}</div>
+                  <div style={{ textAlign: "center" }}>Retrieving {nodeId} Jobs</div>
                 </div>
               </div>
             </div>
