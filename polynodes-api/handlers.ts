@@ -19,16 +19,24 @@ import {
   destroyDroplet,
   createDroplet,
 } from "@polynodes/core/lib/do";
-import { Jobs, Bridges, login, Keys } from "@polynodes/core/lib/chainlink";
+import {
+  Jobs,
+  Bridges,
+  login,
+  Keys,
+  ChainlinkKeyObject,
+} from "@polynodes/core/lib/chainlink";
 import { restart, uploadTemplate } from "@polynodes/core/lib/externalAdapters";
 import DOTGraph from "@polynodes/core/lib/dotgraph";
 import { compileTemplate, deploy } from "@polynodes/core/lib/externalAdapters";
 import { ChainlinkVariable } from "@polynodes/core/lib/chainlinkvariable";
 import { validateKey } from "@polynodes/core/lib/utils";
+import { deployMumbai, deployMatic } from "@polynodes/core/lib/oracle";
 import { getAssetPath } from "@raydeck/local-assets";
 import { ethers } from "ethers";
 import { join } from "path";
 import { execSync } from "child_process";
+import { Value } from "ion-js/dist/commonjs/es6/dom";
 //#region QLDB intialization
 const maxConcurrentTransactions = 10;
 const retryLimit = 4;
@@ -242,8 +250,8 @@ export const build = makeAPIGatewayLambda({
         body: "Missing body",
       };
     }
-    const { key, defaultChainId = 80001 } = <
-      { key: string; defaultChainId?: number }
+    const { key, defaultChainId = 80001, ownerWallet } = <
+      { key: string; defaultChainId?: number; ownerWallet?: string }
     >JSON.parse(event.body);
 
     if (!key) {
@@ -258,20 +266,28 @@ export const build = makeAPIGatewayLambda({
         body: "Invalid key",
       };
     }
+    try {
+      const record = await getNodeRecord(key);
+      if (record) {
+        return { statusCode: 400, body: "Node with this name already exists" };
+      }
+    } catch (e) {
+      //we're ok
+    }
     console.log("Creating droplet");
     const { id, privateKey } = await createDroplet(key);
     console.log("I created the droplet, making query");
     //create new node with the key
-
+    const data: Record<string, any> = {
+      id: key,
+      nodeId: id,
+      privateKey,
+      status: "uninitialized",
+      statusDate: Date.now(),
+      defaultChainId,
+    };
+    if (ownerWallet) data.ownerWallet = ownerWallet;
     await qldbDriver.executeLambda(async (txn) => {
-      const data = {
-        id: key,
-        nodeId: id,
-        privateKey,
-        status: "uninitialized",
-        statusDate: Date.now(),
-        defaultChainId,
-      };
       const query = `INSERT INTO Nodes ?`;
       console.log("Running query", query);
       await txn.execute(query, data);
@@ -294,8 +310,9 @@ export const completedNode = makeAPIGatewayLambda({
     }
     const droplet = await getDropletByKey(nodeId);
     if (!droplet) return { statusCode: 404, body: "Node not found" };
+    let nodeRecord: Value | undefined;
     try {
-      const nodeRecord = await getNodeRecord(nodeId);
+      nodeRecord = await getNodeRecord(nodeId);
       if (nodeRecord.get("status")?.stringValue() !== "uninitialized") {
         return { statusCode: 400, body: "Node is not in uninitialized state" };
       }
@@ -307,7 +324,7 @@ export const completedNode = makeAPIGatewayLambda({
       const query = `UPDATE Nodes 
       SET 
         status = 'completing', 
-        statusDate: ${Date.now()}    
+        statusDate = ${Date.now()}    
       WHERE id = '${nodeId}'`;
       await txn.execute(query);
       console.log("Ran completing query");
@@ -318,18 +335,43 @@ export const completedNode = makeAPIGatewayLambda({
     await ssh.execCommand(
       "cd nodeserver && yarn && yarn start > out.log 2>&1 &"
     );
+
+    //Get keys for evm chains
+    await login(ssh);
+    const ethKeys = await Keys.listEth(ssh);
+    const keyObj = ethKeys.reduce(
+      (o, i) => ({ ...o, [i.evmChainID]: i }),
+      {} as Record<string, ChainlinkKeyObject>
+    );
     console.log("Closing");
     close();
     console.log("Closed");
+    let maticContract = "";
+    let mumbaiContract = "";
+    if (process.env.pk && nodeRecord?.get("ownerWallet")?.stringValue()) {
+      const newOwner = nodeRecord?.get("ownerWallet")?.stringValue();
+      if (newOwner) {
+        const mumbaiKey = keyObj["80001"].address;
+        if (mumbaiKey) {
+          mumbaiContract = await deployMumbai(mumbaiKey, newOwner);
+        }
+        const maticKey = keyObj["137"].address;
+        if (maticKey) {
+          maticContract = await deployMatic(maticKey, newOwner);
+        }
+      }
+    }
     await qldbDriver.executeLambda(async (txn) => {
       const query = `UPDATE Nodes SET 
-        status = 'completed'  ,      
-        statusDate: ${Date.now()}
+        status = 'completed',      
+        statusDate = ${Date.now()}
+        defaultContract_80001 = '${mumbaiContract}',
+        defaultContract_138 = '${maticContract}'
       WHERE 
         id = '${nodeId}'`;
-      console.log("Running completed query");
+      console.log("Running completed query", query);
       await txn.execute(query);
-      console.log("Ran completed query");
+      console.log("Ran completed query", query);
     });
     console.log("Returning success");
     return { statusCode: 200, body: "completed" };
@@ -347,6 +389,10 @@ export const deleteNode = makeAPIGatewayLambda({
         body: "Missing nodeId",
       };
     }
+    await qldbDriver.executeLambda(async (txn) => {
+      const query = `UPDATE Nodes SET status = 'deleting' WHERE id = '${nodeId}'`;
+      await txn.execute(query);
+    });
     const droplet = await getDropletByKey(nodeId);
     if (!droplet) {
       return {
@@ -589,15 +635,15 @@ export const createJob = makeAPIGatewayLambda({
     await deploy(ssh, join(getAssetPath(), "nodeserver"));
     console.log("I have deployed");
     const compiled = await compileTemplate(name, source);
-    // try {
-    //   execSync(`node --check ${compiled}`);
-    // } catch (e) {
-    //   //No good
-    //   return {
-    //     statusCode: 400,
-    //     body: "Could not compile this code",
-    //   };
-    // }
+    try {
+      execSync(`node --check ${compiled}`);
+    } catch (e) {
+      //No good
+      return {
+        statusCode: 400,
+        body: "Could not compile this code",
+      };
+    }
     await uploadTemplate(ssh, name, compiled);
     await restart(ssh);
     //log in
