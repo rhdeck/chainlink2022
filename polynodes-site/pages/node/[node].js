@@ -45,7 +45,6 @@ function Node() {
       jobList = jobList.sort( compare );
       setJobs(jobList)
     } catch (err) {
-      setJobs("No Jobs Created")
       console.log(err.message);
     }
   };
@@ -106,16 +105,16 @@ function Node() {
         {!node ? <div></div> :
         <div className={styles.gridThree}>
           <div style={{fontSize:"1.25rem"}}>
-        <p>{nodeId}</p>
+        <p>Node Name: {nodeId}</p>
         <p>Status: {capitalizeFirstLetter(String(node.status))}</p>
         <p>Chain: {node.defaultChainId}</p>
         </div>
-        <button  style={{margin:"auto"}} className={styles.exploreButton} onClick={() => router.replace(`../nodeId/${nodeId}`)}>Create Job</button>
+        <button  style={{margin:"auto", backgroundColor:"#8e40f2", color:"#ffff"}} className={styles.exploreButton} onClick={() => router.replace(`../nodeId/${nodeId}`)}>Create Job</button>
         </div>
   }
        
         <div className={styles.grid}>
-          <h2 style={{textDecoration:"underline", width:"400px"}}>Jobs List</h2>
+          <h2 style={{textDecoration:"underline", width:"200px"}}>Jobs List</h2>
           {!jobs || !node ? (
             <div className={styles.overlay}>
               <div className={styles.overlay__inner}>
@@ -140,7 +139,7 @@ function Node() {
                   style={{ cursor: "pointer" }}
                 >
                   <h3>{job.name}</h3>
-                  <h4>Status: {capitalizeFirstLetter(String(job.status))}</h4>
+                <h4><div>Status: </div><div style={{marginLeft:'10px'}}>{capitalizeFirstLetter(String(job.status))}</div></h4>
                 </div>
               );
             })

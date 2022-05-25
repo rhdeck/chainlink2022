@@ -71,23 +71,23 @@ function Node() {
                 </div> :
               <div key={job} className={styles.cardJob}>
                 <div>
-                <h2 style={{textAlign:"center"}}>{job.name}</h2>
-                <div>Status: <p style={{color:"purple",marginLeft:"30px", width:"300px", overflow:"hidden", textOverflow:"ellipsis"}}>{job.status}</p></div>
-                <div>Oracle Address: <p style={{color:"purple",marginLeft:"30px", width:"300px", overflow:"hidden", textOverflow:"ellipsis"}}>{job.contractAddress}</p></div>
-                <div>Chain: <p style={{color:"purple",marginLeft:"30px", width:"300px", overflow:"hidden", textOverflow:"ellipsis"}}>{job.id}</p></div>
-                <div>Minimum Payment: <p style={{color:"purple",marginLeft:"30px", width:"300px", overflow:"hidden", textOverflow:"ellipsis"}}>{Number(job.minPayment).toFixed(3)} LINK</p></div>
-                <div>External Job ID: <p style={{color:"purple",marginLeft:"30px", width:"300px", overflow:"hidden", textOverflow:"ellipsis"}}>{job.externalJobID}</p></div>
+                <h2 style={{textAlign:"center", width:"200px", margin:"auto", marginBottom:"10px"}}>{job.name}</h2>
+                <div>Status: <p style={{color:"purple",marginLeft:"30px", width:"250px", overflow:"hidden", textOverflow:"ellipsis"}}>{job.status}</p></div>
+                <div>Oracle Address: <p style={{color:"purple",marginLeft:"30px", width:"250px", overflow:"hidden", textOverflow:"ellipsis"}}>{job.contractAddress}</p></div>
+                <div>Chain: <p style={{color:"purple",marginLeft:"30px", width:"250px", overflow:"hidden", textOverflow:"ellipsis"}}>{job.id}</p></div>
+                <div>Minimum Payment: <p style={{color:"purple",marginLeft:"30px", width:"250px", overflow:"hidden", textOverflow:"ellipsis"}}>{Number(job.minPayment).toFixed(3)} LINK</p></div>
+                <div>External Job ID: <p style={{color:"purple",marginLeft:"30px", width:"250px", overflow:"hidden", textOverflow:"ellipsis"}}>{job.externalJobID}</p></div>
                 <div>Parameters: 
                   {job.parameters ? 
                   job.parameters.map((param) => {
                     return (
-                    <p style={{color:"purple",marginLeft:"30px", width:"300px", overflow:"hidden", textOverflow:"ellipsis"}}>{param}</p>
+                    <p style={{color:"purple",marginLeft:"30px", width:"250px", overflow:"hidden", textOverflow:"ellipsis"}}>{param}</p>
                   )})
                   :
                   <div></div>
           }
                   </div>
-                <div>Source: <p style={{color:"purple",marginLeft:"30px", width:"300px", overflow:"hidden", textOverflow:"ellipsis"}}>{job.source}</p></div>
+                <div>Source: <p style={{color:"purple",marginLeft:"30px", width:"250px", overflow:"hidden", textOverflow:"ellipsis"}}>{job.source}</p></div>
                 </div>
             </div> 
 }

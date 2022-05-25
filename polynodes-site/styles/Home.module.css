@@ -25,6 +25,7 @@
   font-size: 1.75rem;
   text-align: left;
   margin: 20px 0;
+  width:200px;
   font-size: GeneralSans-Regular;
 }
 
@@ -307,7 +308,8 @@
 
 .gridTwo {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: space-around;
   align-items: center;
   width: 90vw;
 }
@@ -316,9 +318,13 @@
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  margin-left: 2px;
+  margin-left: 40px;
   justify-content: flex-start;
   max-width: 500px;
+  background-color: #dcd4ff;
+  border-radius: 20px;
+  padding: 10px;
+  color: #4a23a4;
 }
 
 .card {
@@ -334,7 +340,7 @@
   width: 400px;
   background-color: #ffff;
   transition: transform 0.2s;
-  margin-bottom: 10px;
+  margin: 10px;
 
 }
 
@@ -694,9 +700,10 @@
 
 @media (max-width: 1000px) {
   .grid {
-    width: 100%;
+    width: 320px;
     flex-direction: column;
-    margin-top: 40px;
+    margin: 5px;
+    padding:2px;
   }
 
   .gridTwo {
@@ -705,13 +712,28 @@
   }
 
   .card {
-    width:320px;
+    width:300px;
+  }
+
+  .cardJob {
+    width: 300px;
+    text-align: left;
+    margin: 5px;
+    padding: 8px;
   }
 
   .inputButton {
     width: 160px;
     height:65px;
     border-radius: 30px;
+  }
+
+  .indexText {
+    width:300px;
+  }
+
+  .gridThree {
+    margin: 5px;
   }
 
 }

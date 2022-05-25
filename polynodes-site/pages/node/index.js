@@ -58,7 +58,7 @@ export default function Home() {
     showFeedback =    <div className={styles.overlay}>
     <div className={styles.overlay__inner}>
       <div className={styles.overlay__content}>
-        <div style={{ textAlign: "center" }}>Creating Job...</div>
+        <div style={{ textAlign: "center" }}>Creating Node...</div>
       </div>
     </div>
   </div>

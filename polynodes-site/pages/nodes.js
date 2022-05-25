@@ -11,6 +11,16 @@ function Nodes() {
 
   const router = useRouter();
 
+  function compare( a, b ) {
+    if ( a.key < b.key ){
+      return -1;
+    }
+    if ( a.key > b.key ){
+      return 1;
+    }
+    return 0;
+  }
+
   const listNodes = async () => {
     try {
       const data = await fetch(
@@ -21,7 +31,8 @@ function Nodes() {
           }
         }
       );
-      const allData = await data.json();
+      let allData = await data.json();
+      allData = allData.sort( compare );
       setNodes(allData)
       console.log("allData ", allData)
     } catch (err) {
@@ -65,7 +76,7 @@ listNodes()
         <h1 className={styles.header1}>PolyNodes
         <button className={styles.exploreButton} style={{margin:"20px 0"}} onClick={() => router.replace('./node')}>Create Node</button></h1>
     
-        <div  className={styles.grid} >
+        <div  className={styles.gridTwo} >
           {!nodes ? 
                   <div className={styles.overlay}>
                   <div className={styles.overlay__inner}>
@@ -79,8 +90,8 @@ listNodes()
             return(
               <div key={node.key} className={styles.card} onClick={() => router.replace(`/node/${node.key}`)} style={{cursor:"pointer"}}>
                  
-                <h3><div>Node: </div>{node.key}</h3>
-                <h4><div>Status: </div>{capitalizeFirstLetter(node.status)}</h4>
+                <h3><div>Node: </div><div style={{marginLeft:'10px'}}>{node.key}</div></h3>
+                <h4><div>Status: </div><div style={{marginLeft:'10px'}}>{capitalizeFirstLetter(node.status)}</div></h4>
             </div>
            )  
           })}
