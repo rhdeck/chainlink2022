@@ -1,6 +1,7 @@
 // const createRequest = require("./index").createRequest;
 //#region Set up Alpaca API Keys
 require("dotenv").config();
+const { execSync } = require("child_process");
 
 //#region Express Server
 const express = require("express");
@@ -17,20 +18,32 @@ const reportedEndpoints = [];
 const errorEndpoints = [];
 endpoints.forEach((filename) => {
   const fullpath = `${endpointDir}/${filename}`;
+  //Guard against bad syntax - refuse to accept it
+  try {
+    execSync(`node --check ${fullpath}`);
+  } catch (e) {
+    errorEndpoints.push(filename);
+    return;
+  }
   const endpoint = require(fullpath);
   if (typeof endpoint === "function") {
     app.post(
       "/" + filename.substring(0, filename.length - 3),
       async (req, res) => {
-        const input = req.body;
-        const jobRunId = typeof input.id === "undefined" ? 1 : input.id;
-        const output = await endpoint(
-          req.body.data ? req.body.data : {},
-          req.body
-        );
-        const result = { jobRunId, output };
-        console.log("were back from ", filename, result);
-        res.status(200).json(result);
+        try {
+          const input = req.body;
+          const jobRunId = typeof input.id === "undefined" ? 1 : input.id;
+          const output = await endpoint(
+            req.body.data ? req.body.data : {},
+            req.body
+          );
+          const result = { jobRunId, output };
+          console.log("were back from ", filename, result);
+          res.status(200).json(result);
+        } catch (e) {
+          console.error(e);
+          res.status(500).json({ error: e.message });
+        }
       }
     );
     reportedEndpoints.push(filename);
