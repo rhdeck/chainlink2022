@@ -263,19 +263,28 @@ export const Jobs = {
   delete: deleteJob,
 };
 export type ChainlinkKeyObject = {
-  evmChainId: string;
+  evmChainID: string;
   address: string;
   ethBalance: string;
-  linkBalanace: string;
+  linkBalance: string;
   isFunding: boolean;
   createdAt: string;
   updatedAt: string;
   maxGasPriceWei: string;
 };
 export const listEthKeys = async (ssh: NodeSSH) => {
-  const { stdout: jsonOut } = await command(ssh, `keys eth list`);
-  const obj = <ChainlinkKeyObject[]>JSON.parse(jsonOut);
-  return obj;
+  const { stdout: jsonOut, stderr } = await command(ssh, `keys eth list`);
+  try {
+    const obj = <ChainlinkKeyObject[]>JSON.parse(jsonOut);
+    return obj;
+  } catch (e) {
+    console.log(
+      "I could not parse the output from the keys eth list command",
+      jsonOut,
+      stderr
+    );
+    throw e;
+  }
 };
 export const Keys = {
   listEth: listEthKeys,
