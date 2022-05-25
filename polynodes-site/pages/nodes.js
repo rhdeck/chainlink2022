@@ -32,6 +32,10 @@ function Nodes() {
         }
       );
       let allData = await data.json();
+        if (allData.length == 0) {
+        setJobs("No Jobs Created")
+        return;
+      }
       allData = allData.sort( compare );
       setNodes(allData)
       console.log("allData ", allData)
@@ -73,7 +77,7 @@ listNodes()
       </div>
       <div>
       <main className={styles.main}>
-        <h1 className={styles.header1}>PolyNodes
+        <h1 className={styles.header1}>Current Nodes
         <button className={styles.exploreButton} style={{margin:"20px 0"}} onClick={() => router.replace('./node')}>Create Node</button></h1>
     
         <div  className={styles.gridTwo} >
@@ -86,6 +90,9 @@ listNodes()
                     </div>
                   </div>
                 </div> :
+                (
+                  nodes == "No Jobs Created" ?
+                  <h2>{nodes}</h2> :
           nodes.map((node) => {
             return(
               <div key={node.key} className={styles.card} onClick={() => router.replace(`/node/${node.key}`)} style={{cursor:"pointer"}}>
@@ -94,7 +101,9 @@ listNodes()
                 <h4><div>Status: </div><div style={{marginLeft:'10px'}}>{capitalizeFirstLetter(node.status)}</div></h4>
             </div>
            )  
-          })}
+          })
+                )
+        }
         </div>
       </main>
 

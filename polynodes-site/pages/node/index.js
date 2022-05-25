@@ -58,6 +58,7 @@ export default function Home() {
     showFeedback =    <div className={styles.overlay}>
     <div className={styles.overlay__inner}>
       <div className={styles.overlay__content}>
+      <img src="../../images/abstract.png" className={styles.spinner}></img>
         <div style={{ textAlign: "center" }}>Creating Node...</div>
       </div>
     </div>
@@ -82,7 +83,7 @@ export default function Home() {
       </div>
       <main className={styles.main}>
       {showFeedback}
-        <h1 className={styles.header1}>PolyNodes <h2 className={styles.header2}>(Create Node)</h2> </h1>
+        <h1 className={styles.header1}>Create Node</h1>
             <input
               className={styles.inputTicker}
               onChange={handleChange}

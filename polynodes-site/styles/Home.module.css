@@ -167,6 +167,7 @@
   /* Inside auto layout */
   flex: none;
   order: 0;
+  z-index:1;
   align-self: stretch;
   flex-grow: 0;
   font-size: 1rem;
@@ -204,6 +205,29 @@
   color:#cf9fff;
 
 }
+.inputCode {
+  max-width: 500px;
+  background: #ffffff;
+  /* Solid Colours/Brand/Primary/Primary-500 */
+  border: 1px solid #8247e5;
+  /* State/Primary Focus */
+
+  box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #dcd4ff;
+  border-radius: 3px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: space-around;
+  max-width: 500px;
+  margin:20px 20px 0 0px;
+}
+
 
 .nodeButton {
   margin: 10px 10px;
@@ -737,5 +761,10 @@
   .gridThree {
     margin: 5px;
   }
+  .inputCode {
+    max-width: 300px;
+
+  }
+  
 
 }

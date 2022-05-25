@@ -58,7 +58,7 @@ function Node() {
       <div className={styles.logoText}><Link href="/">PolyNodes</Link></div>
       </div>
       <main className={styles.main}>
-        <h1 className={styles.header1}>PolyNodes <button className={styles.connectButton} style={{marginLeft:"0",fontSize:"1.25rem", textDecoration:"underline", backgroundColor:"inherit"}} onClick={() => router.replace(`/node/${nodeId}`)}>Back to Jobs</button></h1>
+        <h1 className={styles.header1}>Job Details<button className={styles.connectButton} style={{marginLeft:"0",fontSize:"1.25rem", textDecoration:"underline", backgroundColor:"inherit"}} onClick={() => router.replace(`/node/${nodeId}`)}>Back to Jobs</button></h1>
         <div  className={styles.grid}>
           {!job ? 
                   <div className={styles.overlay}>
