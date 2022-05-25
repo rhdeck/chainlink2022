@@ -58,24 +58,24 @@ export default function Home() {
       chainId: formData.chain,
     };
     const body = JSON.stringify(newBody);
-console.log(body)
-    // try {
-    //   const data = await fetch(
-    //     `https://4nxj58hwac.execute-api.us-east-1.amazonaws.com/dev/nodes/${nodeId}/jobs`,
-    //     {
-    //       method: "POST",
-    //       headers: {
-    //         Authorization: "Bearer POLYNODES",
-    //       },
-    //       body: body,
-    //     }
-    //   );
-    //   const response = data.json();
-    //   console.log("response: ", response);
-    // } catch (err) {
-    //   console.log(err.message);
-    // }
-    // router.replace(`../node/${nodeId}`);
+
+    try {
+      const data = await fetch(
+        `https://4nxj58hwac.execute-api.us-east-1.amazonaws.com/dev/nodes/${nodeId}/jobs`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer POLYNODES",
+          },
+          body: body,
+        }
+      );
+      const response = data.json();
+      console.log("response: ", response);
+    } catch (err) {
+      console.log(err.message);
+    }
+    router.replace(`../node/${nodeId}`);
   };
 
   let showFeedback;
