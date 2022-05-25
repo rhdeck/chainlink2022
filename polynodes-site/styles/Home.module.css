@@ -88,6 +88,8 @@
   background-color: hsla(0, 0%, 100%, 0.6);
   box-shadow: 0 30px 15px rgba(0, 0, 0, 0.4);
   transition: transform 0.2s;
+  margin-top: 1em;
+  margin-left: 2em;
 }
 
 .finityButton:active {
@@ -484,7 +486,7 @@
 
 .indexText {
   text-align: left;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
   font-size: 1.25rem;
   width:400px;
   font-family: GeneralSans-Regular;
