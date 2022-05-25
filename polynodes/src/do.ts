@@ -4,7 +4,6 @@ import { ssh, pki } from "node-forge";
 import { readFileSync } from "fs";
 import { NodeSSH } from "node-ssh";
 import mustache from "mustache";
-import { join } from "path";
 import { loadStringAsset } from "@raydeck/local-assets";
 import { validateKey } from "./utils";
 type KeyPair = {
@@ -88,15 +87,17 @@ async function getClient() {
   staticClient = dots;
   return dots;
 }
-export async function getDroplets() {
+export async function getDroplets(tag = "polynodes") {
   const dots = await getClient();
-  const droplets = await dots.droplet.listDroplets({});
+  const droplets = await dots.droplet.listDroplets(
+    tag ? { tag_name: tag } : {}
+  );
   return droplets.data.droplets
     .filter((d) => d.name.startsWith(droplet_prefix))
     .map((d) => ({ ...d, key: d.name.replace(`${droplet_prefix}-`, "") }));
 }
 export async function getDropletByName(name: string) {
-  const droplets = await getDroplets();
+  const droplets = await getDroplets("");
   return droplets.find((d) => d.name === name);
 }
 export async function getDropletByKey(key: string) {
@@ -132,10 +133,34 @@ export async function createDroplet(key: string) {
     monitoring: false,
     ssh_keys: [id],
     user_data,
-    tags: ["uninitialized", `${droplet_prefix}-${key}`],
+    tags: ["uninitialized", "polynodes", `${droplet_prefix}-${key}`],
   });
   const droplet = response.data.droplet;
   return { id: droplet.id, keyId: id, droplet, privateKey };
+}
+export async function removeTag(key: string, tag: string) {
+  const dots = await getClient();
+  const droplet = await getDropletByKey(key);
+  if (droplet?.tags.includes(tag)) {
+    await dots.tag.untagResources({
+      tag_name: tag,
+      resources: [
+        { resource_type: "droplet", resource_id: droplet.id.toString() },
+      ],
+    });
+  }
+}
+export async function addTag(key: string, tag: string) {
+  const dots = await getClient();
+  const droplet = await getDropletByKey(key);
+  if (droplet?.tags.includes(tag)) {
+    await dots.tag.tagResources({
+      tag_name: tag,
+      resources: [
+        { resource_type: "droplet", resource_id: droplet.id.toString() },
+      ],
+    });
+  }
 }
 export async function destroyDroplet(droplet_id: number) {
   const dots = await getClient();
