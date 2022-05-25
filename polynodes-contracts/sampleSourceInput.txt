@@ -1,0 +1,11 @@
+const headers = {
+  "APCA-API-KEY-ID": 'Alpaca KEY',
+  "APCA-API-SECRET-KEY": 'Alpaca Secret',
+};
+  const {ticker} = inputData;
+  const url = `https://data.alpaca.markets/v2/stocks/${ticker}/quotes/latest`;
+  const response = await fetch(url, { headers });
+  const data = await response.json();
+  const price = Math.floor(data.quote.ap * 100);
+  return price;
+    
