@@ -3,7 +3,7 @@ import styles from "../../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
-import Link from 'next/link'
+import Link from "next/link";
 
 function Node() {
   const [jobs, setJobs] = useState();
@@ -13,17 +13,28 @@ function Node() {
 
   const nodeId = router.query.node;
 
-  function compare( a, b ) {
-    if ( a.id < b.id ){
+  function compare(a, b) {
+    if (a.id < b.id) {
       return -1;
     }
-    if ( a.id > b.id ){
+    if (a.id > b.id) {
       return 1;
     }
     return 0;
   }
-  
 
+  const deleteNode = useCallback(async () => {
+    const data = await fetch(
+      `https://4nxj58hwac.execute-api.us-east-1.amazonaws.com/dev/nodes/${nodeId}`,
+      {
+        headers: {
+          Authorization: "Bearer POLYNODES",
+        },
+        method: "DELETE",
+      }
+    );
+    router.replace(`/nodes`);
+  }, [nodeId, router]);
   const listJobs = async () => {
     if (!nodeId) {
       return;
@@ -39,11 +50,11 @@ function Node() {
       );
       let jobList = await data.json();
       if (jobList.length == 0) {
-        setJobs("No Jobs Created")
+        setJobs("No Jobs Created");
         return;
       }
-      jobList = jobList.sort( compare );
-      setJobs(jobList)
+      jobList = jobList.sort(compare);
+      setJobs(jobList);
     } catch (err) {
       console.log(err.message);
     }
@@ -63,9 +74,10 @@ function Node() {
         }
       );
       let nodeData = await data.json();
-      setNode(nodeData)
+      setNode(nodeData);
     } catch (err) {
       console.log(err.message);
+      setNode({});
     }
   };
 
@@ -94,25 +106,50 @@ function Node() {
       </Head>
       <div className={styles.logo}>
         <div className={styles.logoText}>
-        <Link href="/">PolyNodes</Link>
+          <Link href="/">PolyNodes</Link>
         </div>
       </div>
       <main className={styles.main}>
-        <h1 className={styles.header1}>{nodeId} Jobs<button className={styles.connectButton} style={{marginLeft:"0", fontSize:"1.25rem", textDecoration:"underline", backgroundColor:"inherit"}} onClick={() => router.replace(`/nodes`)}>Back to Nodes</button></h1>
-        <div className={styles.polygonscan} >
-        
-        </div>
-        {!node ? <div></div> :
-        <div className={styles.gridThree}>
-          <div style={{fontSize:"1.25rem"}}>
-        <p>Node Name: {nodeId}</p>
-        <p>Status: {capitalizeFirstLetter(String(node.status))}</p>
-        <p>Chain: {node.defaultChainId}</p>
-        </div>
-        <button  style={{margin:"auto", backgroundColor:"#8e40f2", color:"#ffff"}} className={styles.exploreButton} onClick={() => router.replace(`../nodeId/${nodeId}`)}>Create Job</button>
-        </div>
-  }
-       
+        <h1 className={styles.header1}>
+          {nodeId} Jobs
+          <button
+            className={styles.connectButton}
+            style={{
+              marginLeft: "0",
+              fontSize: "1.25rem",
+              textDecoration: "underline",
+              backgroundColor: "inherit",
+            }}
+            onClick={() => router.replace(`/nodes`)}
+          >
+            Back to Nodes
+          </button>
+          <button onClick={deleteNode}>Delete Me</button>
+        </h1>
+        <div className={styles.polygonscan}></div>
+        {!node ? (
+          <div></div>
+        ) : (
+          <div className={styles.gridThree}>
+            <div style={{ fontSize: "1.25rem" }}>
+              <p>Node Name: {nodeId}</p>
+              <p>Status: {capitalizeFirstLetter(String(node.status))}</p>
+              <p>Chain: {node.defaultChainId}</p>
+            </div>
+            <button
+              style={{
+                margin: "auto",
+                backgroundColor: "#8e40f2",
+                color: "#ffff",
+              }}
+              className={styles.exploreButton}
+              onClick={() => router.replace(`../nodeId/${nodeId}`)}
+            >
+              Create Job
+            </button>
+          </div>
+        )}
+
         <div className={styles.grid}>
           {!jobs || !node ? (
             <div className={styles.overlay}>
@@ -122,23 +159,32 @@ function Node() {
                     src="../images/abstract.png"
                     className={styles.spinner}
                   ></img>
-                  <div style={{ textAlign: "center" }}>Retrieving {nodeId} Jobs</div>
+                  <div style={{ textAlign: "center" }}>
+                    Retrieving {nodeId} Jobs
+                  </div>
                 </div>
               </div>
             </div>
+          ) : jobs == "No Jobs Created" ? (
+            <h2>{jobs}</h2>
           ) : (
-            jobs == "No Jobs Created" ?
-            <h2>{jobs}</h2> :
             jobs.map((job, index) => {
               return (
                 <div
                   key={index}
                   className={styles.card}
-                  onClick={() => router.replace(`../nodeId/${nodeId}/job/${job.name}`)}
+                  onClick={() =>
+                    router.replace(`../nodeId/${nodeId}/job/${job.name}`)
+                  }
                   style={{ cursor: "pointer" }}
                 >
                   <h3>{job.name}</h3>
-                <h4><div>Status: </div><div style={{marginLeft:'10px'}}>{capitalizeFirstLetter(String(job.status))}</div></h4>
+                  <h4>
+                    <div>Status: </div>
+                    <div style={{ marginLeft: "10px" }}>
+                      {capitalizeFirstLetter(String(job.status))}
+                    </div>
+                  </h4>
                 </div>
               );
             })
