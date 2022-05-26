@@ -107,7 +107,9 @@ function Node() {
       setShowLoader(false);
     }
   }, [jobs, node]);
-
+  useEffect(() => {
+    console.log("Working with node", node);
+  }, [node]);
   return (
     <div className={styles.container}>
       <Head>
@@ -124,26 +126,24 @@ function Node() {
         </div>
       </div>
       <main className={styles.main}>
-        <h1 className={styles.header1}>
-          About {nodeId}
-        </h1>
+        <h1 className={styles.header1}>About {nodeId}</h1>
 
         <button
-            className={styles.addButton}
-            style={{
-              // flex: 1,
-              display: "inline-block",
-              marginBottom:"20px",
-              fontSize: "1.25rem",
-              borderColor: "red",
-              color: "red"
-              // textDecoration: "underline",
-              // backgroundColor: "inherit",
-            }}
-            onClick={deleteNode}
-          >
-            Delete Me
-          </button>
+          className={styles.addButton}
+          style={{
+            // flex: 1,
+            display: "inline-block",
+            marginBottom: "20px",
+            fontSize: "1.25rem",
+            borderColor: "red",
+            color: "red",
+            // textDecoration: "underline",
+            // backgroundColor: "inherit",
+          }}
+          onClick={deleteNode}
+        >
+          Delete Me
+        </button>
         {showLoader && (
           <div className={styles.overlay}>
             <div className={styles.overlay__inner}>
@@ -159,20 +159,45 @@ function Node() {
         )}
         {!showLoader && (
           <div className={styles.polygonscan}>
-            {node && (
+            {node && node.id && (
               <div className={styles.detailWrap}>
-              <div className={styles.gridThree}>
-                  <p >Node Name: <div className={styles.details}>{nodeId}</div></p>
-                  <p>Status: <div className={styles.details}>{capitalizeFirstLetter(String(node.status))}</div></p>
-                  <p>Chain: <div className={styles.details}>{node.defaultChainId}</div></p>
-              </div>
+                <div className={styles.gridThree}>
+                  <div className={styles.nodeDetailWrapper}>
+                    <div className={styles.nodeLabel}>Node Name</div>
+                    <div className={styles.details}>{nodeId}</div>
+                  </div>
+                  <div className={styles.nodeDetailWrapper}>
+                    <div className={styles.nodeLabel}>Status</div>
+                    <div className={styles.details}>
+                      {capitalizeFirstLetter(String(node.status))}
+                    </div>
+                  </div>
+                  <div className={styles.nodeDetailWrapper}>
+                    <div className={styles.nodeLabel}>Default EVM Chain</div>
+                    <div className={styles.details}>{node.defaultChainId}</div>
+                  </div>
+                </div>
+                {node.keys &&
+                  node.keys.map(({ evmChainID, address }, index) => (
+                    <div className={styles.gridThree}>
+                      <div className={styles.nodeDetailWrapper}>
+                        <div className={styles.nodeLabel}>
+                          Wallet for chain {evmChainID}
+                        </div>
+                        <div className={styles.details}>{address}</div>
+                      </div>
+                    </div>
+                  ))}
               </div>
             )}
 
             <div className={styles.gridTwo}>
-              {jobs == "No Jobs Created" ? (
-                <h2 style={{color:"white"}}>{jobs}</h2>
-              ) : (
+              {(!jobs || !Array.isArray(jobs) || !jobs.length) && (
+                <h2 style={{ color: "white" }}>{jobs}</h2>
+              )}
+              {jobs &&
+                Array.isArray(jobs) &&
+                jobs.length &&
                 jobs.map((job, index) => {
                   return (
                     <div
@@ -192,27 +217,27 @@ function Node() {
                       </h4>
                     </div>
                   );
-                })
-              )}
-        
+                })}
             </div>
-            <button
-                  className={styles.addButton}
-                  onClick={() => router.replace(`../nodeId/${nodeId}`)}
-                  style={{ margin: "20px 20px" }}
-                >
-                 {"+ "} Add a Job
-                </button>
+            {node && node.id && (
+              <button
+                className={styles.addButton}
+                onClick={() => router.replace(`../nodeId/${nodeId}`)}
+                style={{ margin: "20px 20px" }}
+              >
+                {"+ "} Add a Job
+              </button>
+            )}
           </div>
         )}
-              <div className={styles.nav}> 
-              <button
-          className={styles.navButton}
-          onClick={() => router.replace(`/nodes`)}
-        >
-          {"< "}Back to Nodes
-        </button>
-       </div>
+        <div className={styles.nav}>
+          <button
+            className={styles.navButton}
+            onClick={() => router.replace(`/nodes`)}
+          >
+            {"< "}Back to Nodes
+          </button>
+        </div>
       </main>
 
       <footer className={styles.footer}>

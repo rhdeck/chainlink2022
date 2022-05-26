@@ -216,7 +216,7 @@
   margin-bottom: 40px;
   padding: 2px;
   width: 70vw;
-  height:100px;
+  /* height:100px; */
   font-size: 1rem;
   background-color: #cf9fff;
   opacity: 90%;
@@ -480,6 +480,8 @@ background-color:#dcd4ff;
   font-family: "GeneralSans-SemiBold";
   font-size:1.25rem;
   color: #4a23a4;
+  /* margin-bottom: "20px"; */
+  padding-bottom: 20px
 }
 
 .card {
@@ -697,6 +699,10 @@ background-color:#dcd4ff;
   border-left: 1.5px solid #747c90;
 }
 
+.uninitialized h4{
+  animation: pulse 2s infinite;
+}
+
 @font-face {
   font-family: "GeneralSans-Variable";
   src: url("./fonts/GeneralSans-Variable.woff2") format("woff2"),
@@ -879,7 +885,7 @@ background-color:#dcd4ff;
     width:80vw;
     font-size: .5rem;
     padding: 0 10px;
-    height: 300px;
+    /* height: 300px; */
   }
 
   .cardJob {
