@@ -6,7 +6,7 @@
 }
 
 .main {
-  min-height: 100vh;
+  min-height: 60vh;
   padding: 5rem 0;
   flex: 1;
   display: flex;
@@ -129,8 +129,28 @@
   transform: scale(1.05);
 }
 
+.informationWrapper {
+  color: #000000;
+  margin: 5px;
+  padding: 5px;
+  background-color: #ffff;
+  border: 2px solid pink;
+  font-family: "GeneralSans-Regular";
+  font-size: 0.75rem;
+}
+
+.inputLabel {
+  text-align: left;
+  font-family: "GeneralSans-Regular";
+  font-size: 0.75rem;
+}
+
+.inputContainer {
+  margin: 20px 20px 0 0;
+}
+
 .inputTicker {
-  max-width: 200px;
+  width:300px;
   background: #ffffff;
   /* Solid Colours/Brand/Primary/Primary-500 */
   border: 1px solid #8247e5;
@@ -138,19 +158,18 @@
 
   box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #dcd4ff;
   border-radius: 3px;
-
+  padding: 5px;
   /* Inside auto layout */
   flex: none;
   order: 0;
   align-self: stretch;
   flex-grow: 0;
-  font-size: 1rem;
+  font-size: .75rem;
   display: flex;
   flex-direction: column;
   align-items: space-around;
   height: 40px;
-  width: auto;
-  margin:20px 20px 0 0px;
+  margin-top: 3px;
 }
 
 .inputArea {
@@ -206,15 +225,13 @@
 
 }
 .inputCode {
-  max-width: 500px;
   background: #ffffff;
   /* Solid Colours/Brand/Primary/Primary-500 */
   border: 1px solid #8247e5;
   /* State/Primary Focus */
-
+  width: 600px;
   box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #dcd4ff;
   border-radius: 3px;
-
   /* Inside auto layout */
   flex: none;
   order: 0;
@@ -224,7 +241,6 @@
   display: flex;
   flex-direction: column;
   align-items: space-around;
-  max-width: 500px;
   margin:20px 20px 0 0px;
 }
 
@@ -336,7 +352,6 @@
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  align-items: center;
   width: 90vw;
 }
 

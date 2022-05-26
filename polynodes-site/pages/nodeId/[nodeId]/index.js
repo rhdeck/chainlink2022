@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import React from "react";
 import { render } from "react-dom";
-import AceEditor from "react-ace";
+// import AceEditor from "react-ace";
 
-import "ace-builds/src-noconflict/mode-java";
-import "ace-builds/src-noconflict/theme-github";
-import "ace-builds/src-noconflict/ext-language_tools";
+// import "ace-builds/src-noconflict/mode-java";
+// import "ace-builds/src-noconflict/theme-github";
+// import "ace-builds/src-noconflict/ext-language_tools";
 
 export default function Home() {
   const [feedback, setFeedback] = useState(false);
@@ -33,6 +33,7 @@ export default function Home() {
     minPayment: "",
     parameters: "",
     oracleAddress: "",
+    source:""
   });
 
   const [formData, updateFormData] = useState(initialFormData);
@@ -51,7 +52,7 @@ export default function Home() {
     const newParams = formData.parameters.split(",").map((s) => s.trim());
     const newBody = {
       name: formData.name,
-      source: source,
+      source: formData.source,
       parameters: newParams,
       minPayment: formData.minPayment,
       oracleAddress: formData.oracleAddress,
@@ -111,10 +112,12 @@ export default function Home() {
           <Link href="/">PolyNodes</Link>
         </div>
       </div>
-      <main className={styles.main}>
+      <main className={styles.main} suppressHydrationWarning>
         {showFeedback}
         <h1 className={styles.header1}>Create Job</h1>
         <div className={styles.gridTwo}>
+          <div className={styles.inputContainer}>
+          <label className={styles.inputLabel}>Job Name</label>
           <input
             className={styles.inputTicker}
             onChange={handleChange}
@@ -124,6 +127,9 @@ export default function Home() {
             autoComplete="off"
             type="text"
           />
+          </div>
+          <div className={styles.inputContainer}>
+          <label className={styles.inputLabel}>Chain ID</label>
           <input
             className={styles.inputTicker}
             onChange={handleChange}
@@ -133,6 +139,9 @@ export default function Home() {
             autoComplete="off"
             type="text"
           />
+          </div>
+                    <div className={styles.inputContainer}>
+          <label className={styles.inputLabel}>Minimum Payment</label>
           <input
             className={styles.inputTicker}
             onChange={handleChange}
@@ -142,7 +151,9 @@ export default function Home() {
             autoComplete="off"
             type="text"
           />
-
+          </div>
+          <div className={styles.inputContainer}>
+          <label className={styles.inputLabel}>Parameters</label>
           <input
             className={styles.inputTicker}
             onChange={handleChange}
@@ -152,18 +163,38 @@ export default function Home() {
             autoComplete="off"
             type="text"
           />
-
+          </div>
+          <div className={styles.inputContainer}>
+          <label className={styles.inputLabel}>Oracle Address</label>
           <input
             className={styles.inputTicker}
             onChange={handleChange}
+            value={formData.oracleAddress}
             name="oracleAddress"
             id="oracleAddress"
             placeholder="Oracle Address"
             autoComplete="off"
             type="text"
           />
+          </div>
         </div>
-        <AceEditor 
+        <div className={styles.inputContainer}>
+          <label className={styles.inputLabel}>Source Code</label>
+          <div className={styles.informationWrapper}><p  className={styles.information}>This is explanation</p></div>
+        <div >
+        <textarea
+            className={styles.inputCode}
+            onChange={handleChange}
+            content={formData.source}
+            name="source"
+            id="source"
+            cols="80"
+            row="10"
+            placeholder="Enter source code..."
+            autoComplete="off"
+            type="text"
+          >{formData.source}</textarea>
+        {/* { typeof window !== "undefined" && <AceEditor 
           className={styles.inputCode}
           mode="javascript"
           theme="github"
@@ -182,7 +213,9 @@ export default function Home() {
             showLineNumbers: true,
             tabSize: 2,
           }}
-        />
+        />} */}
+        </div>
+        </div>
         <div>
           <button
             className={styles.exploreButton}

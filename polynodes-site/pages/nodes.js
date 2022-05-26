@@ -86,32 +86,21 @@ function Nodes() {
           <Link href="/">PolyNodes</Link>
         </div>
       </div>
-      <div>
-        <main className={styles.main}>
-          <h1 className={styles.header1}>
-            Current Nodes
-            <button
-              className={styles.exploreButton}
-              style={{ margin: "20px 0" }}
-              onClick={() => router.replace("./node")}
-            >
-              Create Node
-            </button>
-          </h1>
-
-          <div className={styles.gridTwo}>
-            {!nodes ? (
-              <div className={styles.overlay}>
-                <div className={styles.overlay__inner}>
-                  <div className={styles.overlay__content}>
-                    <img
-                      src="../images/abstract.png"
-                      className={styles.spinner}
-                    ></img>
-                    <div style={{ textAlign: "center" }}>Retrieving Nodes</div>
+    
+      <main className={styles.main}>
+        <h1 className={styles.header1}>Nodes</h1>
+        <button className={styles.exploreButton} style={{margin:"20px 0"}} onClick={() => router.replace('./node')}>Create Node</button>
+    
+        <div  className={styles.gridTwo} >
+          {!nodes ? (
+                  <div className={styles.overlay}>
+                  <div className={styles.overlay__inner}>
+                    <div className={styles.overlay__content}>
+                      <img src="../images/abstract.png" className={styles.spinner}></img>
+                      <div style={{ textAlign: "center" }}>Retrieving Nodes</div>
+                    </div>
                   </div>
                 </div>
-              </div>
             ) : nodes == "No Jobs Created" ? (
               <h2>{nodes}</h2>
             ) : (
@@ -137,7 +126,7 @@ function Nodes() {
                 );
               })
             )}
-          </div>
+            </div>
         </main>
 
         <footer className={styles.footer}>
@@ -149,9 +138,8 @@ function Nodes() {
             ></img>
           </button>
         </footer>
-      </div>
-    </div>
-  );
+        </div>
+    )
 }
 
 export default Nodes;
