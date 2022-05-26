@@ -82,7 +82,7 @@ contract EquitiesPriceFeed is ChainlinkClient, Ownable {
             this.fulfill.selector
         );
 
-        request.add("ticker", _symbol);
+        request.add("symbol", _symbol);
         // Sends the request
         bytes32 _requestId = sendChainlinkRequestTo(oracle, request, fee);
         requests[_requestId] = _symbol;

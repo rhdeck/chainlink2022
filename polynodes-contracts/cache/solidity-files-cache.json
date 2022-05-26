@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/akshayrakheja/Documents/chainlink2022/polynodes-contracts/contracts/EquitiesPriceFeed.sol": {
-      "lastModificationDate": 1653409429548,
-      "contentHash": "cebda62db63b35b31c495302ecf50c33",
+      "lastModificationDate": 1653533207756,
+      "contentHash": "e17bc979107c1be3b9c79b7ce266f00a",
       "sourceName": "contracts/EquitiesPriceFeed.sol",
       "solcConfig": {
         "version": "0.8.7",

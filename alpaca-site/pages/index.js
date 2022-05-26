@@ -18,7 +18,7 @@ export default function Home() {
   const [fee, setFee] = useState();
   const [loading, setLoading] = useState(false);
 
-  const dappAddress = "0x577079b8E3562FEa524Dc99Ea31Abbd58dd5e57a";
+  const dappAddress = "0xe9139B9A048cf97d792aed5e1546A73f1594A86e";
 
   const loader = (
     <div className={styles.overlay}>
