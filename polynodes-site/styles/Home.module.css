@@ -863,10 +863,22 @@ background-color:#dcd4ff;
 
   .gridTwo {
     flex-direction: column;
+    width: 50vw;
+  }
+
+  .container {
+    padding:5px;
   }
 
   .card {
     width:300px;
+  }
+
+  .detailWrap {
+    width: 350px;
+    font-size: .5rem;
+    padding:2px;
+    height: 100px;
   }
 
   .cardJob {
@@ -886,6 +898,10 @@ background-color:#dcd4ff;
     width:300px;
   }
 
+  .gridTwo {
+    margin: 5px;
+  }
+
   .gridThree {
     margin: 5px;
   }
@@ -893,6 +909,20 @@ background-color:#dcd4ff;
     max-width: 300px;
 
   }
+  .inputArea {
+    max-width: 300px;
+  }
+
+  .main {
+    padding: 10px;
+  }
+
+  .inputTicker {
+    max-width: 270px;
+  }
+  .inputContainer {
+    margin: 5px 5px 0 0;
   
+  }
 
 }
