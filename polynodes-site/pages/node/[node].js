@@ -24,16 +24,20 @@ function Node() {
   }
 
   const deleteNode = useCallback(async () => {
-    const data = await fetch(
-      `https://4nxj58hwac.execute-api.us-east-1.amazonaws.com/dev/nodes/${nodeId}`,
-      {
-        headers: {
-          Authorization: "Bearer POLYNODES",
-        },
-        method: "DELETE",
-      }
-    );
-    router.replace(`/nodes`);
+    if (window.confirm("Are you sure you want to delete this node?")) {
+      setShowLoader(true);
+      const data = await fetch(
+        `https://4nxj58hwac.execute-api.us-east-1.amazonaws.com/dev/nodes/${nodeId}`,
+        {
+          headers: {
+            Authorization: "Bearer POLYNODES",
+          },
+          method: "DELETE",
+        }
+      );
+      setShowLoader(false);
+      router.replace(`/nodes`);
+    }
   }, [nodeId, router]);
   const listJobs = async () => {
     if (!nodeId) {
@@ -94,6 +98,15 @@ function Node() {
     nodeDetails();
   }, [nodeId]);
 
+  const [showLoader, setShowLoader] = useState(true);
+  useEffect(() => {
+    if (!jobs || !node) {
+      setShowLoader(true);
+    } else {
+      setShowLoader(false);
+    }
+  }, [jobs, node]);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -110,86 +123,99 @@ function Node() {
         </div>
       </div>
       <main className={styles.main}>
+        <button
+          className={styles.connectButton}
+          style={{
+            // flex: 1,
+            // marginLeft: "0",
+            fontSize: "1.25rem",
+            // textDecoration: "underline",
+            // backgroundColor: "inherit",
+          }}
+          onClick={() => router.replace(`/nodes`)}
+        >
+          {"< "}Back to Nodes
+        </button>
         <h1 className={styles.header1}>
-          {nodeId} Jobs
+          About {nodeId}
           <button
             className={styles.connectButton}
             style={{
-              marginLeft: "0",
+              // flex: 1,
+              // marginLeft: "0",
               fontSize: "1.25rem",
-              textDecoration: "underline",
-              backgroundColor: "inherit",
+              // textDecoration: "underline",
+              // backgroundColor: "inherit",
             }}
-            onClick={() => router.replace(`/nodes`)}
+            onClick={deleteNode}
           >
-            Back to Nodes
+            Delete Me
           </button>
-          <button onClick={deleteNode}>Delete Me</button>
         </h1>
-        <div className={styles.polygonscan}></div>
-        {!node ? (
-          <div></div>
-        ) : (
-          <div className={styles.gridThree}>
-            <div style={{ fontSize: "1.25rem" }}>
-              <p>Node Name: {nodeId}</p>
-              <p>Status: {capitalizeFirstLetter(String(node.status))}</p>
-              <p>Chain: {node.defaultChainId}</p>
-            </div>
-            <button
-              style={{
-                margin: "auto",
-                backgroundColor: "#8e40f2",
-                color: "#ffff",
-              }}
-              className={styles.exploreButton}
-              onClick={() => router.replace(`../nodeId/${nodeId}`)}
-            >
-              Create Job
-            </button>
-          </div>
-        )}
-
-        <div className={styles.grid}>
-          {!jobs || !node ? (
-            <div className={styles.overlay}>
-              <div className={styles.overlay__inner}>
-                <div className={styles.overlay__content}>
-                  <img
-                    src="../../images/abstract.png"
-                    className={styles.spinner}
-                  ></img>
-                  <div style={{ textAlign: "center" }}>
-                    Retrieving {nodeId} Jobs
-                  </div>
-                </div>
+        {showLoader && (
+          <div className={styles.overlay}>
+            <div className={styles.overlay__inner}>
+              <div className={styles.overlay__content}>
+                <img
+                  src="../../images/abstract.png"
+                  className={styles.spinner}
+                ></img>
+                <div style={{ textAlign: "center" }}>Loading {nodeId}</div>
               </div>
             </div>
-          ) : jobs == "No Jobs Created" ? (
-            <h2>{jobs}</h2>
-          ) : (
-            jobs.map((job, index) => {
-              return (
-                <div
-                  key={index}
-                  className={styles.card}
-                  onClick={() =>
-                    router.replace(`../nodeId/${nodeId}/job/${job.name}`)
-                  }
-                  style={{ cursor: "pointer" }}
-                >
-                  <h3>{job.name}</h3>
-                  <h4>
-                    <div>Status: </div>
-                    <div style={{ marginLeft: "10px" }}>
-                      {capitalizeFirstLetter(String(job.status))}
-                    </div>
-                  </h4>
+          </div>
+        )}
+        {!showLoader && (
+          <div className={styles.polygonscan}>
+            {node && (
+              <div className={styles.gridThree}>
+                <div style={{ fontSize: "1.25rem" }}>
+                  <p>Node Name: {nodeId}</p>
+                  <p>Status: {capitalizeFirstLetter(String(node.status))}</p>
+                  <p>Chain: {node.defaultChainId}</p>
                 </div>
-              );
-            })
-          )}
-        </div>
+                <button
+                  style={{
+                    margin: "auto",
+                    backgroundColor: "#8e40f2",
+                    color: "#ffff",
+                  }}
+                  className={styles.exploreButton}
+                  onClick={() => router.replace(`../nodeId/${nodeId}`)}
+                >
+                  Create Job
+                </button>
+              </div>
+            )}
+
+            <div className={styles.grid}>
+              {jobs == "No Jobs Created" ? (
+                <h2>{jobs}</h2>
+              ) : (
+                jobs.map((job, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className={styles.card}
+                      onClick={() =>
+                        router.replace(`../nodeId/${nodeId}/job/${job.name}`)
+                      }
+                      style={{ cursor: "pointer" }}
+                    >
+                      <h3>{job.name}</h3>
+                      <h4>
+                        <div>Status: </div>
+                        <div style={{ marginLeft: "10px" }}>
+                          {capitalizeFirstLetter(String(job.status))}
+                        </div>
+                      </h4>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        )}
       </main>
 
       <footer className={styles.footer}>

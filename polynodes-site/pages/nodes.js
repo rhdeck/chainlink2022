@@ -32,7 +32,7 @@ function Nodes() {
       );
       let allData = await data.json();
       if (allData.length == 0) {
-        setJobs("No Jobs Created");
+        setNodes("No Nodes Created");
         return;
       }
       allData = allData.sort(compare);
@@ -62,7 +62,11 @@ function Nodes() {
     if (timer) clearInterval(timer);
     setTimer(
       setInterval(() => {
-        if (nodes && nodes.find(({ status }) => status !== "completed"))
+        if (
+          nodes &&
+          isArray(nodes) &&
+          nodes.find(({ status }) => status !== "completed")
+        )
           listNodes();
       }, 10000)
     );
@@ -70,6 +74,7 @@ function Nodes() {
       if (timer) clearInterval(timer);
     };
   }, [nodes]);
+  console.log("Rendering nodes", nodes);
   return (
     <div className={styles.container}>
       <Head>
@@ -86,60 +91,69 @@ function Nodes() {
           <Link href="/">PolyNodes</Link>
         </div>
       </div>
-    
+
       <main className={styles.main}>
         <h1 className={styles.header1}>Nodes</h1>
-        <button className={styles.exploreButton} style={{margin:"20px 0"}} onClick={() => router.replace('./node')}>Create Node</button>
-    
-        <div  className={styles.gridTwo} >
-          {!nodes ? (
-                  <div className={styles.overlay}>
-                  <div className={styles.overlay__inner}>
-                    <div className={styles.overlay__content}>
-                      <img src="../images/abstract.png" className={styles.spinner}></img>
-                      <div style={{ textAlign: "center" }}>Retrieving Nodes</div>
-                    </div>
-                  </div>
-                </div>
-            ) : nodes == "No Jobs Created" ? (
-              <h2>{nodes}</h2>
-            ) : (
-              nodes.map((node) => {
-                return (
-                  <div
-                    key={node.key}
-                    className={styles.card}
-                    onClick={() => router.replace(`/node/${node.key}`)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <h3>
-                      <div>Node: </div>
-                      <div style={{ marginLeft: "10px" }}>{node.key}</div>
-                    </h3>
-                    <h4>
-                      <div>Status: </div>
-                      <div style={{ marginLeft: "10px" }}>
-                        {capitalizeFirstLetter(node.status)}
-                      </div>
-                    </h4>
-                  </div>
-                );
-              })
-            )}
-            </div>
-        </main>
+        <button
+          className={styles.exploreButton}
+          style={{ margin: "20px 0" }}
+          onClick={() => router.replace("./node")}
+        >
+          Create Node
+        </button>
 
-        <footer className={styles.footer}>
-          <button className={styles.finityButton} onClick={clickFooter}>
-            <div style={{ marginRight: "5px" }}>Created with </div>
-            <img
-              className={styles.finityLogo}
-              src="https://assets.website-files.com/61f6b057c024d3274ee3a052/61f6e2b3e6ce5e8a000000bd_logoPurple.svg"
-            ></img>
-          </button>
-        </footer>
+        <div className={styles.gridTwo}>
+          {!nodes ? (
+            <div className={styles.overlay}>
+              <div className={styles.overlay__inner}>
+                <div className={styles.overlay__content}>
+                  <img
+                    src="../images/abstract.png"
+                    className={styles.spinner}
+                  ></img>
+                  <div style={{ textAlign: "center" }}>Retrieving Nodes</div>
+                </div>
+              </div>
+            </div>
+          ) : nodes == "No Nodes Created" ? (
+            <h2>{nodes}</h2>
+          ) : (
+            nodes.map((node) => {
+              return (
+                <div
+                  key={node.key}
+                  className={styles.card}
+                  onClick={() => router.replace(`/node/${node.key}`)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <h3>
+                    <div>Node: </div>
+                    <div style={{ marginLeft: "10px" }}>{node.key}</div>
+                  </h3>
+                  <h4>
+                    <div>Status: </div>
+                    <div style={{ marginLeft: "10px" }}>
+                      {capitalizeFirstLetter(node.status)}
+                    </div>
+                  </h4>
+                </div>
+              );
+            })
+          )}
         </div>
-    )
+      </main>
+
+      <footer className={styles.footer}>
+        <button className={styles.finityButton} onClick={clickFooter}>
+          <div style={{ marginRight: "5px" }}>Created with </div>
+          <img
+            className={styles.finityLogo}
+            src="https://assets.website-files.com/61f6b057c024d3274ee3a052/61f6e2b3e6ce5e8a000000bd_logoPurple.svg"
+          ></img>
+        </button>
+      </footer>
+    </div>
+  );
 }
 
 export default Nodes;

@@ -1,11 +1,10 @@
 import Head from "next/head";
 import styles from "../../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from 'next/router';
-import Link from 'next/link'
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function Home() {
-
   const clickFooter = useCallback(() => {
     window.location.href = "https://finity.polygon.technology/";
   }, []);
@@ -13,7 +12,7 @@ export default function Home() {
   const router = useRouter();
 
   const initialFormData = Object.freeze({
-    name: ""
+    name: "",
   });
 
   const [formData, updateFormData] = useState(initialFormData);
@@ -28,11 +27,11 @@ export default function Home() {
   };
 
   const createNode = async () => {
-    setFeedback(true)
+    setFeedback(true);
     const newBody = {
-      key: formData.name
-    }
-    const body = JSON.stringify(newBody)
+      key: formData.name,
+    };
+    const body = JSON.stringify(newBody);
 
     try {
       await fetch(
@@ -45,26 +44,29 @@ export default function Home() {
           body: body,
         }
       );
-
     } catch (err) {
       console.log(err.message);
     }
-    router.replace(`../nodes`)
+    router.replace(`../nodes`);
   };
 
   let showFeedback;
 
   if (feedback) {
-    showFeedback =    <div className={styles.overlay}>
-    <div className={styles.overlay__inner}>
-      <div className={styles.overlay__content}>
-      <img src="../../images/abstract.png" className={styles.spinner}></img>
-        <div style={{ textAlign: "center" }}>Creating Node...</div>
+    showFeedback = (
+      <div className={styles.overlay}>
+        <div className={styles.overlay__inner}>
+          <div className={styles.overlay__content}>
+            <img
+              src="../../images/abstract.png"
+              className={styles.spinner}
+            ></img>
+            <div style={{ textAlign: "center" }}>Creating Node...</div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    );
   }
-
 
   return (
     <div className={styles.container}>
@@ -78,29 +80,57 @@ export default function Home() {
       </Head>
       <div className={styles.logo}>
         <div className={styles.logoText}>
-        <Link href="/">PolyNodes</Link>
+          <Link href="/">PolyNodes</Link>
         </div>
       </div>
       <main className={styles.main}>
-      {showFeedback}
+        {showFeedback}
         <h1 className={styles.header1}>Create Node</h1>
-            <input
-              className={styles.inputTicker}
-              onChange={handleChange}
-              name="name"
-              id="name"
-              placeholder="Node Name"
-              autoComplete="off"
-              type="text"
-            />
-
-          <div>
-            <button className={styles.exploreButton} style={{marginTop:"15px"}} onClick={createNode}>
-              Create Node
-            </button>
-          
+        <div className={styles.inputContainer}>
+          <label className={styles.inputLabel}>Node Name</label>
+          <input
+            className={styles.inputTicker}
+            onChange={handleChange}
+            name="name"
+            id="name"
+            placeholder="Node Name"
+            autoComplete="off"
+            type="text"
+          />
         </div>
-        <button className={styles.connectButton} style={{marginLeft:"0px", fontSize:"1.25rem", textDecoration:"underline", backgroundColor:"inherit"}} onClick={() => router.replace("/nodes")}>Back to Nodes</button>
+        <div className={styles.inputContainer}>
+          <label className={styles.inputLabel}>Owner Wallet (EVM)</label>
+          <input
+            className={styles.inputTicker}
+            onChange={handleChange}
+            name="ownerWallet"
+            id="ownerWallet"
+            placeholder="0x000000000000000000000000"
+            autoComplete="off"
+            type="text"
+          />
+        </div>
+        <div>
+          <button
+            className={styles.exploreButton}
+            style={{ marginTop: "15px" }}
+            onClick={createNode}
+          >
+            Create Node
+          </button>
+        </div>
+        <button
+          className={styles.connectButton}
+          style={{
+            marginLeft: "0px",
+            fontSize: "1.25rem",
+            textDecoration: "underline",
+            backgroundColor: "inherit",
+          }}
+          onClick={() => router.replace("/nodes")}
+        >
+          Back to Nodes
+        </button>
       </main>
 
       <footer className={styles.footer}>
