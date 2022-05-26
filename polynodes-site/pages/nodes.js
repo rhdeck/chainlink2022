@@ -138,8 +138,16 @@ function Nodes() {
           style={{ margin: "20px 20px" }}
           onClick={() => router.replace("./node")}
         >
-          Create Node
+          Add a Node
         </button>
+        <div className={styles.nav}> 
+          <button
+          className={styles.navButton}
+          onClick={() => router.replace(`./`)}
+        >
+          Home
+        </button>
+        </div>
       </main>
 
       <footer className={styles.footer}>

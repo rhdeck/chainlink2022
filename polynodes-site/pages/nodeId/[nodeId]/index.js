@@ -225,7 +225,7 @@ export default function Home() {
           className={styles.navButton}
           onClick={() => router.replace(`/node/${nodeId}`)}
         >
-          Back to Jobs
+          {"< "}Back to Jobs
         </button>
         </div>
         </div>

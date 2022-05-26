@@ -104,7 +104,7 @@
 .exploreButton {
   border-radius: 40px;
   margin-top: 20px;
-  height: 70px;
+  height: 50px;
   border: 0;
   position: relative;
   display: flex;
@@ -138,7 +138,6 @@
   border-radius: 10px;
   margin: 40px auto;
   height: 40px;
-  border: 0;
   position: relative;
   display: flex;
   font-family: GeneralSans-SemiBold;
@@ -153,6 +152,42 @@
   box-shadow: 0 30px 15px rgba(0, 0, 0, 0.4);
   transition: transform 0.2s;
 }
+
+.addButton {
+  border-radius: 4px;
+  height: 40px;
+  position: relative;
+  display: flex;
+  font-family: GeneralSans-SemiBold;
+  color: #8247e5;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  width: 200px;
+  cursor: pointer;
+  border: 2px solid #cf9fff;
+  background-color: #ffff;
+  transition: transform 0.2s;
+}
+
+.addButton:active {
+  background-image: none;
+  box-shadow: none;
+}
+.addButton:hover {
+  background-image: none;
+  transform: scale(1.05);
+}
+
+.navButton:active {
+  background-image: none;
+  box-shadow: none;
+}
+.navButton:hover {
+  background-image: none;
+  transform: scale(1.05);
+}
+
 
 .exploreButton:active {
   background-image: none;
@@ -173,6 +208,24 @@
   border: 2px solid #f5acf7;
   font-family: "GeneralSans-Regular";
   width:70vw;
+}
+
+.detailWrap {
+  color: #000000;
+  margin: 3px 0;
+  padding: 2px;
+  width: 600px;
+  height:100px;
+  font-size: 1rem;
+  background-color: #cf9fff;
+  opacity: 90%;
+  border: 2px solid #f5acf7;
+  font-family: "GeneralSans-Regular";
+}
+
+.details {
+  font-family: "GeneralSans-Regular";
+  margin-left: 12px;
 }
 
 .inputLabel {
@@ -408,7 +461,7 @@ background-color:#dcd4ff;
   flex-wrap: wrap;
   flex-direction: column;
   justify-content: space-around;
-  margin-left: 50px;
+  margin-left: 30px;
 }
 
 .gridTwo {
@@ -420,14 +473,11 @@ background-color:#dcd4ff;
 
 .gridThree {
   display: flex;
-  flex-wrap: wrap;
+  margin: auto;
   flex-direction: row;
-  margin-left: 40px;
-  justify-content: flex-start;
-  max-width: 500px;
-  background-color: #dcd4ff;
-  border-radius: 20px;
-  padding: 10px;
+  justify-content: space-around;
+  font-family: "GeneralSans-SemiBold";
+  font-size:1.25rem;
   color: #4a23a4;
 }
 
@@ -542,7 +592,7 @@ background-color:#dcd4ff;
 
 .logoText {
   color: #8e40f2;
-  background: -webkit-linear-gradient(#8e40f2, #8e40f2, #cf9fff);
+  background: -webkit-linear-gradient(#6c01f7, #6c01f7, #8247e5);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
