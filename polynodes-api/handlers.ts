@@ -2,6 +2,7 @@ import "./core";
 import {
   httpSuccess,
   makeAPIGatewayLambda,
+  makeLambda,
 } from "@raydeck/serverless-lambda-builder";
 import {
   APIGatewayProxyEvent,
@@ -364,9 +365,9 @@ export const completedNode = makeAPIGatewayLambda({
     await qldbDriver.executeLambda(async (txn) => {
       const query = `UPDATE Nodes SET 
         status = 'completed',      
-        statusDate = ${Date.now()}
+        statusDate = ${Date.now()},
         defaultContract_80001 = '${mumbaiContract}',
-        defaultContract_138 = '${maticContract}'
+        defaultContract_137 = '${maticContract}'
       WHERE 
         id = '${nodeId}'`;
       console.log("Running completed query", query);
@@ -534,6 +535,7 @@ type PolyNodesJobRequest = {
   parameters?: string[];
   confirmations?: number;
 };
+
 export const createJob = makeAPIGatewayLambda({
   path: "/nodes/{nodeId}/jobs",
   method: "post",
