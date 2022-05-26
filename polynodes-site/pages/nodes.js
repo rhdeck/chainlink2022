@@ -110,22 +110,23 @@ function Nodes() {
           ) : nodes == "No Nodes Created" ? (
             <h2>{nodes}</h2>
           ) : (
-            nodes.map((node) => {
+            nodes.map(({ key, status, ...rest }) => {
+              console.log("Looking at object in nodes", key, rest);
               return (
                 <div
-                  key={node.key}
-                  className={styles.card}
-                  onClick={() => router.replace(`/node/${node.key}`)}
+                  key={key}
+                  className={[styles.card, styles[status]].join(" ")}
+                  onClick={() => router.replace(`/node/${key}`)}
                   style={{ cursor: "pointer" }}
                 >
                   <h3>
-                    <div>Node: </div>
-                    <div style={{ marginLeft: "10px" }}>{node.key}</div>
+                    <div className={styles.nodeName}>Node: </div>
+                    <div style={{ marginLeft: "10px" }}>{key}</div>
                   </h3>
-                  <h4>
+                  <h4 className={styles.nodeStatus}>
                     <div>Status: </div>
                     <div style={{ marginLeft: "10px" }}>
-                      {capitalizeFirstLetter(node.status)}
+                      {capitalizeFirstLetter(status)}
                     </div>
                   </h4>
                 </div>
@@ -140,13 +141,13 @@ function Nodes() {
         >
           {"+ "} Add a Node
         </button>
-        <div className={styles.nav}> 
+        <div className={styles.nav}>
           <button
-          className={styles.navButton}
-          onClick={() => router.replace(`./`)}
-        >
-          Home
-        </button>
+            className={styles.navButton}
+            onClick={() => router.replace(`./`)}
+          >
+            Home
+          </button>
         </div>
       </main>
 
