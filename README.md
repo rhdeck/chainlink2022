@@ -52,13 +52,17 @@ We will show how this implementation works to the community to make it easy to d
 This was a complicated, multi-part product that required expertise from blockchain to devops. We learned a ton from each other and the community. This initiative can make Chainlink and blockchain technology in general a lot more accessible and usable to a wider audience of people. For under a dollar ([or even a MATIC at prices as of this writing](https://coinmarketcap.com/currencies/polygon/)) per day, one can have a chainlink node of one's own, and make managing it easy. 
 
 ## Components
-This project is designed as a monorepo. Key complents:
+This project is designed as a monorepo. Key components:
+
+### Core Polynodes
+1. `polynodes` is the core library for the Polynodes node deployment and management API. 
+2. `polynodes-api` is the serverless deployment of that API as REST endpoints using Serverless Framework and AWS Lambda
+3. `polynodes-contracts` contains source code to create the Oracle contract as part of generating a Polynode. 
+4. `polynodes-site` is a Finity-enabled Nextjs interface for deploying and managing Polynode oracle servers and jobs. (deployed via [Fleek](https://fleek.co))
+
+### Reference Implementation with Alpaca
 1. `alpaca-contracts` The on-chain code for the alpaca price feed. Note that the list of equities to track is managed in the keeper. The price feed itself submits requests to the oracle.
 2. `alpaca-site` is a Finity-enabled Nextjs interface for viewing current prices and keeping it all alive. (deployed via [Fleek](https://fleek.co))
-3. `polynodes` is the core library for the Polynodes node deployment and management API. 
-4. `polynodes-api` is the serverless deployment of that API as REST endpoints using Serverless Framework and AWS Lambda
-5. `polynodes-contracts` contains source code to create the Oracle contract as part of generating a Polynode. 
-6. `polynodes-site` is a Finity-enabled Nextjs interface for deploying and managing Polynode oracle servers and jobs. (deployed via [Fleek](https://fleek.co))
 
 ## Where we're going
 There are too few Chainlink nodes on L2. We plan to make interchain and offchain communication easy for everyone - maybe the easiest part of the process. 
@@ -69,7 +73,7 @@ Finally, the nodes are set up to be inexpensive at the price of redundancy. We c
 We are grateful to the Chainlink team for putting together the hackathon that gave us the opportunity and inspiration to work on this project! 
 
 ## The Polynodes Team
-Akshay
-Ray
-Rishabh
-Robert
+* [Akshay](https://github.com/akshay-rakheja)
+* [Ray](https://github.com/rhdeck)
+* [Rishabh](https://github.com/robertreinhart)
+* [Robert](https://github.com/rishbruh)
