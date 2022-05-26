@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 export default function Home() {
+  const [problems, setProblems] = useState({});
   const clickFooter = useCallback(() => {
     window.location.href = "https://finity.polygon.technology/";
   }, []);
@@ -25,6 +26,16 @@ export default function Home() {
       [e.target.name]: e.target.value,
     });
   };
+  useEffect(() => {
+    if (formData && formData.name && !/^[a-z0-9]+$/i.test(formData.name)) {
+      setProblems((old) => ({
+        ...old,
+        name: "Name can only contain letters and numbers",
+      }));
+    } else {
+      setProblems((old) => ({ ...old, name: "" }));
+    }
+  }, [formData]);
 
   const createNode = async () => {
     setFeedback(true);
@@ -97,6 +108,9 @@ export default function Home() {
             autoComplete="off"
             type="text"
           />
+          {problems.name && (
+            <div className={styles.errorText}>{problems.name}</div>
+          )}
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.inputLabel}>Owner Wallet (EVM)</label>
@@ -109,6 +123,9 @@ export default function Home() {
             autoComplete="off"
             type="text"
           />
+          {problems.name && (
+            <div className={styles.errorText}>{problems.name}</div>
+          )}
         </div>
         <div>
           <button

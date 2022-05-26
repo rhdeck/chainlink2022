@@ -172,6 +172,11 @@
   margin-top: 3px;
 }
 
+.errorText {
+  color: red;
+  font-size: 0.75rem;
+  font-family: "GeneralSans-Regular";
+}
 .inputArea {
   max-width: 400px;
   background: #ffffff;
