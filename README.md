@@ -36,7 +36,7 @@ return retvalue;
 The reference implementation shows how much power there is in using the simplified keepers network plus the simplified Polynodes interface for making the regular requests. We're quite excited at how this could make real DAOs work much more effectively and efficiently on Polygon. 
 
 ## Limitations
-1. Currently the full service is only for Mumbai, but we have the code ready for Polygon Mainnet - just didn't want to activate that with 'real money' while the reference is open to the public. 
+1. Currently the full service is only for Mumbai, but we have the code ready for Polygon Mainnet - just didn't want to activate that with 'real money' while the reference is open to the public and unauthenticated. 
 2. The node is setup is for Mumbai and Polygon, but there's no reason it cannot be extended to other chains, like Avalanche or Mainnet. 
 3. Since this is on a trial DigitalOcean account, we can only have under 10 live nodes at a time. 
 
@@ -65,10 +65,10 @@ This project is designed as a monorepo. Key components:
 2. `alpaca-site` is a Finity-enabled Nextjs interface for viewing current prices and keeping it all alive. (deployed via [Fleek](https://fleek.co))
 
 ## Where we're going
-There are too few Chainlink nodes on L2. We plan to make interchain and offchain communication easy for everyone - maybe the easiest part of the process. 
-We will move more into making the system low-code and potentially no-code. 
-Currently we only support direct request jobs, but there's awesome opportunity to enable cron-based and external initiation so contracts can respond to events. 
-Finally, the nodes are set up to be inexpensive at the price of redundancy. We can make the system more resilient and decentralized by extending to other data centers at Digital Ocean, and other virtual server vendors (looking at you, [linode](https://linode.com))
+1. There are too few Chainlink nodes on L2. We plan to make interchain and offchain communication easy for everyone - maybe the easiest part of the process. 
+2. We will move more into making the system low-code and potentially no-code. 
+3. Currently we only support direct request jobs, but there's awesome opportunity to enable cron-based and external initiation so contracts can respond to events. 
+4. Finally, the nodes are set up to be inexpensive at the price of redundancy. We can make the system more resilient and decentralized by extending to other data centers at Digital Ocean, and other virtual server vendors (looking at you, [linode](https://linode.com))
 ## Thanks
 We are grateful to the Chainlink team for putting together the hackathon that gave us the opportunity and inspiration to work on this project! 
 
