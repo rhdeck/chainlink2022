@@ -1,16 +1,23 @@
 import config from "./config";
-import ethers from "ethers";
+import { ethers } from "ethers";
+import { fetch } from "cross-fetch";
+// tslint:disable-next-line:no-any
+declare var global: any;
+global.fetch = fetch;
 
-export const deployMumbai = async (nodeWallet: string, userWallet: string) => {
+export const deployMumbai = async (
+  nodeWallet: string,
+  userWallet: string,
+  privateKey: string
+) => {
   const bytecode = config.bytecode;
   const abi = config.abi;
   const provider = new ethers.providers.AlchemyProvider(
     "maticmum",
     process.env.ALCHEMY_MUMBAI_KEY
   );
-  if (!process.env.PK) throw new Error("PK env var not set");
   const account_from = {
-    privateKey: process.env.PK,
+    privateKey,
   };
   let wallet = new ethers.Wallet(account_from.privateKey, provider);
   const oracle = new ethers.ContractFactory(abi, bytecode, wallet);
@@ -37,7 +44,11 @@ export const deployMumbai = async (nodeWallet: string, userWallet: string) => {
   return contract.address;
 };
 
-export const deployMatic = async (nodeWallet: string, userWallet: string) => {
+export const deployMatic = async (
+  nodeWallet: string,
+  userWallet: string,
+  privateKey: string
+) => {
   console.log("Hi i m deployMatic!");
   const bytecode = config.bytecodeMatic;
   const abi = config.abi;
@@ -45,9 +56,8 @@ export const deployMatic = async (nodeWallet: string, userWallet: string) => {
     "matic",
     process.env.ALCHEMY_MATIC_KEY
   );
-  if (!process.env.PK) throw new Error("PK env var not set");
   const account_from = {
-    privateKey: process.env.PK,
+    privateKey,
   };
   let wallet = new ethers.Wallet(account_from.privateKey, provider);
   const oracle = new ethers.ContractFactory(abi, bytecode, wallet);

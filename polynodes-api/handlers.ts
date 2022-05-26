@@ -38,6 +38,8 @@ import { ethers } from "ethers";
 import { join } from "path";
 import { execSync } from "child_process";
 import { Value } from "ion-js/dist/commonjs/es6/dom";
+import { Lambda } from "aws-sdk";
+import { get as registryGet } from "@raydeck/registry-manager";
 //#region QLDB intialization
 const maxConcurrentTransactions = 10;
 const retryLimit = 4;
@@ -314,7 +316,15 @@ export const completedNode = makeAPIGatewayLambda({
     let nodeRecord: Value | undefined;
     try {
       nodeRecord = await getNodeRecord(nodeId);
-      if (nodeRecord.get("status")?.stringValue() !== "uninitialized") {
+      const status = nodeRecord.get("status")?.stringValue();
+      const statusDate = nodeRecord.get("statusDate")?.numberValue();
+      if (
+        status !== "uninitialized" &&
+        status === "completing" &&
+        statusDate &&
+        statusDate + 60 * 1000 > Date.now()
+      ) {
+        // if (nodeRecord.get("status")?.stringValue() !== "uninitialized") {
         return { statusCode: 400, body: "Node is not in uninitialized state" };
       }
     } catch (e) {
@@ -336,8 +346,30 @@ export const completedNode = makeAPIGatewayLambda({
     await ssh.execCommand(
       "cd nodeserver && yarn && yarn start > out.log 2>&1 &"
     );
+    close();
+    const Payload = JSON.stringify({ nodeId });
+    console.log("invoking makecontract", registryGet("MAKE_CONTRACT_FUNCTION"));
+    await new Lambda({ region: registryGet("AWS_REGION", "us-east-1") })
+      .invoke({
+        InvocationType: "Event",
+        FunctionName: registryGet("MAKE_CONTRACT_FUNCTION"),
+        Payload,
+      })
+      .promise();
+    console.log(
+      "That was makecontract firing off",
+      registryGet("MAKE_CONTRACT_FUNCTION")
+    );
+    console.log("Returning success");
+    return { statusCode: 200, body: "completed" };
+  }, process.env.COMPLETED_KEY),
+});
 
-    //Get keys for evm chains
+export const makeContract = makeLambda({
+  timeout: 300,
+  func: async (event) => {
+    const { nodeId } = event;
+    const { ssh, close } = await sshTo(nodeId);
     await login(ssh);
     const ethKeys = await Keys.listEth(ssh);
     const keyObj = ethKeys.reduce(
@@ -349,34 +381,43 @@ export const completedNode = makeAPIGatewayLambda({
     console.log("Closed");
     let maticContract = "";
     let mumbaiContract = "";
-    if (process.env.pk && nodeRecord?.get("ownerWallet")?.stringValue()) {
+    const nodeRecord = await getNodeRecord(nodeId);
+    if (nodeRecord?.get("ownerWallet")?.stringValue()) {
       const newOwner = nodeRecord?.get("ownerWallet")?.stringValue();
       if (newOwner) {
         const mumbaiKey = keyObj["80001"].address;
-        if (mumbaiKey) {
-          mumbaiContract = await deployMumbai(mumbaiKey, newOwner);
+        if (mumbaiKey && process.env.MUMBAI_PK) {
+          mumbaiContract = await deployMumbai(
+            mumbaiKey,
+            newOwner,
+            process.env.MUMBAI_PK
+          );
         }
         const maticKey = keyObj["137"].address;
-        if (maticKey) {
-          maticContract = await deployMatic(maticKey, newOwner);
+        if (maticKey && process.env.MATIC_PK) {
+          maticContract = await deployMatic(
+            maticKey,
+            newOwner,
+            process.env.MATIC_PK
+          );
         }
       }
     }
+    //Get keys for evm chains
+
     await qldbDriver.executeLambda(async (txn) => {
       const query = `UPDATE Nodes SET 
-        status = 'completed',      
-        statusDate = ${Date.now()},
-        defaultContract_80001 = '${mumbaiContract}',
-        defaultContract_137 = '${maticContract}'
-      WHERE 
-        id = '${nodeId}'`;
+      status = 'completed',      
+      statusDate = ${Date.now()},
+      defaultContract_80001 = '${mumbaiContract}',
+      defaultContract_137 = '${maticContract}'
+    WHERE 
+      id = '${nodeId}'`;
       console.log("Running completed query", query);
       await txn.execute(query);
       console.log("Ran completed query", query);
     });
-    console.log("Returning success");
-    return { statusCode: 200, body: "completed" };
-  }, process.env.COMPLETED_KEY),
+  },
 });
 
 export const deleteNode = makeAPIGatewayLambda({

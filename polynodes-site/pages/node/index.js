@@ -3,6 +3,7 @@ import styles from "../../styles/Home.module.css";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { ethers } from "ethers";
 
 export default function Home() {
   const [problems, setProblems] = useState({});
@@ -35,12 +36,31 @@ export default function Home() {
     } else {
       setProblems((old) => ({ ...old, name: "" }));
     }
+    if (
+      formData &&
+      formData.ownerWallet &&
+      !ethers.utils.isAddress(formData.ownerWallet)
+    ) {
+      setProblems((old) => ({
+        ...old,
+        ownerWallet:
+          "Invalid address: should be 0x followed by forty hexadecimal characters",
+      }));
+    } else {
+      setProblems((old) => ({ ...old, ownerWallet: "" }));
+    }
   }, [formData]);
 
   const createNode = async () => {
     setFeedback(true);
+    //check the problems
+    if (problems.name || problems.ownerWallet) {
+      setFeedback(false);
+      return;
+    }
     const newBody = {
       key: formData.name,
+      ownerWallet: formData.ownerWallet,
     };
     const body = JSON.stringify(newBody);
 
@@ -125,7 +145,7 @@ export default function Home() {
             <div className={styles.inputContainer}>
               <label
                 className={`${styles.inputLabel} ${
-                  problems.name && styles.errorLabel
+                  problems.ownerWallet && styles.errorLabel
                 }`}
               >
                 Owner Wallet (EVM)
@@ -150,18 +170,21 @@ export default function Home() {
                 className={styles.exploreButton}
                 style={{ marginTop: "15px" }}
                 onClick={createNode}
+                disabled={!!problems.name || !!problems.ownerWallet}
               >
-                Create Node
+                {!!problems.name || !!problems.ownerWallet
+                  ? "Fix Problems..."
+                  : "Create Node"}
               </button>
             </div>
-            <div className={styles.nav}> 
+            <div className={styles.nav}>
               <button
-          className={styles.navButton}
-          onClick={() => router.replace(`/nodes`)}
-        >
-          {"< "}Back to Nodes
-        </button>
-       </div>
+                className={styles.navButton}
+                onClick={() => router.replace(`/nodes`)}
+              >
+                {"< "}Back to Nodes
+              </button>
+            </div>
           </div>
         )}
       </main>

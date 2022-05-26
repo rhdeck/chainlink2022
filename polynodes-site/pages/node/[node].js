@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from "react";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 function Node() {
   const [jobs, setJobs] = useState();
   const [node, setNode] = useState();

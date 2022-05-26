@@ -15,6 +15,10 @@
     "DO_TOKEN": "${env:DO_TOKEN}"
     "ALCHEMY_MUMBAI_KEY": "${env:ALCHEMY_MUMBAI_KEY}"
     "ALCHEMY_POLYGON_KEY": "${env:ALCHEMY_POLYGON_KEY}"
+    "MAKE_CONTRACT_FUNCTION":
+      "Fn::GetAtt":
+        - "makeContract"
+        - "Arn"
     "BASE_URL":
       "Fn::Join":
         - ""
@@ -123,6 +127,9 @@
           "method": "get"
           "cors": true
           "private": false
+  "makeContract":
+    "handler": "handlers.makeContract"
+    "timeout": 300
   "deleteNode":
     "handler": "handlers.deleteNode"
     "events":
