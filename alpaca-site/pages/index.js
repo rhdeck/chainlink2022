@@ -326,9 +326,15 @@ export default function Home() {
                     blockchain via Chainlink nodes.
                   </p>
                   <p>Don't see a ticker? Submit one here.</p>
-                  <a className={styles.polygonscan} href="https://mumbai.polygonscan.com/address/0xe934b71053845886a5F400E8ad289aA0B3E7B602">
-                    Polygonscan
-                  </a>
+                  <button
+                    className={styles.polygonscan}
+                    onClick={() => {
+                      window.location.href =
+                        "https://mumbai.polygonscan.com/address/0xe934b71053845886a5F400E8ad289aA0B3E7B602";
+                    }}
+                  >
+                    Interact with the contract On PolygonScan
+                  </button>
                 </div>
               </div>
               <div className={styles.grid}>

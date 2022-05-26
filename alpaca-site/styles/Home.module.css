@@ -200,7 +200,12 @@
 }
 
 .polygonscan {
-  color: #cf9fff;
+  background-color: #cf9fff;
+  color: black;
+  font-family: "GeneralSans-Medium";
+  padding: 10px;
+  border-radius: 20px;
+  height: 40px;
 }
 
 .polygonscan:active,
