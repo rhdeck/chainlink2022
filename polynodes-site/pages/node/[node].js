@@ -123,15 +123,19 @@ function Node() {
         </div>
       </div>
       <main className={styles.main}>
-  
         <h1 className={styles.header1}>
           About {nodeId}
-          <button
-            className={styles.connectButton}
+        </h1>
+
+        <button
+            className={styles.addButton}
             style={{
               // flex: 1,
-              // marginLeft: "0",
+              display: "inline-block",
+              marginBottom:"20px",
               fontSize: "1.25rem",
+              borderColor: "red",
+              color: "red"
               // textDecoration: "underline",
               // backgroundColor: "inherit",
             }}
@@ -139,7 +143,6 @@ function Node() {
           >
             Delete Me
           </button>
-        </h1>
         {showLoader && (
           <div className={styles.overlay}>
             <div className={styles.overlay__inner}>

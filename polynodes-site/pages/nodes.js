@@ -134,11 +134,11 @@ function Nodes() {
           )}
         </div>
         <button
-          className={styles.exploreButton}
+          className={styles.addButton}
           style={{ margin: "20px 20px" }}
           onClick={() => router.replace("./node")}
         >
-          Add a Node
+          {"+ "} Add a Node
         </button>
         <div className={styles.nav}> 
           <button
