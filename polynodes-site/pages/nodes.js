@@ -94,14 +94,6 @@ function Nodes() {
 
       <main className={styles.main}>
         <h1 className={styles.header1}>Nodes</h1>
-        <button
-          className={styles.exploreButton}
-          style={{ margin: "20px 0" }}
-          onClick={() => router.replace("./node")}
-        >
-          Create Node
-        </button>
-
         <div className={styles.gridTwo}>
           {!nodes ? (
             <div className={styles.overlay}>
@@ -140,6 +132,21 @@ function Nodes() {
               );
             })
           )}
+        </div>
+        <button
+          className={styles.addButton}
+          style={{ margin: "20px 20px" }}
+          onClick={() => router.replace("./node")}
+        >
+          {"+ "} Add a Node
+        </button>
+        <div className={styles.nav}> 
+          <button
+          className={styles.navButton}
+          onClick={() => router.replace(`./`)}
+        >
+          Home
+        </button>
         </div>
       </main>
 

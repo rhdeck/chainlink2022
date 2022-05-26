@@ -154,18 +154,14 @@ export default function Home() {
                 Create Node
               </button>
             </div>
-            <button
-              className={styles.connectButton}
-              style={{
-                marginLeft: "0px",
-                fontSize: "1.25rem",
-                textDecoration: "underline",
-                backgroundColor: "inherit",
-              }}
-              onClick={() => router.replace("/nodes")}
-            >
-              Back to Nodes
-            </button>
+            <div className={styles.nav}> 
+              <button
+          className={styles.navButton}
+          onClick={() => router.replace(`/nodes`)}
+        >
+          {"< "}Back to Nodes
+        </button>
+       </div>
           </div>
         )}
       </main>

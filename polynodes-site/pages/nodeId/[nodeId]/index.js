@@ -220,19 +220,16 @@ export default function Home() {
           >
             Create Job
           </button>
-        </div>
-        <button
-          className={styles.connectButton}
-          style={{
-            marginLeft: "0",
-            fontSize: "1.25rem",
-            textDecoration: "underline",
-            backgroundColor: "inherit",
-          }}
+          <div className={styles.nav}> 
+          <button
+          className={styles.navButton}
           onClick={() => router.replace(`/node/${nodeId}`)}
         >
-          Back to Jobs
+          {"< "}Back to Jobs
         </button>
+        </div>
+        </div>
+
       </main>
 
       <footer className={styles.footer}>

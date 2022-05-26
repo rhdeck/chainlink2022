@@ -123,27 +123,19 @@ function Node() {
         </div>
       </div>
       <main className={styles.main}>
-        <button
-          className={styles.connectButton}
-          style={{
-            // flex: 1,
-            // marginLeft: "0",
-            fontSize: "1.25rem",
-            // textDecoration: "underline",
-            // backgroundColor: "inherit",
-          }}
-          onClick={() => router.replace(`/nodes`)}
-        >
-          {"< "}Back to Nodes
-        </button>
         <h1 className={styles.header1}>
           About {nodeId}
-          <button
-            className={styles.connectButton}
+        </h1>
+
+        <button
+            className={styles.addButton}
             style={{
               // flex: 1,
-              // marginLeft: "0",
+              display: "inline-block",
+              marginBottom:"20px",
               fontSize: "1.25rem",
+              borderColor: "red",
+              color: "red"
               // textDecoration: "underline",
               // backgroundColor: "inherit",
             }}
@@ -151,7 +143,6 @@ function Node() {
           >
             Delete Me
           </button>
-        </h1>
         {showLoader && (
           <div className={styles.overlay}>
             <div className={styles.overlay__inner}>
@@ -168,29 +159,18 @@ function Node() {
         {!showLoader && (
           <div className={styles.polygonscan}>
             {node && (
+              <div className={styles.detailWrap}>
               <div className={styles.gridThree}>
-                <div style={{ fontSize: "1.25rem" }}>
-                  <p>Node Name: {nodeId}</p>
-                  <p>Status: {capitalizeFirstLetter(String(node.status))}</p>
-                  <p>Chain: {node.defaultChainId}</p>
-                </div>
-                <button
-                  style={{
-                    margin: "auto",
-                    backgroundColor: "#8e40f2",
-                    color: "#ffff",
-                  }}
-                  className={styles.exploreButton}
-                  onClick={() => router.replace(`../nodeId/${nodeId}`)}
-                >
-                  Create Job
-                </button>
+                  <p >Node Name: <div className={styles.details}>{nodeId}</div></p>
+                  <p>Status: <div className={styles.details}>{capitalizeFirstLetter(String(node.status))}</div></p>
+                  <p>Chain: <div className={styles.details}>{node.defaultChainId}</div></p>
+              </div>
               </div>
             )}
 
             <div className={styles.grid}>
               {jobs == "No Jobs Created" ? (
-                <h2>{jobs}</h2>
+                <h2 style={{color:"white"}}>{jobs}</h2>
               ) : (
                 jobs.map((job, index) => {
                   return (
@@ -213,9 +193,24 @@ function Node() {
                   );
                 })
               )}
+                   <button
+                  className={styles.addButton}
+                  onClick={() => router.replace(`../nodeId/${nodeId}`)}
+                >
+                 {"+ "} Add a Job
+                </button>
             </div>
+       
           </div>
         )}
+              <div className={styles.nav}> 
+              <button
+          className={styles.navButton}
+          onClick={() => router.replace(`/nodes`)}
+        >
+          {"< "}Back to Nodes
+        </button>
+       </div>
       </main>
 
       <footer className={styles.footer}>
