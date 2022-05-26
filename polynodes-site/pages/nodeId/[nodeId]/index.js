@@ -180,19 +180,15 @@ export default function Home() {
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.inputLabel}>Source Code</label>
-          <div className={styles.informationWrapper}><p  className={styles.information}>This is explanation</p></div>
+          <div className={styles.informationWrapper}><p  className={styles.information}>The source code is...</p></div>
         <div >
         <textarea
-            className={styles.inputCode}
-            onChange={handleChange}
-            content={formData.source}
-            name="source"
-            id="source"
-            cols="80"
-            row="10"
-            placeholder="Enter source code..."
-            autoComplete="off"
-            type="text"
+              className={styles.inputArea}
+              onChange={handleChange}
+              name="source"
+              id="source"
+              placeholder="Enter job source code here..."
+              autoComplete="off"
           >{formData.source}</textarea>
         {/* { typeof window !== "undefined" && <AceEditor 
           className={styles.inputCode}
