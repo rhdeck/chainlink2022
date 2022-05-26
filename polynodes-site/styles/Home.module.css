@@ -213,8 +213,9 @@
 .detailWrap {
   color: #000000;
   margin: 3px 0;
+  margin-bottom: 40px;
   padding: 2px;
-  width: 600px;
+  width: 70vw;
   height:100px;
   font-size: 1rem;
   background-color: #cf9fff;
@@ -853,7 +854,7 @@ background-color:#dcd4ff;
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 600px) {
   .grid {
     width: 320px;
     flex-direction: column;
@@ -875,10 +876,10 @@ background-color:#dcd4ff;
   }
 
   .detailWrap {
-    width: 350px;
+    width:80vw;
     font-size: .5rem;
-    padding:2px;
-    height: 100px;
+    padding: 0 10px;
+    height: 300px;
   }
 
   .cardJob {
@@ -904,6 +905,8 @@ background-color:#dcd4ff;
 
   .gridThree {
     margin: 5px;
+    padding-left: 20px;
+    flex-direction: column;
   }
   .inputCode {
     max-width: 300px;
@@ -922,7 +925,6 @@ background-color:#dcd4ff;
   }
   .inputContainer {
     margin: 5px 5px 0 0;
-  
   }
 
 }

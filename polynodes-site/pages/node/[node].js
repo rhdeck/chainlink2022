@@ -39,6 +39,7 @@ function Node() {
       router.replace(`/nodes`);
     }
   }, [nodeId, router]);
+
   const listJobs = async () => {
     if (!nodeId) {
       return;
@@ -168,7 +169,7 @@ function Node() {
               </div>
             )}
 
-            <div className={styles.grid}>
+            <div className={styles.gridTwo}>
               {jobs == "No Jobs Created" ? (
                 <h2 style={{color:"white"}}>{jobs}</h2>
               ) : (
@@ -193,14 +194,15 @@ function Node() {
                   );
                 })
               )}
-                   <button
+        
+            </div>
+            <button
                   className={styles.addButton}
                   onClick={() => router.replace(`../nodeId/${nodeId}`)}
+                  style={{ margin: "20px 20px" }}
                 >
                  {"+ "} Add a Job
                 </button>
-            </div>
-       
           </div>
         )}
               <div className={styles.nav}> 
