@@ -130,15 +130,49 @@
   transform: scale(1.05);
 }
 
+.nav{
+  width:88vw;
+}
+
+.navButton {
+  border-radius: 10px;
+  margin: 40px auto;
+  height: 40px;
+  border: 0;
+  position: relative;
+  display: flex;
+  font-family: GeneralSans-SemiBold;
+  color: #cf9fff;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  width: 200px;
+  cursor: pointer;
+  border: 2px solid #cf9fff;
+  background-color: #4a23a4;
+  box-shadow: 0 30px 15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s;
+}
+
+.exploreButton:active {
+  background-image: none;
+  box-shadow: none;
+}
+.exploreButton:hover {
+  background-image: none;
+  transform: scale(1.05);
+}
+
 .informationWrapper {
   color: #000000;
-  margin: 5px;
+  margin: 5px 0;
   overflow-wrap: break-word;
   padding: 2px;
   font-size: 1rem;
   background-color: #ffff;
-  border: 2px solid pink;
+  border: 2px solid #f5acf7;
   font-family: "GeneralSans-Regular";
+  width:70vw;
 }
 
 .inputLabel {
@@ -769,7 +803,7 @@ background-color:#dcd4ff;
   }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 800px) {
   .grid {
     width: 320px;
     flex-direction: column;
