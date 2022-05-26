@@ -18,7 +18,7 @@
 .header1 {
   margin-bottom: 20px;
   font-size: 4rem;
-  width: 200px;
+  /* width: 200px; */
 }
 
 .header2 {
@@ -213,15 +213,18 @@
   font-size: 1rem;
   width: 200px;
   cursor: pointer;
-  background-color: #8e40f2;
+  background-color: #6f00ff;
   transition: transform 0.2s;
+   border-radius: 20px;
+   box-shadow: #747c90;
+   margin: 5px;
 }
 
 .connnectButton:active {
-  color:#dcd4ff;
+background-color:#dcd4ff;
 }
 .connectButton:hover {
-  color:#cf9fff;
+  background-color:#cf9fff;
 
 }
 .inputCode {
