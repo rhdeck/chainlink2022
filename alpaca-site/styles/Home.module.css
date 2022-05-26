@@ -6,7 +6,7 @@
 }
 
 .main {
-  min-height: 100vh;
+  min-height: 40vh;
   padding-top: 5rem;
   flex: 1;
   display: flex;
@@ -16,8 +16,8 @@
 
 .header1 {
   margin-bottom: 0;
-  font-size: 6rem;
-  width: 200px;
+  font-size: 6rem; 
+  /* width: 200px; */
 }
 
 .header2 {
@@ -184,19 +184,20 @@
   color: #ffff;
   line-height: 1.15;
   font-size: 2rem;
+  width: 70%;
 }
 
 .title,
 .description {
   text-align: left;
   font-family: GeneralSans-SemiBold;
-  width: 70%;
 }
 
 .description {
   margin: 2rem 0;
   line-height: 1.5;
   font-size: 1.25rem;
+  margin-right: 20px;
 }
 
 .polygonscan {
@@ -230,7 +231,7 @@
   justify-content: center;
   flex-wrap: wrap;
   max-width: 400px;
-  margin-top: 150px;
+  /* margin-top: 150px; */
 }
 
 .gridTwo {

@@ -7,6 +7,7 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import abi from "../src/utils/Keepers.json";
 import { ethers } from "ethers";
+import { Fragment } from "react";
 
 export default function Home() {
   const [price, setPrice] = useState([]);
@@ -316,9 +317,10 @@ export default function Home() {
           <div className={styles.cardTwo}>{loader}</div>
         ) : (
           <div>
+            <h1 className={styles.header1}>Alpaca Feeds</h1>
             <div className={styles.gridTwo}>
               <div>
-                <h1 className={styles.header1}>Alpaca Feeds</h1>
+                
                 <h4 className={styles.header2}>(Powered by PolyNodes)</h4>
                 <div className={styles.description}>
                   <p>
@@ -356,24 +358,49 @@ export default function Home() {
                   }
                 })}
                 <div className={styles.card} style={{ padding: "0" }}>
-                  <input
-                    className={styles.inputTicker}
-                    onChange={handleChange}
-                    name="ticker"
-                    id="ticker"
-                    value={ticker}
-                    placeholder="AAPL"
-                    autoComplete="off"
-                    type="text"
-                    style={{ textTransform: "uppercase" }}
-                  />
-                  <button
-                    className={styles.inputButton}
-                    onClick={submitNewTicker}
-                  >
-                    Submit Ticker Request ({(Number(fee) / 10 ** 18).toFixed(2)}{" "}
-                    MATIC)
-                  </button>
+                  {!currentAccount ? (
+                    <Fragment>
+                      <div
+                        // className={styles.inputTicker}
+                        style={{
+                          marginLeft: "10px",
+                          fontFamily: "GeneralSans-Regular",
+                          marginRight: "10px",
+                        }}
+                      >
+                        {" "}
+                        Connect your wallet to add an equity
+                      </div>
+                      <button
+                        style={{ marginRight: "10px" }}
+                        onClick={onConnect}
+                        className={styles.inputButton}
+                      >
+                        Connect
+                      </button>
+                    </Fragment>
+                  ) : (
+                    <Fragment>
+                      <input
+                        className={styles.inputTicker}
+                        onChange={handleChange}
+                        name="ticker"
+                        id="ticker"
+                        value={ticker}
+                        placeholder="AAPL"
+                        autoComplete="off"
+                        type="text"
+                        style={{ textTransform: "uppercase" }}
+                      />
+                      <button
+                        className={styles.inputButton}
+                        onClick={submitNewTicker}
+                      >
+                        Submit Ticker Request (
+                        {(Number(fee) / 10 ** 18).toFixed(2)} MATIC)
+                      </button>
+                    </Fragment>
+                  )}
                 </div>
                 {loading && (
                   <div className={styles.cardTransaction}>
