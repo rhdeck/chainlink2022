@@ -64,7 +64,7 @@ function Nodes() {
       setInterval(() => {
         if (
           nodes &&
-          isArray(nodes) &&
+          Array.isArray(nodes) &&
           nodes.find(({ status }) => status !== "completed")
         )
           listNodes();

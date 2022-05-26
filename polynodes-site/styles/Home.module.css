@@ -145,8 +145,13 @@
   font-size: 0.75rem;
 }
 
+.errorLabel {
+  color: rgb(255, 163, 163);
+}
+
 .inputContainer {
   margin: 20px 20px 0 0;
+
 }
 
 .inputTicker {
@@ -156,7 +161,6 @@
   border: 1px solid #8247e5;
   /* State/Primary Focus */
 
-  box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #dcd4ff;
   border-radius: 3px;
   padding: 5px;
   /* Inside auto layout */
@@ -170,12 +174,29 @@
   align-items: space-around;
   height: 40px;
   margin-top: 3px;
+  box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #dcd4ff;
+
+}
+
+.errorTicker {
+
+  border: 1px solid #e54747;
+
 }
 
 .errorText {
-  color: red;
-  font-size: 0.75rem;
-  font-family: "GeneralSans-Regular";
+  width: 300px;
+  color: rgb(255, 163, 163);
+  font-size: 0.65rem;
+  font-family: "GeneralSans-Medium";
+  /*
+  background-color: rgb(89, 0, 0);
+  border: 1px solid rgb(255, 96, 96);
+  border-top-width: 0;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px; */
+  padding: 5px;
+  margin-top: 2px;
 }
 .inputArea {
   max-width: 400px;

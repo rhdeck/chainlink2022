@@ -95,59 +95,79 @@ export default function Home() {
         </div>
       </div>
       <main className={styles.main}>
-        {showFeedback}
-        <h1 className={styles.header1}>Create Node</h1>
-        <div className={styles.inputContainer}>
-          <label className={styles.inputLabel}>Node Name</label>
-          <input
-            className={styles.inputTicker}
-            onChange={handleChange}
-            name="name"
-            id="name"
-            placeholder="Node Name"
-            autoComplete="off"
-            type="text"
-          />
-          {problems.name && (
-            <div className={styles.errorText}>{problems.name}</div>
-          )}
-        </div>
-        <div className={styles.inputContainer}>
-          <label className={styles.inputLabel}>Owner Wallet (EVM)</label>
-          <input
-            className={styles.inputTicker}
-            onChange={handleChange}
-            name="ownerWallet"
-            id="ownerWallet"
-            placeholder="0x000000000000000000000000"
-            autoComplete="off"
-            type="text"
-          />
-          {problems.name && (
-            <div className={styles.errorText}>{problems.name}</div>
-          )}
-        </div>
-        <div>
-          <button
-            className={styles.exploreButton}
-            style={{ marginTop: "15px" }}
-            onClick={createNode}
-          >
-            Create Node
-          </button>
-        </div>
-        <button
-          className={styles.connectButton}
-          style={{
-            marginLeft: "0px",
-            fontSize: "1.25rem",
-            textDecoration: "underline",
-            backgroundColor: "inherit",
-          }}
-          onClick={() => router.replace("/nodes")}
-        >
-          Back to Nodes
-        </button>
+        {feedback && showFeedback}
+        {!feedback && (
+          <div>
+            <h1 className={styles.header1}>Create Node</h1>
+            <div className={styles.inputContainer}>
+              <label
+                className={`${styles.inputLabel} ${
+                  problems.name && styles.errorLabel
+                }`}
+              >
+                Node Name
+              </label>
+              <input
+                className={`${styles.inputTicker} ${
+                  problems.name && styles.errorTicker
+                }`}
+                onChange={handleChange}
+                name="name"
+                id="name"
+                placeholder="Node Name"
+                autoComplete="off"
+                type="text"
+              />
+              {problems.name && (
+                <div className={styles.errorText}>{problems.name}</div>
+              )}
+            </div>
+            <div className={styles.inputContainer}>
+              <label
+                className={`${styles.inputLabel} ${
+                  problems.name && styles.errorLabel
+                }`}
+              >
+                Owner Wallet (EVM)
+              </label>
+              <input
+                className={`${styles.inputTicker} ${
+                  problems.ownerWallet && styles.errorTicker
+                }`}
+                onChange={handleChange}
+                name="ownerWallet"
+                id="ownerWallet"
+                placeholder="0x000000000000000000000000"
+                autoComplete="off"
+                type="text"
+              />
+              {problems.ownerWallet && (
+                <div className={styles.errorText}>{problems.ownerWallet}</div>
+              )}
+            </div>
+            <div>
+              <button
+                className={styles.exploreButton}
+                style={{ marginTop: "15px" }}
+                onClick={createNode}
+              >
+                Create Node
+              </button>
+            </div>
+            <button
+              className={styles.connectButton}
+              style={{
+                marginLeft: "0px",
+                fontSize: "1.25rem",
+                textDecoration: "underline",
+                backgroundColor: "inherit",
+              }}
+              onClick={() => router.replace("/nodes")}
+            >
+              Back to Nodes
+            </button>
+          </div>
+        )}
       </main>
 
       <footer className={styles.footer}>
