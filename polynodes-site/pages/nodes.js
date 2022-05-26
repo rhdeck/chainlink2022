@@ -94,14 +94,6 @@ function Nodes() {
 
       <main className={styles.main}>
         <h1 className={styles.header1}>Nodes</h1>
-        <button
-          className={styles.exploreButton}
-          style={{ margin: "20px 0" }}
-          onClick={() => router.replace("./node")}
-        >
-          Create Node
-        </button>
-
         <div className={styles.gridTwo}>
           {!nodes ? (
             <div className={styles.overlay}>
@@ -141,6 +133,13 @@ function Nodes() {
             })
           )}
         </div>
+        <button
+          className={styles.exploreButton}
+          style={{ margin: "20px 20px" }}
+          onClick={() => router.replace("./node")}
+        >
+          Create Node
+        </button>
       </main>
 
       <footer className={styles.footer}>
