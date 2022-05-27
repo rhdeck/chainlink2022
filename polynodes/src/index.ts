@@ -58,6 +58,7 @@ import {
   uploadTemplate as externalAdapters_uploadTemplate,
 } from "./externalAdapters";
 import {
+  feedMumbai as oracle_feedMumbai,
   deployMumbai as oracle_deployMumbai,
   deployMatic as oracle_deployMatic,
 } from "./oracle";
@@ -118,6 +119,7 @@ export {
   externalAdapters_check,
   externalAdapters_compileTemplate,
   externalAdapters_uploadTemplate,
+  oracle_feedMumbai,
   oracle_deployMumbai,
   oracle_deployMatic,
   utils_sleep,

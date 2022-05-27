@@ -4,6 +4,29 @@ import { fetch } from "cross-fetch";
 // tslint:disable-next-line:no-any
 declare var global: any;
 global.fetch = fetch;
+export const feedMumbai = async (
+  oracleAddress: string,
+  privateKey: string,
+  amount: number = 0.15
+) => {
+  const provider = new ethers.providers.AlchemyProvider(
+    "maticmum",
+    process.env.ALCHEMY_MUMBAI_KEY
+  );
+  const account_from = {
+    privateKey,
+  };
+  let wallet = new ethers.Wallet(account_from.privateKey, provider);
+  const oracle = new ethers.Contract(oracleAddress, config.abi, wallet);
+  const value = ethers.utils.parseEther(amount.toString());
+  if (value.gt(2 * 10 ** 18))
+    throw new Error("Cannot transfer more than 2 ETH");
+  wallet.sendTransaction({
+    to: oracleAddress,
+    value,
+  });
+  console.log(`Attempting to deploy from account: ${wallet.address}`);
+};
 
 export const deployMumbai = async (
   nodeWallet: string,
