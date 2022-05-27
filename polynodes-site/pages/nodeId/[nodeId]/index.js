@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import React from "react";
 import { render } from "react-dom";
+import { ethers } from "ethers";
 // import AceEditor from "react-ace";
 
 // import "ace-builds/src-noconflict/mode-java";
@@ -14,6 +15,7 @@ import { render } from "react-dom";
 export default function Home() {
   const [feedback, setFeedback] = useState(false);
   const [source, setSource] = useState();
+  const [problems, setProblems] = useState({});
 
   function onChange(newValue) {
     setSource(newValue);
@@ -97,6 +99,96 @@ export default function Home() {
     );
   }
 
+  useEffect(() => {
+    if (formData && formData.name && !/^[a-z0-9]+$/i.test(formData.name)) {
+      setProblems((old) => ({
+        ...old,
+        name: "Name can only contain letters and numbers",
+      }));
+    } else if (!formData.name) {
+      setProblems((old) => ({
+        ...old,
+        name: "Name is required",
+      }));
+    } else {
+      setProblems((old) => ({ ...old, name: "" }));
+    }
+    
+    if (formData && formData.chain && !["80001", "137"].includes(formData.chain)) {
+      setProblems((old) => ({
+        ...old,
+        chain: "Chain must be 80001 or 137",
+      }));
+    } else if (!formData.chain) {
+      setProblems((old) => ({
+        ...old,
+        chain: "Chain is required",
+      }));
+    } else {
+      setProblems((old) => ({ ...old, chain: "" }));
+    }
+
+    if (
+      formData &&
+      formData.ownerWallet &&
+      !ethers.utils.isAddress(formData.ownerWallet)
+    ) {
+      setProblems((old) => ({
+        ...old,
+        ownerWallet:
+          "Invalid address: should be 0x followed by forty hexadecimal characters",
+      }));
+    } else {
+      setProblems((old) => ({ ...old, ownerWallet: "" }));
+    }
+
+    // @Todo: validate minPayment -> doesnt work if the minpayment 
+    // starts with a number and contains characters
+    const minPayment = parseFloat(formData.minPayment);
+    if(isNaN(minPayment) || minPayment < 0) {
+      console.log("here");
+      setProblems((old) => ({
+        ...old,
+        minPayment: "Min payment must be a number and greater than or equal to 0",
+      })); 
+    }
+    else if(!formData.minPayment)
+    {
+      setProblems((old) => ({
+        ...old,
+        minPayment: "Min Payment is required",
+      }));
+    }
+    else{
+      setProblems((old) => ({ ...old, minPayment: "" }));
+    }
+
+    // @TODO: prefill oracle address (right now its required) 
+     if (
+      formData &&
+      formData.oracleAddress &&
+      !ethers.utils.isAddress(formData.oracleAddress)
+    ) {
+      setProblems((old) => ({
+        ...old,
+        oracleAddress:
+          "Invalid address: should be 0x followed by forty hexadecimal characters",
+      }));
+    }
+    else if(!formData.oracleAddress){
+      setProblems((old) => ({
+        ...old,
+        oracleAddress: "Oracle Address is required",
+      }));
+    } 
+    else {
+      setProblems((old) => ({ ...old, oracleAddress: "" }));
+    }
+
+
+
+  }, [formData]);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -117,9 +209,17 @@ export default function Home() {
         <h1 className={styles.header1}>Create Job</h1>
         <div className={styles.gridTwo}>
           <div className={styles.inputContainer}>
-            <label className={styles.inputLabel}>Job Name</label>
+            <label
+              className={`${styles.inputLabel} ${
+                problems.name && styles.errorLabel
+              }`}
+            >
+              Job Name
+            </label>
             <input
-              className={styles.inputTicker}
+              className={`${styles.inputTicker} ${
+                problems.name && styles.errorTicker
+              }`}
               onChange={handleChange}
               name="name"
               id="name"
@@ -127,9 +227,18 @@ export default function Home() {
               autoComplete="off"
               type="text"
             />
+            {problems.name && (
+              <div className={styles.errorText}>{problems.name}</div>
+            )}
           </div>
           <div className={styles.inputContainer}>
-            <label className={styles.inputLabel}>Chain ID</label>
+            <label
+              className={`${styles.inputLabel} ${
+                problems.chain && styles.errorLabel
+              }`}
+            >
+              Chain ID
+            </label>
             <input
               className={styles.inputTicker}
               onChange={handleChange}
@@ -139,9 +248,14 @@ export default function Home() {
               autoComplete="off"
               type="text"
             />
+            {problems.chain && (
+              <div className={styles.errorText}>{problems.chain}</div>
+            )}
           </div>
           <div className={styles.inputContainer}>
-            <label className={styles.inputLabel}>Minimum Payment</label>
+            <label className={`${styles.inputLabel} ${
+                  problems.minPayment && styles.errorLabel
+                }`}>Minimum Payment</label>
             <input
               className={styles.inputTicker}
               onChange={handleChange}
@@ -151,9 +265,14 @@ export default function Home() {
               autoComplete="off"
               type="text"
             />
+            {problems.minPayment && (
+                <div className={styles.errorText}>{problems.minPayment}</div>
+              )}
           </div>
           <div className={styles.inputContainer}>
-            <label className={styles.inputLabel}>Parameters</label>
+            <label className={`${styles.inputLabel} ${
+                  problems.parameters && styles.errorLabel
+                }`}>Parameters</label>
             <input
               className={styles.inputTicker}
               onChange={handleChange}
@@ -163,9 +282,15 @@ export default function Home() {
               autoComplete="off"
               type="text"
             />
+             {problems.parameters && (
+                <div className={styles.errorText}>{problems.parameters}</div>
+              )}
+
           </div>
           <div className={styles.inputContainer}>
-            <label className={styles.inputLabel}>Oracle Address</label>
+            <label className={`${styles.inputLabel} ${
+                  problems.oracleAddress && styles.errorLabel
+                }`}>Oracle Address</label>
             <input
               className={styles.inputTicker}
               onChange={handleChange}
@@ -176,11 +301,13 @@ export default function Home() {
               autoComplete="off"
               type="text"
             />
+            {problems.oracleAddress && (
+                <div className={styles.errorText}>{problems.oracleAddress}</div>
+              )}
           </div>
         </div>
         <div className={styles.inputContainer}>
-          <label className={styles.inputLabel}>Source Code</label>
-          <div className={styles.informationWrapper}>
+          <div className={styles.detailsNode}>
             <p className={styles.information}>
               You can access any of the parameters via the inputData. E.g.
               referencing inputData.ticker would fetch the parameter called,
@@ -192,6 +319,7 @@ export default function Home() {
               lambda function.
             </p>
           </div>
+          <label className={styles.inputLabel}>Source Code</label>
           <div>
             <textarea
               className={styles.inputArea}
