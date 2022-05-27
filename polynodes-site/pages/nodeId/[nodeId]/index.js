@@ -36,7 +36,6 @@ export default function Home() {
     window.location.href = "https://fleek.co/";
   }, []);
 
-
   const router = useRouter();
 
   const nodeId = router.query.nodeId;
@@ -219,8 +218,9 @@ export default function Home() {
       const goodParameterString = formData.parameters
         .split(",")
         .map((s) => s.trim())
-        .filter((s) => /[a-z0-9]+/i.test(s))
+        .filter((s) => s.replace(/[a-z0-9]+/gi, ""))
         .join(",");
+      // console.log("Comparing", formData.parameters, "to", goodParameterString);
       if (formData.parameters !== goodParameterString) {
         setProblems((old) => ({
           ...old,
@@ -454,15 +454,13 @@ export default function Home() {
           ></img>
         </button>
 
-                 <button className={styles.finityButton} onClick={clickFooter2}>
+        <button className={styles.finityButton} onClick={clickFooter2}>
           <div style={{ marginLeft: "15px" }}>Hosted on </div>
           <img
             className={styles.finityLogo}
             src="../images/fleek-logo.png"
           ></img>
         </button>
-
-
       </footer>
     </div>
   );
