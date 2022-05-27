@@ -108,3 +108,4 @@ dist
 polynodes/lib
 .webpack
 .DS_Store
+polynodes/taskrun.json
