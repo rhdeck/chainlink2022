@@ -230,6 +230,12 @@ export default function Home() {
       <main className={styles.main} suppressHydrationWarning>
         {showFeedback}
         <h1 className={styles.header1}>Create Job</h1>
+        {
+          <div>
+            on
+            {nodeId}
+          </div>
+        }
         <div className={styles.gridTwo}>
           <div className={styles.inputContainer}>
             <label

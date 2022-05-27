@@ -556,6 +556,11 @@
 .jobIdDefault {
   font-size: 0.75rem;
 }
+.jobNodeLink {
+  margin-left: 5px;
+  text-decoration: none;
+  color: white;
+}
 
 .cardJob {
   font-family: "GeneralSans-Regular";
