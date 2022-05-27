@@ -17,15 +17,27 @@ export const feedMumbai = async (
     privateKey,
   };
   let wallet = new ethers.Wallet(account_from.privateKey, provider);
-  const oracle = new ethers.Contract(oracleAddress, config.abi, wallet);
+  // const oracle = new ethers.Contract(oracleAddress, config.abi, wallet);
   const value = ethers.utils.parseEther(amount.toString());
-  if (value.gt(2 * 10 ** 18))
+  if (value.gt(ethers.utils.parseEther("2"))) {
     throw new Error("Cannot transfer more than 2 ETH");
-  wallet.sendTransaction({
+  }
+  const maxPriorityFeePerGas = ethers.BigNumber.from(100 * 10 ** 9);
+  const maxFeePerGas = ethers.BigNumber.from(100 * 10 ** 9);
+  // const gasLimit = ethers.BigNumber.from(2500000);
+  console.log("The from for the wallet is ", wallet.address);
+  console.log(`Attempting to send money from account: ${wallet.address}`);
+  const txn = await wallet.sendTransaction({
+    from: wallet.address,
     to: oracleAddress,
     value,
+    maxFeePerGas,
+    // gasLimit,
+    maxPriorityFeePerGas,
+    // gasPrice: maxPriorityFeePerGas,
   });
-  console.log(`Attempting to deploy from account: ${wallet.address}`);
+  await txn.wait();
+  console.log("Done sending money");
 };
 
 export const deployMumbai = async (

@@ -391,19 +391,30 @@ export const makeContract = makeLambda({
       const newOwner = nodeRecord?.get("ownerWallet")?.stringValue();
       if (newOwner) {
         const mumbaiKey = keyObj["80001"].address;
-        if (mumbaiKey && process.env.MUMBAI_PK) {
+        const amount = keyObj["80001"].ethBalance;
+        if (ethers.BigNumber.from(amount).gt(ethers.utils.parseEther("0.5"))) {
+          if (process.env.MUMBAI_PK) {
+            //lets feed it a little fake money
+            await feedMumbai(mumbaiKey, process.env.MUMBAI_PK, 0.5);
+          }
+        }
+        if (
+          !nodeRecord.get("defaultContract_80001") &&
+          mumbaiKey &&
+          process.env.MUMBAI_PK
+        ) {
           mumbaiContract = await deployMumbai(
             mumbaiKey,
             newOwner,
             process.env.MUMBAI_PK
           );
-          if (mumbaiContract) {
-            //lets feed it a little fake money
-            await feedMumbai(mumbaiContract, newOwner, 0.5);
-          }
         }
         const maticKey = keyObj["137"].address;
-        if (maticKey && process.env.MATIC_PK) {
+        if (
+          !nodeRecord.get("defaultContract_137") &&
+          maticKey &&
+          process.env.MATIC_PK
+        ) {
           maticContract = await deployMatic(
             maticKey,
             newOwner,
