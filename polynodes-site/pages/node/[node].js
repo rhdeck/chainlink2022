@@ -184,61 +184,135 @@ function Node() {
                     </div>
                   </div>
                   {node.keys &&
-                    node.keys.map(({ evmChainID, address }, index) => (
-                      <div className={styles.gridThree}>
-                        <div className={styles.nodeDetailWrapper}>
-                          {evmChainID === "80001" ? (
-                            <div>
-                              <div style={{ textDecoration: "underline" }}>
-                                Mumbai ({evmChainID})
-                              </div>
-                              <div className={styles.details}>
-                                Wallet:{" "}
-                                <Link
-                                  href={`https://mumbai.polygonscan.com/address/${address}`}
-                                >
-                                  <div className={styles.link}>{address}</div>
-                                </Link>
-                              </div>
-                              <div className={styles.details}>
-                                Contract:{" "}
-                                <Link
-                                  href={`https://mumbai.polygonscan.com/address/${node.defaultContract_80001[0]}`}
-                                >
-                                  <div className={styles.link}>
-                                    {node.defaultContract_80001[0]}
+                    node.keys.map(
+                      ({ evmChainID, address, ethBalance }, index) => (
+                        <div className={styles.gridThree}>
+                          <div className={styles.nodeDetailWrapper}>
+                            {evmChainID === "80001" ? (
+                              <div>
+                                <div style={{ fontSize: "24px" }}>
+                                  Mumbai ({evmChainID})
+                                </div>
+                                {address ? (
+                                  <div className={styles.details}>
+                                    Wallet:{" "}
+                                    <Link
+                                      href={`https://mumbai.polygonscan.com/address/${address}`}
+                                    >
+                                      <div
+                                        className={styles.link}
+                                        style={{ display: "inline-block" }}
+                                      >
+                                        {address}{" "}
+                                      </div>
+                                    </Link>
+                                    {"   "}{" "}
+                                    <div style={{ display: "inline-block" }}>
+                                      (Balance: {ethBalance})
+                                    </div>
                                   </div>
-                                </Link>
-                              </div>
-                            </div>
-                          ) : (
-                            <div>
-                              <div style={{ textDecoration: "underline" }}>
-                                Mainnet ({evmChainID})
-                              </div>
-                              <div className={styles.details}>
-                                Wallet:{" "}
-                                <Link
-                                  href={`https://polygonscan.com/address/${address}`}
-                                >
-                                  <div className={styles.link}>{address}</div>
-                                </Link>
-                              </div>
-                              <div className={styles.details}>
-                                Contract:{" "}
-                                <Link
-                                  href={`https://polygonscan.com/address/${node.defaultContract_137[0]}`}
-                                >
-                                  <div className={styles.link}>
-                                    {node.defaultContract_137[0]}
+                                ) : (
+                                  <div className={styles.details}>
+                                    Wallet:{" "}
+                                    <div
+                                      className={styles.link}
+                                      style={{ display: "inline-block" }}
+                                    >
+                                      No Wallet Found
+                                    </div>
                                   </div>
-                                </Link>
+                                )}
+                                {node.defaultContract_80001[0] ? (
+                                  <div className={styles.details}>
+                                    Contract:{" "}
+                                    <Link
+                                      href={`https://mumbai.polygonscan.com/address/${node.defaultContract_80001[0]}`}
+                                    >
+                                      <div
+                                        className={styles.link}
+                                        style={{ display: "inline-block" }}
+                                      >
+                                        {node.defaultContract_80001[0]}
+                                      </div>
+                                    </Link>
+                                  </div>
+                                ) : (
+                                  <div className={styles.details}>
+                                    Contract:{" "}
+                                    <div
+                                      className={styles.link}
+                                      style={{ display: "inline-block" }}
+                                    >
+                                      No Contract Found
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                            </div>
-                          )}
+                            ) : (
+                              <div>
+                                <div style={{ fontSize: "24px" }}>
+                                  Mainnet ({evmChainID})
+                                </div>
+                                {address ? (
+                                  <div className={styles.details}>
+                                    Wallet:{" "}
+                                    <Link
+                                      href={`https://polygonscan.com/address/${address}`}
+                                    >
+                                      <div
+                                        className={styles.link}
+                                        style={{ display: "inline-block" }}
+                                      >
+                                        {address}{" "}
+                                      </div>
+                                    </Link>
+                                    {"   "}
+                                    <div style={{ display: "inline-block" }}>
+                                      (Balance: {ethBalance})
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className={styles.details}>
+                                    Wallet:{" "}
+                                    <div
+                                      className={styles.link}
+                                      style={{ display: "inline-block" }}
+                                    >
+                                      No Wallet Found
+                                    </div>
+                                  </div>
+                                )}
+                                {node.defaultContract_137[0] ? (
+                                  <div className={styles.details}>
+                                    Contract:{" "}
+                                    <Link
+                                      href={`https://polygonscan.com/address/${node.defaultContract_137[0]}`}
+                                    >
+                                      <div
+                                        className={styles.link}
+                                        style={{ display: "inline-block" }}
+                                      >
+                                        {node.defaultContract_137[0]}
+                                      </div>
+                                    </Link>
+                                  </div>
+                                ) : (
+                                  <div className={styles.details}>
+                                    Contract:{" "}
+                                    <div
+                                      className={styles.link}
+                                      style={{ display: "inline-block" }}
+                                    >
+                                      No Contract Found
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    )}
                 </div>
               </div>
             )}

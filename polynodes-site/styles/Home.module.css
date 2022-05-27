@@ -983,6 +983,10 @@
     text-overflow: ellipsis;
   }
 
+  .link {
+    overflow-wrap: anywhere;
+  }
+
   .jobText {
     width:250px;
     overflow: hidden;
