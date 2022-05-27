@@ -472,6 +472,11 @@
   line-height: 1.5;
   font-size: 1.25rem;
 }
+.indexText a{
+  color: rgb(219, 173, 207);
+  text-decoration: none;
+}
+
 
 .polygonscan {
   color: #cf9fff;
