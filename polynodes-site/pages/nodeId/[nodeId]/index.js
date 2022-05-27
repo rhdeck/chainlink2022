@@ -100,7 +100,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (formData && formData.name && !/^[a-z0-9]+$/i.test(formData.name)) {
+    if (formData && formData.name && !/^[a-z0-9]+$/.test(formData.name)) {
       setProblems((old) => ({
         ...old,
         name: "Name can only contain letters and numbers",
