@@ -95,8 +95,9 @@ function Nodes() {
       <main className={styles.main}>
         <h1 className={styles.header1}>Nodes</h1>
         <div className={styles.detailsNode}>
-          Below is a list of the nodes currently deployed on PolyNodes. Click on a node to see the jobs running on 
-          it. 
+          Below is a list of the nodes currently deployed on PolyNodes. Click on
+          a node to see the jobs running on it. Nodes marked as initializing
+          usually take about 5 minutes to deploy.
         </div>
         <div className={styles.gridTwo}>
           {!nodes ? (
@@ -123,11 +124,11 @@ function Nodes() {
                   onClick={() => router.replace(`/node/${key}`)}
                   style={{ cursor: "pointer" }}
                 >
-                  <h3 className={styles.nodeName}>
-                    {key}
-                  </h3>
+                  <h3 className={styles.nodeName}>{key}</h3>
                   <h4 className={styles.nodeStatus}>
-                      {capitalizeFirstLetter(status)}
+                    {status === "uninitalized"
+                      ? "Initializing"
+                      : capitalizeFirstLetter(status)}
                   </h4>
                 </div>
               );
