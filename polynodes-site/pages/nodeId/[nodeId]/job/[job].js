@@ -119,13 +119,21 @@ function Node() {
                   Oracle Address:{" "}
                   <p className={styles.jobText}>
                     <div className={styles.details}>
+                      {job.chainId ==="80001"?
+                      <Link
+                        href={`https://mumbai.polygonscan.com/address/${job.contractAddress}`}
+                      >
+                        <div className={styles.linkTwo}>
+                          {job.contractAddress}
+                        </div>
+                      </Link>:
                       <Link
                         href={`https://polygonscan.com/address/${job.contractAddress}`}
                       >
                         <div className={styles.linkTwo}>
                           {job.contractAddress}
                         </div>
-                      </Link>
+                      </Link>}
                     </div>
                   </p>
                 </div>
