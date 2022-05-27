@@ -196,7 +196,7 @@ function Node() {
                                 </div>
                                 {address ? (
                                   <div className={styles.details}>
-                                    Wallet:{" "}
+                                    Node Wallet:{" "}
                                     <Link
                                       href={`https://mumbai.polygonscan.com/address/${address}`}
                                     >
@@ -214,7 +214,7 @@ function Node() {
                                   </div>
                                 ) : (
                                   <div className={styles.details}>
-                                    Wallet:{" "}
+                                    Node Wallet:{" "}
                                     <div
                                       className={styles.link}
                                       style={{ display: "inline-block" }}
@@ -226,7 +226,7 @@ function Node() {
                                 {node.defaultContract_80001 &&
                                 node.defaultContract_80001[0] ? (
                                   <div className={styles.details}>
-                                    Contract:{" "}
+                                    Oracle Contract:{" "}
                                     <Link
                                       href={`https://mumbai.polygonscan.com/address/${node.defaultContract_80001[0]}`}
                                     >
@@ -240,7 +240,7 @@ function Node() {
                                   </div>
                                 ) : (
                                   <div className={styles.details}>
-                                    Contract:{" "}
+                                    Oracle Contract:{" "}
                                     <div
                                       className={styles.link}
                                       style={{ display: "inline-block" }}
@@ -257,7 +257,7 @@ function Node() {
                                 </div>
                                 {address ? (
                                   <div className={styles.details}>
-                                    Wallet:{" "}
+                                    Node Wallet:{" "}
                                     <Link
                                       href={`https://polygonscan.com/address/${address}`}
                                     >
@@ -275,7 +275,7 @@ function Node() {
                                   </div>
                                 ) : (
                                   <div className={styles.details}>
-                                    Wallet:{" "}
+                                    Node Wallet:{" "}
                                     <div
                                       className={styles.link}
                                       style={{ display: "inline-block" }}
@@ -287,7 +287,7 @@ function Node() {
                                 {node.defaultContract_137 &&
                                 node.defaultContract_137[0] ? (
                                   <div className={styles.details}>
-                                    Contract:{" "}
+                                    Oracle Contract:{" "}
                                     <Link
                                       href={`https://polygonscan.com/address/${node.defaultContract_137[0]}`}
                                     >
@@ -301,7 +301,7 @@ function Node() {
                                   </div>
                                 ) : (
                                   <div className={styles.details}>
-                                    Contract:{" "}
+                                    Oracle Contract:{" "}
                                     <div
                                       className={styles.link}
                                       style={{ display: "inline-block" }}
