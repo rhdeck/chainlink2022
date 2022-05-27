@@ -1,6 +1,6 @@
 import Head from "next/head";
 import styles from "../../styles/Home.module.css";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Fragment } from "react";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -161,15 +161,22 @@ function Node() {
             {node && node.id && (
               <div className={styles.detailWrap}>
                 <div className={styles.gridThree}>
-                  <div className={styles.nodeDetailWrapper}>
+                  {/* <div className={styles.nodeDetailWrapper}>
                     <div className={styles.nodeLabel}>Node Name</div>
-                    <div className={styles.details}>{nodeId}</div>
-                  </div>
+                    <div className={styles.details}>{new Date(node.statusDate[0]).toLocaleString()}</div>
+                  </div> */}
                   <div className={styles.nodeDetailWrapper}>
+                    {node.status[0] === "completed" ?
+                   ( <Fragment><div className={styles.nodeLabel}>Ready Since</div>
+                   <div className={styles.details}>{new Date(node.statusDate[0]).toLocaleString()}</div>
+                   </Fragment>) :
+                    ( <div>
                     <div className={styles.nodeLabel}>Status</div>
                     <div className={styles.details}>
                       {capitalizeFirstLetter(String(node.status))}
                     </div>
+                    </div>)
+}
                   </div>
                   <div className={styles.nodeDetailWrapper}>
                     <div className={styles.nodeLabel}>Default EVM Chain</div>
@@ -181,9 +188,12 @@ function Node() {
                     <div className={styles.gridThree}>
                       <div className={styles.nodeDetailWrapper}>
                         <div className={styles.nodeLabel}>
-                          Wallet for chain {evmChainID}
+                          Wallet for chain {evmChainID} (Polygon {evmChainID === "80001" ? "Mumbai" : "Mainnet"})
                         </div>
-                        <div className={styles.details}>{address}</div>
+                        {evmChainID === "80001" ?
+                        <div className={styles.details}><Link href={`https://mumbai.polygonscan.com/address/${address}`}>{address}</Link></div>
+                        : <div className={styles.details}><Link href={`https://polygonscan.com/address/${address}`}>{address}</Link></div>
+                  }
                       </div>
                     </div>
                   ))}

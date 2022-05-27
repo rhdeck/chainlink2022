@@ -94,6 +94,10 @@ function Nodes() {
 
       <main className={styles.main}>
         <h1 className={styles.header1}>Nodes</h1>
+        <div className={styles.detailsNode}>
+          Below is a list of the nodes currently deployed on PolyNodes. Click on a node to see the jobs running on 
+          it. 
+        </div>
         <div className={styles.gridTwo}>
           {!nodes ? (
             <div className={styles.overlay}>
@@ -119,15 +123,11 @@ function Nodes() {
                   onClick={() => router.replace(`/node/${key}`)}
                   style={{ cursor: "pointer" }}
                 >
-                  <h3>
-                    <div className={styles.nodeName}>Node: </div>
-                    <div style={{ marginLeft: "10px" }}>{key}</div>
+                  <h3 className={styles.nodeName}>
+                    {key}
                   </h3>
                   <h4 className={styles.nodeStatus}>
-                    <div>Status: </div>
-                    <div style={{ marginLeft: "10px" }}>
                       {capitalizeFirstLetter(status)}
-                    </div>
                   </h4>
                 </div>
               );

@@ -12,7 +12,6 @@
   display: flex;
   flex-direction: column;
   text-align: left;
-
 }
 
 .header1 {
@@ -25,7 +24,7 @@
   font-size: 1.75rem;
   text-align: left;
   margin: 20px 0;
-  width:200px;
+  width: 200px;
   font-size: GeneralSans-Regular;
 }
 
@@ -130,8 +129,8 @@
   transform: scale(1.05);
 }
 
-.nav{
-  width:88vw;
+.nav {
+  width: 88vw;
 }
 
 .navButton {
@@ -188,7 +187,6 @@
   transform: scale(1.05);
 }
 
-
 .exploreButton:active {
   background-image: none;
   box-shadow: none;
@@ -207,7 +205,7 @@
   background-color: #ffff;
   border: 2px solid #f5acf7;
   font-family: "GeneralSans-Regular";
-  width:70vw;
+  width: 70vw;
 }
 
 .detailWrap {
@@ -229,6 +227,24 @@
   margin-left: 12px;
 }
 
+.detailsNode {
+  font-family: "GeneralSans-Regular";
+  margin-left: 12px;
+  margin-bottom: 20px;
+  background-color: #00000099;
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid black;
+  box-shadow: 10px 10px 10px #00000099;
+  font-weight: bold;
+  width: 70vw;
+}
+
+.nodeStatus {
+  font-family: "GeneralSans-Medium";
+}
+
 .inputLabel {
   text-align: left;
   font-family: "GeneralSans-Regular";
@@ -241,11 +257,10 @@
 
 .inputContainer {
   margin: 20px 20px 0 0;
-
 }
 
 .inputTicker {
-  width:400px;
+  width: 400px;
   background: #ffffff;
   /* Solid Colours/Brand/Primary/Primary-500 */
   border: 1px solid #8247e5;
@@ -258,27 +273,24 @@
   order: 0;
   align-self: stretch;
   flex-grow: 0;
-  font-size: .75rem;
+  font-size: 0.75rem;
   display: flex;
   flex-direction: column;
   align-items: space-around;
   height: 40px;
   margin-top: 3px;
   box-shadow: 0px 2px 2px -1px rgba(0, 0, 0, 0.12), 0px 0px 0px 3px #dcd4ff;
-
 }
 
-.errorTicker {
-
+.errorTicker, .errorTicker:focus {
   border: 1px solid #e54747;
-
 }
 
 .errorText {
   width: 300px;
-  color: rgb(255, 163, 163);
-  font-size: 0.65rem;
-  font-family: "GeneralSans-Medium";
+  color: rgb(253, 197, 197);
+  font-size: 0.80rem;
+  font-family: "GeneralSans-SemiBold";
   /*
   background-color: rgb(89, 0, 0);
   border: 1px solid rgb(255, 96, 96);
@@ -309,7 +321,7 @@
   align-items: space-around;
   height: 400px;
   width: 80vw;
-  margin-right:20px;
+  margin-right: 20px;
   margin-top: 20px;
 }
 
@@ -329,17 +341,16 @@
   cursor: pointer;
   background-color: #6f00ff;
   transition: transform 0.2s;
-   border-radius: 20px;
-   box-shadow: #747c90;
-   margin: 5px;
+  border-radius: 20px;
+  box-shadow: #747c90;
+  margin: 5px;
 }
 
 .connnectButton:active {
-background-color:#dcd4ff;
+  background-color: #dcd4ff;
 }
 .connectButton:hover {
-  background-color:#cf9fff;
-
+  background-color: #cf9fff;
 }
 .inputCode {
   background: #ffffff;
@@ -358,9 +369,8 @@ background-color:#dcd4ff;
   display: flex;
   flex-direction: column;
   align-items: space-around;
-  margin:20px 20px 0 0px;
+  margin: 20px 20px 0 0px;
 }
-
 
 .nodeButton {
   margin: 10px 10px;
@@ -432,7 +442,7 @@ background-color:#dcd4ff;
 }
 
 .description {
-  height:150px;
+  height: 150px;
   line-height: 1.5;
   font-size: 1.25rem;
 }
@@ -443,8 +453,7 @@ background-color:#dcd4ff;
 
 .polygonscan:active,
 .polygonscan:hover,
-.polygonscan:focus
- {
+.polygonscan:focus {
   color: #ffff;
 }
 
@@ -478,32 +487,30 @@ background-color:#dcd4ff;
   flex-direction: row;
   justify-content: space-around;
   font-family: "GeneralSans-SemiBold";
-  font-size:1.25rem;
+  font-size: 1.25rem;
   color: #4a23a4;
   /* margin-bottom: "20px"; */
-  padding-bottom: 20px
+  padding-bottom: 20px;
 }
 
 .card {
   display: flex;
-  border:#cf9fff 4px solid;
+  border: #cf9fff 4px solid;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 2px 1rem;
   color: #4a23a4;
   border-radius: 20px;
-  height:70px;
+  height: 70px;
   width: 400px;
   background-color: #ffff;
   transition: transform 0.2s;
   margin: 10px;
-
 }
 
-
 .cardJob {
-  border:#cf9fff 4px solid;
+  border: #cf9fff 4px solid;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -518,7 +525,6 @@ background-color:#dcd4ff;
   background-color: #ffff;
   transition: transform 0.2s;
   margin-bottom: 40px;
-
 }
 
 .cardTransaction {
@@ -531,7 +537,7 @@ background-color:#dcd4ff;
   color: #4a23a4;
   border-radius: 4px;
   min-height: 72.5px;
-  max-width:600px;
+  max-width: 600px;
   background-color: #ffff;
   transition: transform 0.2s;
   animation: shadow 2s infinite;
@@ -539,17 +545,15 @@ background-color:#dcd4ff;
 
 @keyframes pulse {
   100% {
-    color:#cf9fff;
+    color: #cf9fff;
   }
 }
 
 @keyframes shadow {
-
   50% {
     opacity: 70%;
   }
 }
-
 
 .card:hover {
   transform: scale(1.05);
@@ -644,7 +648,7 @@ background-color:#dcd4ff;
   text-align: left;
   margin-bottom: 1rem;
   font-size: 1.25rem;
-  width:400px;
+  width: 400px;
   font-family: GeneralSans-Regular;
 }
 
@@ -699,8 +703,15 @@ background-color:#dcd4ff;
   border-left: 1.5px solid #747c90;
 }
 
-.uninitialized h4{
+.uninitialized h4, .completing h4 {
   animation: pulse 2s infinite;
+}
+
+.nodeName {
+  font-size: 20px;
+  font-family: "GeneralSans-Bold";
+  margin-bottom: auto 0;
+  
 }
 
 @font-face {
@@ -865,7 +876,7 @@ background-color:#dcd4ff;
     width: 320px;
     flex-direction: column;
     margin: 5px;
-    padding:2px;
+    padding: 2px;
   }
 
   .gridTwo {
@@ -874,16 +885,16 @@ background-color:#dcd4ff;
   }
 
   .container {
-    padding:5px;
+    padding: 5px;
   }
 
   .card {
-    width:300px;
+    width: 300px;
   }
 
   .detailWrap {
-    width:80vw;
-    font-size: .5rem;
+    width: 80vw;
+    font-size: 0.5rem;
     padding: 0 10px;
     /* height: 300px; */
   }
@@ -897,12 +908,12 @@ background-color:#dcd4ff;
 
   .inputButton {
     width: 160px;
-    height:65px;
+    height: 65px;
     border-radius: 30px;
   }
 
   .indexText {
-    width:300px;
+    width: 300px;
   }
 
   .gridTwo {
@@ -916,7 +927,6 @@ background-color:#dcd4ff;
   }
   .inputCode {
     max-width: 300px;
-
   }
   .inputArea {
     max-width: 300px;
@@ -933,4 +943,10 @@ background-color:#dcd4ff;
     margin: 5px 5px 0 0;
   }
 
+.detailsNode {
+  width:80vw;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  font-weight: 100;
+}
 }
