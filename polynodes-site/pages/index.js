@@ -38,6 +38,9 @@ export default function Home() {
         <p className={styles.indexText}>
         The team is grateful to Polygon and <a href = "https://cope.studio/">Cope Studios</a> for open sourcing the Figma design system for a cool web3 look.
         </p>
+        <p className={styles.indexText}>
+                    The Polynodes dapp is on IPFS and hosted via <a href = "https://fleek.co/">fleek.co</a>
+                  </p>
         <button
           className={styles.finityButton}
           onClick={() => router.replace("./nodes")}
