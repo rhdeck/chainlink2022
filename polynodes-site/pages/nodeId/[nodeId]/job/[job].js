@@ -8,6 +8,7 @@ import Link from 'next/link'
 function Node() {
 
   const [job, setJobs] = useState();
+  const [showLoader, setShowLoader] = useState()
   console.log(job)
 
   const router = useRouter();
@@ -29,6 +30,25 @@ function Node() {
         }
       );
       const jobs = await data.json();
+      const sourceArray = [""];
+      let count = 0;
+      let counter = 0;
+      const sourceArrayTwo = [];
+      const splitJobs = jobs.source.split("");
+      splitJobs.map((letter, index) => {
+        if (letter === ";") {
+          for (let i=count; i<=index; i++) {
+            sourceArray[counter] = sourceArray[counter].concat(splitJobs[i]);
+            count++;
+          }
+          count = index+1;
+          counter++;
+          sourceArray.push(" ");
+          sourceArrayTwo.push(sourceArray)
+      } 
+    })
+      console.log(sourceArrayTwo)
+      jobs["sourceArray"] = sourceArrayTwo;
       setJobs(jobs);
       setShowLoader(false);
       console.log("jobs ", jobs);
@@ -89,7 +109,11 @@ function Node() {
                   <div></div>
           }
                   </div>
-                <div>Source: <p className={styles.jobText}>{job.source}</p></div>
+                <div>Source: <p className={styles.jobText}>
+                  {job.sourceArray[0].map((text) => {
+                    return (<p>{text}</p>)
+                  })}
+                  </p></div>
                 </div>
             </div> 
 }
