@@ -1,6 +1,5 @@
 {
   "awsAccountId": "210049126456",
   "name": "polynodes-api",
-  "version": "1.0.0",
-  "internalKey": "POLYNODES"
+  "version": "1.0.0"
 }

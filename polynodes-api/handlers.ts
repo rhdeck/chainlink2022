@@ -32,7 +32,11 @@ import DOTGraph from "@polynodes/core/lib/dotgraph";
 import { compileTemplate, deploy } from "@polynodes/core/lib/externalAdapters";
 import { ChainlinkVariable } from "@polynodes/core/lib/chainlinkvariable";
 import { validateKey } from "@polynodes/core/lib/utils";
-import { deployMumbai, deployMatic } from "@polynodes/core/lib/oracle";
+import {
+  deployMumbai,
+  deployMatic,
+  feedMumbai,
+} from "@polynodes/core/lib/oracle";
 import { getAssetPath } from "@raydeck/local-assets";
 import { ethers } from "ethers";
 import { join } from "path";
@@ -40,6 +44,7 @@ import { execSync } from "child_process";
 import { Value } from "ion-js/dist/commonjs/es6/dom";
 import { Lambda } from "aws-sdk";
 import { get as registryGet } from "@raydeck/registry-manager";
+import { unlinkSync, writeFileSync } from "fs";
 //#region QLDB intialization
 const maxConcurrentTransactions = 10;
 const retryLimit = 4;
@@ -352,7 +357,7 @@ export const completedNode = makeAPIGatewayLambda({
     await new Lambda({ region: registryGet("AWS_REGION", "us-east-1") })
       .invoke({
         InvocationType: "Event",
-        FunctionName: registryGet("MAKE_CONTRACT_FUNCTION"),
+        FunctionName: registryGet("stackName") + "-makeContract",
         Payload,
       })
       .promise();
@@ -392,6 +397,10 @@ export const makeContract = makeLambda({
             newOwner,
             process.env.MUMBAI_PK
           );
+          if (mumbaiContract) {
+            //lets feed it a little fake money
+            await feedMumbai(mumbaiContract, newOwner, 0.5);
+          }
         }
         const maticKey = keyObj["137"].address;
         if (maticKey && process.env.MATIC_PK) {
@@ -678,15 +687,23 @@ export const createJob = makeAPIGatewayLambda({
     await deploy(ssh, join(getAssetPath(), "nodeserver"));
     console.log("I have deployed");
     const compiled = await compileTemplate(name, source);
+    const compiledPath = `/tmp/compiled-${name}.js`;
+    writeFileSync(compiledPath, compiled);
     try {
-      execSync(`node --check ${compiled}`);
+      execSync(`node --check ${compiledPath}`);
     } catch (e) {
       //No good
+      try {
+        unlinkSync(compiledPath);
+      } catch (e) {}
       return {
         statusCode: 400,
         body: "Could not compile this code",
       };
     }
+    try {
+      unlinkSync(compiledPath);
+    } catch (e) {}
     await uploadTemplate(ssh, name, compiled);
     await restart(ssh);
     //log in

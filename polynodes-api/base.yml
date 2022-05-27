@@ -11,11 +11,16 @@ provider:
         - Effect: Allow
           Action: "*"
           Resource: "arn:aws:qldb:*:*:*"
+        - Effect: "Allow"
+          Action:
+            - "lambda:InvokeFunction"
+          Resource: "*"
+
   environment:
+    stackName: "${self:custom.config.name}-${opt:stage, self:provider.stage, 'dev'}"
     DO_TOKEN: ${env:DO_TOKEN}
     ALCHEMY_MUMBAI_KEY: ${env:ALCHEMY_MUMBAI_KEY}
     ALCHEMY_POLYGON_KEY: ${env:ALCHEMY_POLYGON_KEY}
-    MAKE_CONTRACT_FUNCTION: { Fn::GetAtt: [makeContract, Arn] }
     BASE_URL:
       {
         "Fn::Join":
