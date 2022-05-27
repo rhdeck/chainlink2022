@@ -215,7 +215,7 @@ function Node() {
         </button>
 
          <button className={styles.finityButton} onClick={clickFooter2}>
-          <div style={{ marginLeft: "15px" }}>Created with </div>
+          <div style={{ marginLeft: "15px" }}>Hosted on </div>
           <img
             className={styles.finityLogo}
             src="../../../images/fleek-logo.png"
