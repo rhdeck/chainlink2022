@@ -76,7 +76,7 @@ function Node() {
                 <h2 style={{textAlign:"center", maxWidth:"400px", margin:"auto", marginBottom:"10px"}}>{job.name}</h2>
                 <div>Status: <p className={styles.jobText}>{job.status}</p></div>
                 <div>Oracle Address: <p className={styles.jobText}><div className={styles.details}><Link href={`https://polygonscan.com/address/${job.contractAddress}`}><div className={styles.linkTwo}>{job.contractAddress}</div></Link></div></p></div>
-                <div>Chain: <p className={styles.jobText}>{job.id}</p></div>
+                <div>Chain: <p className={styles.jobText}>{job.chainId}</p></div>
                 <div>Minimum Payment: <p className={styles.jobText}>{Number(job.minPayment).toFixed(3)} LINK</p></div>
                 <div>External Job ID: <p className={styles.jobText}>{job.externalJobID}</p></div>
                 <div>Parameters: 
