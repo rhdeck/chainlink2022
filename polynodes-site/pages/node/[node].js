@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, Fragment } from "react";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import copy from "copy-to-clipboard";
 function Node() {
   const [jobs, setJobs] = useState();
   const [node, setNode] = useState();
@@ -222,7 +223,8 @@ function Node() {
                                     </div>
                                   </div>
                                 )}
-                                {node.defaultContract_80001[0] ? (
+                                {node.defaultContract_80001 &&
+                                node.defaultContract_80001[0] ? (
                                   <div className={styles.details}>
                                     Contract:{" "}
                                     <Link
@@ -282,7 +284,8 @@ function Node() {
                                     </div>
                                   </div>
                                 )}
-                                {node.defaultContract_137[0] ? (
+                                {node.defaultContract_137 &&
+                                node.defaultContract_137[0] ? (
                                   <div className={styles.details}>
                                     Contract:{" "}
                                     <Link
@@ -325,22 +328,37 @@ function Node() {
                 Array.isArray(jobs) &&
                 jobs.length &&
                 jobs.map((job, index) => {
+                  console.log("Working with job", job);
                   return (
                     <div
                       key={index}
-                      className={styles.card}
+                      className={styles.jobCard}
                       onClick={() =>
                         router.replace(`../nodeId/${nodeId}/job/${job.name}`)
                       }
                       style={{ cursor: "pointer" }}
                     >
                       <h3>{job.name}</h3>
-                      <h4>
-                        <div>Status: </div>
-                        <div style={{ marginLeft: "10px" }}>
+                      {/* <h4>
+                        Status:
+                        <span style={{ marginLeft: "10px" }}>
                           {capitalizeFirstLetter(String(job.status))}
-                        </div>
-                      </h4>
+                        </span>
+                      </h4> */}
+                      {/* <h4> */}
+                      <div
+                        onClick={(e) => {
+                          copy(job.externalJobID.toString().replace(/-/g, ""));
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                      >
+                        Job Id:{" "}
+                        <span className={styles.jobId}>
+                          {job.externalJobID}
+                        </span>
+                      </div>
+                      {/* </h4> */}
                     </div>
                   );
                 })}

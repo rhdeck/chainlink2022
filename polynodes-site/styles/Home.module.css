@@ -534,6 +534,26 @@
   margin: 10px;
 }
 
+.jobCard {
+  display: flex;
+  border: #cf9fff 4px solid;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 1rem;
+  color: #4a23a4;
+  border-radius: 20px;
+  /* height: 70px; */
+  width: 400px;
+  background-color: #ffff;
+  transition: transform 0.2s;
+  margin: 10px;
+}
+
+.jobId {
+  font-family: "GeneralSans-Regular";
+}
+
 .cardJob {
   font-family: "GeneralSans-Regular";
   margin-left: 12px;
