@@ -16,7 +16,7 @@ export default function Home() {
   const [source, setSource] = useState();
 
   function onChange(newValue) {
-    setSource(newValue)
+    setSource(newValue);
   }
 
   const clickFooter = useCallback(() => {
@@ -33,13 +33,13 @@ export default function Home() {
     minPayment: "",
     parameters: "",
     oracleAddress: "",
-    source:""
+    source: "",
   });
 
   const [formData, updateFormData] = useState(initialFormData);
 
   const handleChange = async (e) => {
-    console.log(e)
+    console.log(e);
     updateFormData({
       ...formData,
 
@@ -117,80 +117,93 @@ export default function Home() {
         <h1 className={styles.header1}>Create Job</h1>
         <div className={styles.gridTwo}>
           <div className={styles.inputContainer}>
-          <label className={styles.inputLabel}>Job Name</label>
-          <input
-            className={styles.inputTicker}
-            onChange={handleChange}
-            name="name"
-            id="name"
-            placeholder="Job Name"
-            autoComplete="off"
-            type="text"
-          />
+            <label className={styles.inputLabel}>Job Name</label>
+            <input
+              className={styles.inputTicker}
+              onChange={handleChange}
+              name="name"
+              id="name"
+              placeholder="Job Name"
+              autoComplete="off"
+              type="text"
+            />
           </div>
           <div className={styles.inputContainer}>
-          <label className={styles.inputLabel}>Chain ID</label>
-          <input
-            className={styles.inputTicker}
-            onChange={handleChange}
-            name="chain"
-            id="chain"
-            placeholder="Chain ID (i.e. 80001)"
-            autoComplete="off"
-            type="text"
-          />
-          </div>
-                    <div className={styles.inputContainer}>
-          <label className={styles.inputLabel}>Minimum Payment</label>
-          <input
-            className={styles.inputTicker}
-            onChange={handleChange}
-            name="minPayment"
-            id="minPayment"
-            placeholder="Minimum Payment"
-            autoComplete="off"
-            type="text"
-          />
+            <label className={styles.inputLabel}>Chain ID</label>
+            <input
+              className={styles.inputTicker}
+              onChange={handleChange}
+              name="chain"
+              id="chain"
+              placeholder="Chain ID (i.e. 80001)"
+              autoComplete="off"
+              type="text"
+            />
           </div>
           <div className={styles.inputContainer}>
-          <label className={styles.inputLabel}>Parameters</label>
-          <input
-            className={styles.inputTicker}
-            onChange={handleChange}
-            name="parameters"
-            id="parameters"
-            placeholder="Parameters"
-            autoComplete="off"
-            type="text"
-          />
+            <label className={styles.inputLabel}>Minimum Payment</label>
+            <input
+              className={styles.inputTicker}
+              onChange={handleChange}
+              name="minPayment"
+              id="minPayment"
+              placeholder="Minimum Payment"
+              autoComplete="off"
+              type="text"
+            />
           </div>
           <div className={styles.inputContainer}>
-          <label className={styles.inputLabel}>Oracle Address</label>
-          <input
-            className={styles.inputTicker}
-            onChange={handleChange}
-            value={formData.oracleAddress}
-            name="oracleAddress"
-            id="oracleAddress"
-            placeholder="Oracle Address"
-            autoComplete="off"
-            type="text"
-          />
+            <label className={styles.inputLabel}>Parameters</label>
+            <input
+              className={styles.inputTicker}
+              onChange={handleChange}
+              name="parameters"
+              id="parameters"
+              placeholder="Parameters"
+              autoComplete="off"
+              type="text"
+            />
+          </div>
+          <div className={styles.inputContainer}>
+            <label className={styles.inputLabel}>Oracle Address</label>
+            <input
+              className={styles.inputTicker}
+              onChange={handleChange}
+              value={formData.oracleAddress}
+              name="oracleAddress"
+              id="oracleAddress"
+              placeholder="Oracle Address"
+              autoComplete="off"
+              type="text"
+            />
           </div>
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.inputLabel}>Source Code</label>
-          <div className={styles.informationWrapper}><p  className={styles.information}>The source code is...</p></div>
-        <div >
-        <textarea
+          <div className={styles.informationWrapper}>
+            <p className={styles.information}>
+              You can access any of the parameters via the inputData. E.g.
+              referencing inputData.ticker would fetch the parameter called,
+              "ticker". You can use the await keyword. Return the function that
+              you want.
+            </p>
+            <p>
+              fetch, crypto and ethers are all loaded into memory for this
+              lambda function.
+            </p>
+          </div>
+          <div>
+            <textarea
               className={styles.inputArea}
               onChange={handleChange}
               name="source"
               id="source"
               placeholder="Enter job source code here..."
               autoComplete="off"
-          >{formData.source}</textarea>
-        {/* { typeof window !== "undefined" && <AceEditor 
+            >
+              {formData.source}
+            </textarea>
+            {/* { typeof window !== "undefined" && <AceEditor 
           className={styles.inputCode}
           mode="javascript"
           theme="github"
@@ -210,7 +223,7 @@ export default function Home() {
             tabSize: 2,
           }}
         />} */}
-        </div>
+          </div>
         </div>
         <div>
           <button
@@ -220,16 +233,15 @@ export default function Home() {
           >
             Create Job
           </button>
-          <div className={styles.nav}> 
-          <button
-          className={styles.navButton}
-          onClick={() => router.replace(`/node/${nodeId}`)}
-        >
-          {"< "}Back to Jobs
-        </button>
+          <div className={styles.nav}>
+            <button
+              className={styles.navButton}
+              onClick={() => router.replace(`/node/${nodeId}`)}
+            >
+              {"< "}Back to Jobs
+            </button>
+          </div>
         </div>
-        </div>
-
       </main>
 
       <footer className={styles.footer}>

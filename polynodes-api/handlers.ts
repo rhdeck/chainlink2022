@@ -598,13 +598,13 @@ export const createJob = makeAPIGatewayLambda({
     console.log("Getting noderecord", nodeId);
     const nodeRecord = await getNodeRecord(nodeId);
     console.log("checking status on noderecord", nodeRecord.allFields());
-    const completed = nodeRecord.get("status")?.stringValue() === "completed";
-    if (!completed) {
-      return {
-        statusCode: 400,
-        body: "Node is not ready to receive jobs",
-      };
-    }
+    // const completed = nodeRecord.get("status")?.stringValue() === "completed";
+    // if (!completed) {
+    //   return {
+    //     statusCode: 400,
+    //     body: "Node is not ready to receive jobs",
+    //   };
+    // }
     //check for duplicate job
     console.log("I am completed, let's ride");
     const defaultChainId =
