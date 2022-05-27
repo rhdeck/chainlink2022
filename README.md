@@ -47,6 +47,7 @@ We will show how this implementation works to the community to make it easy to d
 ## Our challenges
 1. Making nodes is complicated! And managing them securely is involved. Getting both of these pieces going was a significant technical challenge. 
 2. We wanted to make the [reference implementation](https://alpaca.polynodes.xyz) as easy as possible to use. This focused us on UX issues that benefited both the main polynodes site. We are grateful to the [Finity project](https://finity.polygon.technology) for giving us a design direction so we could focus on engineering. 
+3. We used the Chainlink CLI for this prototype, but this is limited compared the GraphQL API the Operator UI uses under the hood. For example, getting task run information is exposed through the GraphQL but not the CLI. (We're doing something about it! See next steps below)
 
 ## What We're Proud Of
 This was a complicated, multi-part product that required expertise from blockchain to devops. We learned a ton from each other and the community. This initiative can make Chainlink and blockchain technology in general a lot more accessible and usable to a wider audience of people. For under a dollar ([or even a MATIC at prices as of this writing](https://coinmarketcap.com/currencies/polygon/)) per day, one can have a chainlink node of one's own, and make managing it easy. 
@@ -68,7 +69,8 @@ This project is designed as a monorepo. Key components:
 1. There are too few Chainlink nodes on L2. We plan to make interchain and offchain communication easy for everyone - maybe the easiest part of the process. 
 2. We will move more into making the system low-code and potentially no-code. 
 3. Currently we only support direct request jobs, but there's awesome opportunity to enable cron-based and external initiation so contracts can respond to events. 
-4. Finally, the nodes are set up to be inexpensive at the price of redundancy. We can make the system more resilient and decentralized by extending to other data centers at Digital Ocean, and other virtual server vendors (looking at you, [linode](https://linode.com))
+4. We will move to the GraphQL API for deep integration with the Chainlink subsystems so we can surface the full control plane and reporting - like showing task runs.
+5. The nodes are set up to be inexpensive at the price of redundancy. We can make the system more resilient and decentralized by extending to other data centers at Digital Ocean, and other virtual server vendors (looking at you, [linode](https://linode.com))
 ## Thanks
 We are grateful to the Chainlink team for putting together the hackathon that gave us the opportunity and inspiration to work on this project! 
 
