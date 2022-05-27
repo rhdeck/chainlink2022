@@ -218,9 +218,9 @@ export default function Home() {
       const goodParameterString = formData.parameters
         .split(",")
         .map((s) => s.trim())
-        .filter((s) => s.replace(/[a-z0-9]+/gi, ""))
+        .filter((s) => s.replace(/[^a-z0-9 ]/g, ""))
         .join(",");
-      // console.log("Comparing", formData.parameters, "to", goodParameterString);
+      console.log("Comparing", formData.parameters, "to", goodParameterString);
       if (formData.parameters !== goodParameterString) {
         setProblems((old) => ({
           ...old,
