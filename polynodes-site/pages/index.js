@@ -63,7 +63,7 @@ export default function Home() {
       <footer className={styles.footer}>
         <button
           className={styles.finityButton}
-          onClick={() => router.replace("/nodes")}
+          onClick={clickFooter}
         >
           <div style={{ marginRight: "5px" }}>Created with </div>
           <img
