@@ -1,4 +1,4 @@
-const config = require("./config.js");
+const config = require("../polynodes-contracts/scripts/config.js");
 const ethers = require("ethers");
 require("dotenv").config();
 
@@ -57,10 +57,10 @@ rotateFunds = async () => {
   accountBalance = ethers.utils.formatEther(ethers.BigNumber.from(accountBalance.toString()))
   console.log("Link Balance in our Wallet: ", accountBalance);
 
-  if (accountBalance > 5) {
+  if (accountBalance > 5.5) {
 
     const transferAmount = ethers.utils.parseEther(
-      ((accountBalance -10).toString())
+      ((accountBalance - 5.5).toString())
     );
     console.log("Transfer Amount: ", transferAmount);
 

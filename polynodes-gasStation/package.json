@@ -1,0 +1,31 @@
+{
+  "name": "@polynodes/contracts",
+  "version": "1.0.0",
+  "description": "Contracts for PolyNodes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "hardhat compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhdeck/chainlink2022.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rhdeck/chainlink2022/issues"
+  },
+  "homepage": "https://github.com/rhdeck/chainlink2022#readme",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "ethers": "^5.6.7"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "^0.4.0",
+    "@openzeppelin/contracts": "^4.6.0",
+    "dotenv": "^16.0.0"
+  }
+}
