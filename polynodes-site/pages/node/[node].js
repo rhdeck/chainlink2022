@@ -172,7 +172,7 @@ function Node() {
                     <div>
                       {node.status[0] === "completed" ? (
                         <Fragment>
-                          <div className={styles.nodeLabel}>Ready Since</div>
+                          <div className={styles.nodeLabel} style={{fontSize:"24px"}}>Ready Since</div>
                           <div className={styles.details}>
                             {new Date(node.statusDate[0]).toLocaleString()}
                           </div>
@@ -212,7 +212,7 @@ function Node() {
                                     </a>
                                     {"   "}{" "}
                                     <div style={{ display: "inline-block" }}>
-                                      (Balance: {ethBalance})
+                                      (Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic)
                                     </div>
                                   </div>
                                 ) : (
@@ -287,7 +287,7 @@ function Node() {
                                     </a>
                                     {"   "}
                                     <div style={{ display: "inline-block" }}>
-                                      (Balance: {ethBalance})
+                                      (Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic)
                                     </div>
                                   </div>
                                 ) : (

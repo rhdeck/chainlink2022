@@ -129,7 +129,7 @@ export default function Home() {
             <h1 className={styles.header1}>Create Node</h1>
             <div className={styles.detailsNode}>
           <p>You're almost there! Provide a name for your PolyNodes server and it will be ready for you in about five minutes.</p>
-          <p>If you share your wallet address, PolyNodes will create a Chainlink oracle contract connect to your new server
+          <p>If you share your wallet address, PolyNodes will create a Chainlink oracle contract connected to your new server
           and assign you as the owner of that contract.</p>
         </div>
             <div className={styles.inputContainer}>
