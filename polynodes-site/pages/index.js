@@ -30,9 +30,12 @@ export default function Home() {
         <div className={styles.logoText}>
           <Link href="/">PolyNodes</Link>
         </div>
-      </div> */}
+      </div> */} <div className={styles.mainwrapper}> 
       <main className={styles.mainnologo}>
         <h1 className={styles.header1}>PolyNodes</h1>
+        
+        
+
         <p className={styles.indexText}>
           The easiest way to make your own Chainlink Oracle on Polygon.
         </p>
@@ -52,6 +55,10 @@ export default function Home() {
           Start Exploring Nodes
         </button>
       </main>
+      {/* <div className={styles.polynodewrapper}>
+      <img src = "./images/Polynodestransparent.png"/>
+      </div> */}
+      </div>
 
       <footer className={styles.footer}>
         <button
