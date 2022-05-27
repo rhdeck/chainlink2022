@@ -210,8 +210,25 @@ export default function Home() {
     } else {
       setProblems((old) => ({ ...old, oracleAddress: "" }));
     }
+    //check job for alphas and commas
+    if (formData.parameters) {
+      const goodParameterString = formData.parameters
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => /[a-z0-9]+/i.test(s))
+        .join(",");
+      if (formData.parameters !== goodParameterString) {
+        setProblems((old) => ({
+          ...old,
+          parameters:
+            "Parameters can only contain letters and numbers separated by commas",
+        }));
+      } else {
+        setProblems((old) => ({ ...old, parameters: "" }));
+      }
+    }
   }, [formData]);
-
+  console.log("Problem count", Object.values(problems).filter(Boolean).length);
   return (
     <div className={styles.container}>
       <Head>
@@ -253,6 +270,7 @@ export default function Home() {
               name="name"
               id="name"
               placeholder="Job Name"
+              value={formData.name}
               autoComplete="off"
               type="text"
               autoFocus
@@ -294,6 +312,7 @@ export default function Home() {
             <input
               className={styles.inputTicker}
               onChange={handleChange}
+              value={formData.minPayment}
               name="minPayment"
               id="minPayment"
               placeholder="Minimum Payment"
@@ -317,6 +336,7 @@ export default function Home() {
               onChange={handleChange}
               name="parameters"
               id="parameters"
+              value={formData.parameters}
               placeholder="Parameters"
               autoComplete="off"
               type="text"
@@ -344,7 +364,6 @@ export default function Home() {
               value={formData.oracleAddress}
               name="oracleAddress"
               id="oracleAddress"
-              value={formData.oracleAddress}
               placeholder="Oracle Address"
               autoComplete="off"
               type="text"
@@ -405,8 +424,11 @@ export default function Home() {
             className={styles.exploreButton}
             style={{ margin: "25px 0" }}
             onClick={createJob}
+            disabled={Object.values(problems).filter(Boolean).length}
           >
-            Create Job
+            {!Object.values(problems).filter(Boolean).length
+              ? "Create Job"
+              : "Almost done..."}
           </button>
           <div className={styles.nav}>
             <button
