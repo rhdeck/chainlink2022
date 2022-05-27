@@ -369,7 +369,7 @@ function Node() {
                       }
                       style={{ cursor: "pointer" }}
                     >
-                      <h3>{job.name}</h3>
+                      <h3 style={{margin:"5px auto"}}>{job.name}</h3>
                       {/* <h4>
                         Status:
                         <span style={{ marginLeft: "10px" }}>
