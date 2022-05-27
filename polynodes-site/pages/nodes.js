@@ -47,6 +47,11 @@ function Nodes() {
     window.location.href = "https://finity.polygon.technology/";
   }, []);
 
+      const clickFooter2 = useCallback(() => {
+    window.location.href = "https://fleek.co/";
+  }, []);
+
+
   const createNode = useCallback(() => {
     window.location.href = `./node`;
   }, []);
@@ -160,6 +165,16 @@ function Nodes() {
             src="https://assets.website-files.com/61f6b057c024d3274ee3a052/61f6e2b3e6ce5e8a000000bd_logoPurple.svg"
           ></img>
         </button>
+
+        <button className={styles.finityButton} onClick={clickFooter2}>
+          <div style={{ marginLeft: "15px" }}>Created with </div>
+          <img
+            className={styles.finityLogo}
+            src="../images/fleek-logo.png"
+          ></img>
+        </button>
+
+
       </footer>
     </div>
   );
