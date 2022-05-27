@@ -553,6 +553,9 @@
 .jobId {
   font-family: "GeneralSans-Regular";
 }
+.jobIdDefault {
+  font-size: 0.75rem;
+}
 
 .cardJob {
   font-family: "GeneralSans-Regular";

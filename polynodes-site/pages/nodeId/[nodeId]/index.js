@@ -12,11 +12,19 @@ import { ethers } from "ethers";
 // import "ace-builds/src-noconflict/theme-github";
 // import "ace-builds/src-noconflict/ext-language_tools";
 
+const initialFormData = Object.freeze({
+  name: "",
+  chain: "80001",
+  minPayment: "0.1",
+  parameters: "",
+  oracleAddress: "",
+  source: "",
+});
 export default function Home() {
   const [feedback, setFeedback] = useState(false);
   const [source, setSource] = useState();
   const [problems, setProblems] = useState({});
-
+  const [node, setNode] = useState();
   function onChange(newValue) {
     setSource(newValue);
   }
@@ -29,15 +37,6 @@ export default function Home() {
 
   const nodeId = router.query.nodeId;
 
-  const initialFormData = Object.freeze({
-    name: "",
-    chain: "",
-    minPayment: "",
-    parameters: "",
-    oracleAddress: "",
-    source: "",
-  });
-
   const [formData, updateFormData] = useState(initialFormData);
 
   const handleChange = async (e) => {
@@ -48,7 +47,34 @@ export default function Home() {
       [e.target.name]: e.target.value,
     });
   };
-
+  const getNode = useCallback(async () => {
+    if (!nodeId) return;
+    const data = await fetch(
+      `https://4nxj58hwac.execute-api.us-east-1.amazonaws.com/dev/nodes/${nodeId}`,
+      {
+        headers: {
+          Authorization: "Bearer POLYNODES",
+        },
+      }
+    );
+    const response = await data.json();
+    setNode(response);
+  }, [nodeId]);
+  useEffect(() => {
+    getNode();
+  }, [nodeId]);
+  useEffect(() => {
+    if (node) {
+      console.log("Nodes ahoy", node);
+      const key = `defaultContract_${formData.chain}`;
+      const contract = node[key];
+      console.log({ key, contract });
+      if (contract) {
+        console.log("Found my contract", contract);
+        updateFormData((old) => ({ ...old, oracleAddress: contract[0] }));
+      }
+    }
+  }, [node, formData.chain]);
   const createJob = async () => {
     setFeedback(true);
     const newParams = formData.parameters.split(",").map((s) => s.trim());
@@ -113,8 +139,12 @@ export default function Home() {
     } else {
       setProblems((old) => ({ ...old, name: "" }));
     }
-    
-    if (formData && formData.chain && !["80001", "137"].includes(formData.chain)) {
+
+    if (
+      formData &&
+      formData.chain &&
+      !["80001", "137"].includes(formData.chain)
+    ) {
       setProblems((old) => ({
         ...old,
         chain: "Chain must be 80001 or 137",
@@ -142,29 +172,27 @@ export default function Home() {
       setProblems((old) => ({ ...old, ownerWallet: "" }));
     }
 
-    // @Todo: validate minPayment -> doesnt work if the minpayment 
+    // @Todo: validate minPayment -> doesnt work if the minpayment
     // starts with a number and contains characters
     const minPayment = parseFloat(formData.minPayment);
-    if(isNaN(minPayment) || minPayment < 0) {
+    if (isNaN(minPayment) || minPayment < 0) {
       console.log("here");
       setProblems((old) => ({
         ...old,
-        minPayment: "Min payment must be a number and greater than or equal to 0",
-      })); 
-    }
-    else if(!formData.minPayment)
-    {
+        minPayment:
+          "Min payment must be a number and greater than or equal to 0",
+      }));
+    } else if (!formData.minPayment) {
       setProblems((old) => ({
         ...old,
         minPayment: "Min Payment is required",
       }));
-    }
-    else{
+    } else {
       setProblems((old) => ({ ...old, minPayment: "" }));
     }
 
-    // @TODO: prefill oracle address (right now its required) 
-     if (
+    // @TODO: prefill oracle address (right now its required)
+    if (
       formData &&
       formData.oracleAddress &&
       !ethers.utils.isAddress(formData.oracleAddress)
@@ -174,19 +202,14 @@ export default function Home() {
         oracleAddress:
           "Invalid address: should be 0x followed by forty hexadecimal characters",
       }));
-    }
-    else if(!formData.oracleAddress){
+    } else if (!formData.oracleAddress) {
       setProblems((old) => ({
         ...old,
         oracleAddress: "Oracle Address is required",
       }));
-    } 
-    else {
+    } else {
       setProblems((old) => ({ ...old, oracleAddress: "" }));
     }
-
-
-
   }, [formData]);
 
   return (
@@ -226,6 +249,7 @@ export default function Home() {
               placeholder="Job Name"
               autoComplete="off"
               type="text"
+              autoFocus
             />
             {problems.name && (
               <div className={styles.errorText}>{problems.name}</div>
@@ -243,6 +267,7 @@ export default function Home() {
               className={styles.inputTicker}
               onChange={handleChange}
               name="chain"
+              value={formData.chain}
               id="chain"
               placeholder="Chain ID (i.e. 80001)"
               autoComplete="off"
@@ -253,9 +278,13 @@ export default function Home() {
             )}
           </div>
           <div className={styles.inputContainer}>
-            <label className={`${styles.inputLabel} ${
-                  problems.minPayment && styles.errorLabel
-                }`}>Minimum Payment</label>
+            <label
+              className={`${styles.inputLabel} ${
+                problems.minPayment && styles.errorLabel
+              }`}
+            >
+              Minimum Payment
+            </label>
             <input
               className={styles.inputTicker}
               onChange={handleChange}
@@ -266,13 +295,17 @@ export default function Home() {
               type="text"
             />
             {problems.minPayment && (
-                <div className={styles.errorText}>{problems.minPayment}</div>
-              )}
+              <div className={styles.errorText}>{problems.minPayment}</div>
+            )}
           </div>
           <div className={styles.inputContainer}>
-            <label className={`${styles.inputLabel} ${
-                  problems.parameters && styles.errorLabel
-                }`}>Parameters</label>
+            <label
+              className={`${styles.inputLabel} ${
+                problems.parameters && styles.errorLabel
+              }`}
+            >
+              Parameters
+            </label>
             <input
               className={styles.inputTicker}
               onChange={handleChange}
@@ -282,28 +315,37 @@ export default function Home() {
               autoComplete="off"
               type="text"
             />
-             {problems.parameters && (
-                <div className={styles.errorText}>{problems.parameters}</div>
-              )}
-
+            {problems.parameters && (
+              <div className={styles.errorText}>{problems.parameters}</div>
+            )}
           </div>
           <div className={styles.inputContainer}>
-            <label className={`${styles.inputLabel} ${
-                  problems.oracleAddress && styles.errorLabel
-                }`}>Oracle Address</label>
+            <label
+              className={`${styles.inputLabel} ${
+                problems.oracleAddress && styles.errorLabel
+              }`}
+            >
+              Oracle Address{" "}
+              {node &&
+                node[`defaultContract_${formData.chain}`][0] ==
+                  formData.oracleAddress && (
+                  <span className={styles.jobIdDefault}>(Using Default)</span>
+                )}
+            </label>
             <input
               className={styles.inputTicker}
               onChange={handleChange}
               value={formData.oracleAddress}
               name="oracleAddress"
               id="oracleAddress"
+              value={formData.oracleAddress}
               placeholder="Oracle Address"
               autoComplete="off"
               type="text"
             />
             {problems.oracleAddress && (
-                <div className={styles.errorText}>{problems.oracleAddress}</div>
-              )}
+              <div className={styles.errorText}>{problems.oracleAddress}</div>
+            )}
           </div>
         </div>
         <div className={styles.inputContainer}>
@@ -328,9 +370,8 @@ export default function Home() {
               id="source"
               placeholder="Enter job source code here..."
               autoComplete="off"
-            >
-              {formData.source}
-            </textarea>
+              value={formData.source}
+            />
             {/* { typeof window !== "undefined" && <AceEditor 
           className={styles.inputCode}
           mode="javascript"
