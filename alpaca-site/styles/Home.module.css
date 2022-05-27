@@ -85,6 +85,7 @@
   background-color: hsla(0, 0%, 100%, 0.6);
   box-shadow: 0 30px 15px rgba(0, 0, 0, 0.4);
   transition: transform 0.2s;
+  margin-left: 5px;
 }
 
 .finityButton:active {
