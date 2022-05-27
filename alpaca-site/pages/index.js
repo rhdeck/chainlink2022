@@ -328,8 +328,14 @@ export default function Home() {
                 <h4 className={styles.header2}>(Powered by PolyNodes)</h4>
                 <div className={styles.description}>
                   <p>
-                    Alpaca market feeds are updated continuously on the Polygon
-                    blockchain via Chainlink nodes.
+                    Alpaca market feeds are updated continuously on the <a href= "https://polygon.technology">Polygon
+                    blockchain</a> via <a href = "https://chain.link/">Chainlink</a> nodes.
+                  </p>
+                  <p> 
+                    The team is grateful to Polygon and <a href = "https://cope.studio/">Cope Studios</a> for open sourcing the Figma design system for a cool web3 look.
+                  </p>
+                  <p>
+                    The Alpaca feed is on IPFS and hosted via <a href = "https://fleek.co/">fleek.co</a>
                   </p>
                   <p>Don't see a ticker? Submit one here.</p>
                   <button

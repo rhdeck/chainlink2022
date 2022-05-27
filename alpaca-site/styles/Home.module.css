@@ -191,7 +191,8 @@
 .title,
 .description {
   text-align: left;
-  font-family: GeneralSans-SemiBold;
+  font-family: "GeneralSans-Medium";
+  
 }
 
 .description {
