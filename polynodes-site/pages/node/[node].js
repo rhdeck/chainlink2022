@@ -89,11 +89,9 @@ function Node() {
   const clickFooter = useCallback(() => {
     window.location.href = "https://finity.polygon.technology/";
   }, []);
-      const clickFooter2 = useCallback(() => {
+  const clickFooter2 = useCallback(() => {
     window.location.href = "https://fleek.co/";
   }, []);
-
-  
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -127,7 +125,7 @@ function Node() {
       </Head>
       <div className={styles.logo}>
         <div className={styles.logoText}>
-          <Link href="/">PolyNodes</Link>
+          <a href="/">PolyNodes</a>
         </div>
       </div>
       <main className={styles.main}>
@@ -174,7 +172,7 @@ function Node() {
                     <div>
                       {node.status[0] === "completed" ? (
                         <Fragment>
-                          <div className={styles.nodeLabel}>Ready Since</div>
+                          <div className={styles.nodeLabel} style={{fontSize:"24px"}}>Ready Since</div>
                           <div className={styles.details}>
                             {new Date(node.statusDate[0]).toLocaleString()}
                           </div>
@@ -202,7 +200,7 @@ function Node() {
                                 {address ? (
                                   <div className={styles.details}>
                                     Node Wallet:{" "}
-                                    <Link
+                                    <a target="_blank"
                                       href={`https://mumbai.polygonscan.com/address/${address}`}
                                     >
                                       <div
@@ -211,10 +209,10 @@ function Node() {
                                       >
                                         {address}{" "}
                                       </div>
-                                    </Link>
+                                    </a>
                                     {"   "}{" "}
                                     <div style={{ display: "inline-block" }}>
-                                      (Balance: {ethBalance})
+                                      (Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic)
                                     </div>
                                   </div>
                                 ) : (
@@ -232,7 +230,7 @@ function Node() {
                                 node.defaultContract_80001[0] ? (
                                   <div className={styles.details}>
                                     Oracle Contract:{" "}
-                                    <Link
+                                    <a target="_blank"
                                       href={`https://mumbai.polygonscan.com/address/${node.defaultContract_80001[0]}`}
                                     >
                                       <div
@@ -241,7 +239,21 @@ function Node() {
                                       >
                                         {node.defaultContract_80001[0]}
                                       </div>
-                                    </Link>
+                                    </a>
+                                    <button
+                                      className={styles.connectButton}
+                                      style={{
+                                        display: "inline-block",
+                                        width: "70px",
+                                      }}
+                                      onClick={(e) => {
+                                        copy(node.defaultContract_80001[0].toString());
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                      }}
+                                    >
+                                      Copy
+                                    </button>
                                   </div>
                                 ) : (
                                   <div className={styles.details}>
@@ -263,7 +275,7 @@ function Node() {
                                 {address ? (
                                   <div className={styles.details}>
                                     Node Wallet:{" "}
-                                    <Link
+                                    <a target="_blank"
                                       href={`https://polygonscan.com/address/${address}`}
                                     >
                                       <div
@@ -272,10 +284,10 @@ function Node() {
                                       >
                                         {address}{" "}
                                       </div>
-                                    </Link>
+                                    </a>
                                     {"   "}
                                     <div style={{ display: "inline-block" }}>
-                                      (Balance: {ethBalance})
+                                      (Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic)
                                     </div>
                                   </div>
                                 ) : (
@@ -293,7 +305,7 @@ function Node() {
                                 node.defaultContract_137[0] ? (
                                   <div className={styles.details}>
                                     Oracle Contract:{" "}
-                                    <Link
+                                    <a target="_blank"
                                       href={`https://polygonscan.com/address/${node.defaultContract_137[0]}`}
                                     >
                                       <div
@@ -302,7 +314,21 @@ function Node() {
                                       >
                                         {node.defaultContract_137[0]}
                                       </div>
-                                    </Link>
+                                    </a>
+                                    <button
+                                      className={styles.connectButton}
+                                      style={{
+                                        display: "inline-block",
+                                        width: "70px",
+                                      }}
+                                      onClick={(e) => {
+                                        copy(node.defaultContract_137[0].toString());
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                      }}
+                                    >
+                                      Copy
+                                    </button>
                                   </div>
                                 ) : (
                                   <div className={styles.details}>
@@ -343,7 +369,7 @@ function Node() {
                       }
                       style={{ cursor: "pointer" }}
                     >
-                      <h3>{job.name}</h3>
+                      <h3 style={{margin:"5px auto"}}>{job.name}</h3>
                       {/* <h4>
                         Status:
                         <span style={{ marginLeft: "10px" }}>
@@ -362,6 +388,30 @@ function Node() {
                         <span className={styles.jobId}>
                           {job.externalJobID}
                         </span>
+                      </div>
+                      <div style={{ display: "inline-block" }}>
+                        <div>
+                          <Fragment>Oracle: </Fragment>
+                          {job.chainId === "80001" ? (
+                            <a className={styles.jobId}
+                              target="_blank"
+                              href={`https://mumbai.polygonscan.com/address/${job.contractAddress}`}
+                            >
+                              <span className={styles.jobId}>
+                                {job.contractAddress}
+                              </span>
+                            </a>
+                          ) : (
+                            <a
+                              target="_blank"
+                              href={`https://polygonscan.com/address/${job.contractAddress}`}
+                            >
+                              <span className={styles.jobId}>
+                                {job.contractAddress}
+                              </span>
+                            </a>
+                          )}
+                        </div>
                       </div>
                       {/* </h4> */}
                     </div>
@@ -398,15 +448,13 @@ function Node() {
           ></img>
         </button>
 
-         <button className={styles.finityButton} onClick={clickFooter2}>
+        <button className={styles.finityButton} onClick={clickFooter2}>
           <div style={{ marginLeft: "15px" }}>Hosted on </div>
           <img
             className={styles.finityLogo}
             src="../images/fleek-logo.png"
           ></img>
         </button>
-
-
       </footer>
     </div>
   );

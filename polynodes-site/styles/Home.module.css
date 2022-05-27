@@ -103,7 +103,6 @@
 .link {
   color: #dcd4ff;
   cursor: pointer;
-  margin-left: 30px;
 }
 
 .link:active {
@@ -579,7 +578,7 @@
   color: #4a23a4;
   border-radius: 20px;
   /* height: 70px; */
-  width: 400px;
+  width: 500px;
   background-color: #ffff;
   transition: transform 0.2s;
   margin: 10px;
@@ -587,6 +586,7 @@
 
 .jobId {
   font-family: "GeneralSans-Regular";
+  text-decoration: none;
 }
 .jobIdDefault {
   font-size: 0.75rem;
