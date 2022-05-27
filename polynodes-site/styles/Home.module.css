@@ -70,6 +70,19 @@
   flex-grow: 1;
 }
 
+.link {
+  color:#dcd4ff;
+  cursor: pointer;
+  margin-left:30px;
+}
+
+.link:active {
+  color:#8247e5;
+}
+.link:hover {
+  color:#cf9fff;
+}
+
 .finityButton {
   border-radius: 40px;
   height: 70px;
@@ -483,12 +496,11 @@
 
 .gridThree {
   display: flex;
-  margin: auto;
+  text-align: left;
   flex-direction: row;
-  justify-content: space-around;
+  padding:20px;
   font-family: "GeneralSans-SemiBold";
   font-size: 1.25rem;
-  color: #4a23a4;
   /* margin-bottom: "20px"; */
   padding-bottom: 20px;
 }

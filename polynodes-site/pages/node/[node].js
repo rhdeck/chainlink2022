@@ -157,15 +157,13 @@ function Node() {
           </div>
         )}
         {!showLoader && (
-          <div className={styles.polygonscan}>
+          <div>
             {node && node.id && (
-              <div className={styles.detailWrap}>
+                              <div className={styles.detailsNode} style={{textAlign:"center"}}>
+              <div>
+
                 <div className={styles.gridThree}>
-                  {/* <div className={styles.nodeDetailWrapper}>
-                    <div className={styles.nodeLabel}>Node Name</div>
-                    <div className={styles.details}>{new Date(node.statusDate[0]).toLocaleString()}</div>
-                  </div> */}
-                  <div className={styles.nodeDetailWrapper}>
+                  <div >
                     {node.status[0] === "completed" ?
                    ( <Fragment><div className={styles.nodeLabel}>Ready Since</div>
                    <div className={styles.details}>{new Date(node.statusDate[0]).toLocaleString()}</div>
@@ -178,25 +176,29 @@ function Node() {
                     </div>)
 }
                   </div>
-                  <div className={styles.nodeDetailWrapper}>
-                    <div className={styles.nodeLabel}>Default EVM Chain</div>
-                    <div className={styles.details}>{node.defaultChainId}</div>
-                  </div>
                 </div>
                 {node.keys &&
                   node.keys.map(({ evmChainID, address }, index) => (
                     <div className={styles.gridThree}>
                       <div className={styles.nodeDetailWrapper}>
-                        <div className={styles.nodeLabel}>
-                          Wallet for chain {evmChainID} (Polygon {evmChainID === "80001" ? "Mumbai" : "Mainnet"})
-                        </div>
                         {evmChainID === "80001" ?
-                        <div className={styles.details}><Link href={`https://mumbai.polygonscan.com/address/${address}`}>{address}</Link></div>
-                        : <div className={styles.details}><Link href={`https://polygonscan.com/address/${address}`}>{address}</Link></div>
+                        <div>
+                          <div style={{textDecoration:"underline"}}>Mumbai ({evmChainID})</div>
+                        <div className={styles.details}>Wallet: <Link href={`https://mumbai.polygonscan.com/address/${address}`}><div className={styles.link}>{address}</div></Link></div>
+                        <div className={styles.details}>Contract: <Link href={`https://mumbai.polygonscan.com/address/${node.defaultContract_80001[0]}`}><div className={styles.link}>{node.defaultContract_80001[0]}</div></Link></div>
+                        </div>
+              
+                        : 
+                        <div>
+                           <div style={{textDecoration:"underline"}}>Mainnet ({evmChainID})</div>
+                        <div className={styles.details}>Wallet: <Link href={`https://polygonscan.com/address/${address}`}><div className={styles.link}>{address}</div></Link></div>
+                        <div className={styles.details}>Contract: <Link href={`https://polygonscan.com/address/${node.defaultContract_137[0]}`}><div className={styles.link}>{node.defaultContract_137[0]}</div></Link></div>
+                    </div>
                   }
                       </div>
                     </div>
                   ))}
+                  </div>
               </div>
             )}
 
