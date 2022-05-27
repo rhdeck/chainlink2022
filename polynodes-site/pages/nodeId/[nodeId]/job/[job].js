@@ -29,10 +29,12 @@ function Node() {
         }
       );
       const jobs = await data.json();
-      setJobs(jobs)
-      console.log("jobs ", jobs)
+      setJobs(jobs);
+      setShowLoader(false);
+      console.log("jobs ", jobs);
     } catch (err) {
       console.log(err.message);
+      setShowLoader(false);
     }
   };
 
