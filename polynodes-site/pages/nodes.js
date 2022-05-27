@@ -131,7 +131,8 @@ function Nodes() {
                 >
                   <h3 className={styles.nodeName}>{key}</h3>
                   <h4 className={styles.nodeStatus}>
-                    {status === "uninitalized"
+                    {console.log("status:", status)}
+                    {status === "uninitialized"
                       ? "Initializing"
                       : capitalizeFirstLetter(status)}
                   </h4>
