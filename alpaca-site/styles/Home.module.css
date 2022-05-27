@@ -202,6 +202,16 @@
   margin-right: 20px;
 }
 
+.description a{
+  color: rgb(219, 173, 207);
+  text-decoration: none;
+}
+
+.header2 a{
+  color: rgb(219, 173, 207);
+  text-decoration: none;
+}
+
 .polygonscan {
   background-color: #cf9fff;
   color: black;

@@ -325,7 +325,7 @@ export default function Home() {
             <div className={styles.gridTwo}>
               <div>
                 
-                <h4 className={styles.header2}>(Powered by PolyNodes)</h4>
+                <h4 className={styles.header2}>(Powered by <a href= "https://polynodes.xyz">PolyNodes</a>)</h4>
                 <div className={styles.description}>
                   <p>
                     Alpaca market feeds are updated continuously on the <a href= "https://polygon.technology">Polygon
