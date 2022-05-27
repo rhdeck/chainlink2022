@@ -159,46 +159,87 @@ function Node() {
         {!showLoader && (
           <div>
             {node && node.id && (
-                              <div className={styles.detailsNode} style={{textAlign:"center"}}>
-              <div>
-
-                <div className={styles.gridThree}>
-                  <div >
-                    {node.status[0] === "completed" ?
-                   ( <Fragment><div className={styles.nodeLabel}>Ready Since</div>
-                   <div className={styles.details}>{new Date(node.statusDate[0]).toLocaleString()}</div>
-                   </Fragment>) :
-                    ( <div>
-                    <div className={styles.nodeLabel}>Status</div>
-                    <div className={styles.details}>
-                      {capitalizeFirstLetter(String(node.status))}
-                    </div>
-                    </div>)
-}
-                  </div>
-                </div>
-                {node.keys &&
-                  node.keys.map(({ evmChainID, address }, index) => (
-                    <div className={styles.gridThree}>
-                      <div className={styles.nodeDetailWrapper}>
-                        {evmChainID === "80001" ?
+              <div
+                className={styles.detailsNode}
+                style={{ textAlign: "center" }}
+              >
+                <div>
+                  <div className={styles.gridThree}>
+                    <div>
+                      {node.status[0] === "completed" ? (
+                        <Fragment>
+                          <div className={styles.nodeLabel}>Ready Since</div>
+                          <div className={styles.details}>
+                            {new Date(node.statusDate[0]).toLocaleString()}
+                          </div>
+                        </Fragment>
+                      ) : (
                         <div>
-                          <div style={{textDecoration:"underline"}}>Mumbai ({evmChainID})</div>
-                        <div className={styles.details}>Wallet: <Link href={`https://mumbai.polygonscan.com/address/${address}`}><div className={styles.link}>{address}</div></Link></div>
-                        <div className={styles.details}>Contract: <Link href={`https://mumbai.polygonscan.com/address/${node.defaultContract_80001[0]}`}><div className={styles.link}>{node.defaultContract_80001[0]}</div></Link></div>
+                          <div className={styles.nodeLabel}>Status</div>
+                          <div className={styles.details}>
+                            {capitalizeFirstLetter(String(node.status))}
+                          </div>
                         </div>
-              
-                        : 
-                        <div>
-                           <div style={{textDecoration:"underline"}}>Mainnet ({evmChainID})</div>
-                        <div className={styles.details}>Wallet: <Link href={`https://polygonscan.com/address/${address}`}><div className={styles.link}>{address}</div></Link></div>
-                        <div className={styles.details}>Contract: <Link href={`https://polygonscan.com/address/${node.defaultContract_137[0]}`}><div className={styles.link}>{node.defaultContract_137[0]}</div></Link></div>
+                      )}
                     </div>
-                  }
-                      </div>
-                    </div>
-                  ))}
                   </div>
+                  {node.keys &&
+                    node.keys.map(({ evmChainID, address }, index) => (
+                      <div className={styles.gridThree}>
+                        <div className={styles.nodeDetailWrapper}>
+                          {evmChainID === "80001" ? (
+                            <div>
+                              <div style={{ textDecoration: "underline" }}>
+                                Mumbai ({evmChainID})
+                              </div>
+                              <div className={styles.details}>
+                                Wallet:{" "}
+                                <Link
+                                  href={`https://mumbai.polygonscan.com/address/${address}`}
+                                >
+                                  <div className={styles.link}>{address}</div>
+                                </Link>
+                              </div>
+                              <div className={styles.details}>
+                                Contract:{" "}
+                                <Link
+                                  href={`https://mumbai.polygonscan.com/address/${node.defaultContract_80001[0]}`}
+                                >
+                                  <div className={styles.link}>
+                                    {node.defaultContract_80001[0]}
+                                  </div>
+                                </Link>
+                              </div>
+                            </div>
+                          ) : (
+                            <div>
+                              <div style={{ textDecoration: "underline" }}>
+                                Mainnet ({evmChainID})
+                              </div>
+                              <div className={styles.details}>
+                                Wallet:{" "}
+                                <Link
+                                  href={`https://polygonscan.com/address/${address}`}
+                                >
+                                  <div className={styles.link}>{address}</div>
+                                </Link>
+                              </div>
+                              <div className={styles.details}>
+                                Contract:{" "}
+                                <Link
+                                  href={`https://polygonscan.com/address/${node.defaultContract_137[0]}`}
+                                >
+                                  <div className={styles.link}>
+                                    {node.defaultContract_137[0]}
+                                  </div>
+                                </Link>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                </div>
               </div>
             )}
 
