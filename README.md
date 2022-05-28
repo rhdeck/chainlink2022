@@ -77,5 +77,5 @@ We are grateful to the Chainlink team for putting together the hackathon that ga
 ## The Polynodes Team
 * [Akshay](https://github.com/akshay-rakheja)
 * [Ray](https://github.com/rhdeck)
-* [Rishabh](https://github.com/robertreinhart)
-* [Robert](https://github.com/rishbruh)
+* [Rishabh](https://github.com/rishbruh)
+* [Robert](https://github.com/robertreinhart)
