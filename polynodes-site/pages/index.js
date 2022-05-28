@@ -40,7 +40,7 @@ export default function Home() {
           The easiest way to make your own Chainlink Oracle on Polygon.
         </p>
         <p className={styles.indexText}>
-          With the click of a button, create and deploy <a href= "https://polygon.technology" target="_blank">Polygon</a> nodes to run on <a href = "https://chain.link/" target="_blank">Chainlink</a>. Make your job as easily as defining a javascript lambda.
+          With the click of a button, create and deploy <a href= "https://polygon.technology" target="_blank">Polygon</a> nodes to run on <a href = "https://chain.link/" target="_blank">Chainlink</a>. Make your job as easy as defining a javascript lambda.
         </p>
         <p className={styles.indexText}>
         The team is grateful to Polygon and <a href = "https://cope.studio/" target="_blank">Cope Studios</a> for open sourcing the Figma design system for a cool web3 look.

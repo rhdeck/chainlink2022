@@ -190,7 +190,7 @@
 .navButton {
   border-radius: 10px;
   margin: 40px auto;
-  height: 40px;
+  height: 60px;
   position: relative;
   display: flex;
   font-family: GeneralSans-SemiBold;
@@ -398,7 +398,7 @@
   transition: transform 0.2s;
   border-radius: 20px;
   box-shadow: #747c90;
-  margin: 5px;
+  margin: 0 5px;
 }
 
 .connnectButton:active {
@@ -587,6 +587,7 @@
 .jobId {
   font-family: "GeneralSans-Regular";
   text-decoration: none;
+  color:#4a23a4;
 }
 .jobIdDefault {
   font-size: 0.75rem;

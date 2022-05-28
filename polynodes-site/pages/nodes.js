@@ -101,7 +101,7 @@ function Nodes() {
         <h1 className={styles.header1}>Nodes</h1>
         <div className={styles.detailsNode}>
           Below is a list of the nodes currently deployed on PolyNodes. Click on
-          a node to see the jobs running on it. Nodes marked as initializing
+          a node to see the jobs running on it. Nodes
           usually take about 5 minutes to deploy.
         </div>
         <div className={styles.gridTwo}>
