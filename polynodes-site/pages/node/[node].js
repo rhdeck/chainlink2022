@@ -211,10 +211,17 @@ function Node() {
                                       </div>
                                     </a>
                                     {"   "}{" "}
-                                    <div style={{ display: "inline-block" }}>
-                                      (Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic)
+                                    {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))) ?
+                              
+                                    <div>
+
+                                      Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic
+                                    </div> :
+                                    <div >Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic
+                                    <div style={{color:"red"}}>Node wallet needs to be funded to fulfill job.</div>
                                     </div>
-                                  </div>
+                                    }
+                                    </div>
                                 ) : (
                                   <div className={styles.details}>
                                     Node Wallet:{" "}
@@ -286,8 +293,8 @@ function Node() {
                                       </div>
                                     </a>
                                     {"   "}
-                                    <div style={{ display: "inline-block" }}>
-                                      (Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic)
+                                    <div >
+                                      Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic
                                     </div>
                                   </div>
                                 ) : (
