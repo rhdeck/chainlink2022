@@ -172,12 +172,7 @@ function Node() {
                     <div>
                       {node.status[0] === "completed" ? (
                         <Fragment>
-                          <div
-                            className={styles.nodeLabel}
-                            style={{ fontSize: "24px" }}
-                          >
-                            Ready Since
-                          </div>
+                          <div className={styles.nodeLabel} style={{fontSize:"24px"}}>Ready Since</div>
                           <div className={styles.details}>
                             {new Date(node.statusDate[0]).toLocaleString()}
                           </div>
@@ -205,8 +200,7 @@ function Node() {
                                 {address ? (
                                   <div className={styles.details}>
                                     Node Wallet:{" "}
-                                    <a
-                                      target="_blank"
+                                    <a target="_blank"
                                       href={`https://mumbai.polygonscan.com/address/${address}`}
                                     >
                                       <div
@@ -217,42 +211,17 @@ function Node() {
                                       </div>
                                     </a>
                                     {"   "}{" "}
-                                    {Number(
-                                      ethers.utils.formatEther(
-                                        ethers.BigNumber.from(
-                                          ethBalance.toString()
-                                        )
-                                      )
-                                    ) ? (
-                                      <div>
-                                        Balance:{" "}
-                                        {Number(
-                                          ethers.utils.formatEther(
-                                            ethers.BigNumber.from(
-                                              ethBalance.toString()
-                                            )
-                                          )
-                                        ).toFixed(5)}{" "}
-                                        Matic
-                                      </div>
-                                    ) : (
-                                      <div>
-                                        Balance:{" "}
-                                        {Number(
-                                          ethers.utils.formatEther(
-                                            ethers.BigNumber.from(
-                                              ethBalance.toString()
-                                            )
-                                          )
-                                        ).toFixed(5)}{" "}
-                                        Matic
-                                        <div style={{ color: "red" }}>
-                                          Node wallet needs to be funded to
-                                          fulfill job.
-                                        </div>
-                                      </div>
-                                    )}
-                                  </div>
+                                    {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))) ?
+                              
+                                    <div>
+
+                                      Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic
+                                    </div> :
+                                    <div >Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic
+                                    <div style={{color:"red"}}>Node wallet needs to be funded to fulfill job.</div>
+                                    </div>
+                                    }
+                                    </div>
                                 ) : (
                                   <div className={styles.details}>
                                     Node Wallet:{" "}
@@ -268,8 +237,7 @@ function Node() {
                                 node.defaultContract_80001[0] ? (
                                   <div className={styles.details}>
                                     Oracle Contract:{" "}
-                                    <a
-                                      target="_blank"
+                                    <a target="_blank"
                                       href={`https://mumbai.polygonscan.com/address/${node.defaultContract_80001[0]}`}
                                     >
                                       <div
@@ -286,9 +254,7 @@ function Node() {
                                         width: "70px",
                                       }}
                                       onClick={(e) => {
-                                        copy(
-                                          node.defaultContract_80001[0].toString()
-                                        );
+                                        copy(node.defaultContract_80001[0].toString());
                                         e.preventDefault();
                                         e.stopPropagation();
                                       }}
@@ -316,8 +282,7 @@ function Node() {
                                 {address ? (
                                   <div className={styles.details}>
                                     Node Wallet:{" "}
-                                    <a
-                                      target="_blank"
+                                    <a target="_blank"
                                       href={`https://polygonscan.com/address/${address}`}
                                     >
                                       <div
@@ -328,33 +293,16 @@ function Node() {
                                       </div>
                                     </a>
                                     {"   "}
-                                    <div>
-                                      Balance:{" "}
-                                      {Number(
-                                        ethers.utils.formatEther(
-                                          ethers.BigNumber.from(
-                                            ethBalance.toString()
-                                          )
-                                        )
-                                      ).toFixed(5)}{" "}
-                                      Matic
-                                    </div>{" "}
-                                    :
-                                    <div>
-                                      Balance:{" "}
-                                      {Number(
-                                        ethers.utils.formatEther(
-                                          ethers.BigNumber.from(
-                                            ethBalance.toString()
-                                          )
-                                        )
-                                      ).toFixed(5)}{" "}
-                                      Matic
-                                      <div style={{ color: "red" }}>
-                                        Node wallet needs to be funded to
-                                        fulfill job.
-                                      </div>
-                                    </div>
+                                    {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))) ?
+                              
+                              <div>
+
+                                Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic
+                              </div> :
+                              <div >Balance: {Number(ethers.utils.formatEther(ethers.BigNumber.from(ethBalance.toString()))).toFixed(5)} Matic
+                              <div style={{color:"red"}}>Node wallet needs to be funded to fulfill job.</div>
+                              </div>
+                              }
                                   </div>
                                 ) : (
                                   <div className={styles.details}>
@@ -371,8 +319,7 @@ function Node() {
                                 node.defaultContract_137[0] ? (
                                   <div className={styles.details}>
                                     Oracle Contract:{" "}
-                                    <a
-                                      target="_blank"
+                                    <a target="_blank"
                                       href={`https://polygonscan.com/address/${node.defaultContract_137[0]}`}
                                     >
                                       <div
@@ -389,9 +336,7 @@ function Node() {
                                         width: "70px",
                                       }}
                                       onClick={(e) => {
-                                        copy(
-                                          node.defaultContract_137[0].toString()
-                                        );
+                                        copy(node.defaultContract_137[0].toString());
                                         e.preventDefault();
                                         e.stopPropagation();
                                       }}
@@ -438,7 +383,7 @@ function Node() {
                       }
                       style={{ cursor: "pointer" }}
                     >
-                      <h3 style={{ margin: "5px auto" }}>{job.name}</h3>
+                      <h3 style={{margin:"5px auto"}}>{job.name}</h3>
                       {/* <h4>
                         Status:
                         <span style={{ marginLeft: "10px" }}>
@@ -462,8 +407,7 @@ function Node() {
                         <div>
                           <Fragment>Oracle: </Fragment>
                           {job.chainId === "80001" ? (
-                            <a
-                              className={styles.jobId}
+                            <a className={styles.jobId}
                               target="_blank"
                               href={`https://mumbai.polygonscan.com/address/${job.contractAddress}`}
                             >
