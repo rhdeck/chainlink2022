@@ -345,7 +345,7 @@
 
 .logoText {
   color: #8e40f2;
-  background: -webkit-linear-gradient(#8e40f2, #8e40f2, #cf9fff);
+  background: -webkit-linear-gradient(#6c01f7, #6c01f7, #8247e5);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
