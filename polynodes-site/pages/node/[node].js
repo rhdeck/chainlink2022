@@ -208,6 +208,20 @@ function Node() {
                                         style={{ display: "inline-block" }}
                                       >
                                         {address}{" "}
+                                           <button
+                                      className={styles.connectButton}
+                                      style={{
+                                        display: "inline-block",
+                                        width: "70px",
+                                      }}
+                                      onClick={(e) => {
+                                        copy(address.toString());
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                      }}
+                                    >
+                                      Copy
+                                    </button>
                                       </div>
                                     </a>
                                     {"   "}{" "}
@@ -290,6 +304,20 @@ function Node() {
                                         style={{ display: "inline-block" }}
                                       >
                                         {address}{" "}
+                                        <button
+                                      className={styles.connectButton}
+                                      style={{
+                                        display: "inline-block",
+                                        width: "70px",
+                                      }}
+                                      onClick={(e) => {
+                                        copy(address.toString());
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                      }}
+                                    >
+                                      Copy
+                                    </button>
                                       </div>
                                     </a>
                                     {"   "}
