@@ -125,6 +125,7 @@ function Node() {
       </Head>
       <div className={styles.logo}>
         <div className={styles.logoText}>
+        <img style={{marginRight:"5px"}} height="30" width="30" src="../images/Polynodes Icon.png"></img>
           <a href="/">PolyNodes</a>
         </div>
       </div>
