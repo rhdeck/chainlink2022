@@ -346,7 +346,7 @@ export default function Home() {
                     className={styles.polygonscan}
                     onClick={() => {
                       window.location.href =
-                        "https://mumbai.polygonscan.com/address/0xe934b71053845886a5F400E8ad289aA0B3E7B602";
+                        "https://mumbai.polygonscan.com/address/0xC728A789D4b698a916FD03E159d535b2984c92F8";
                     }}
                   >
                     Interact with the contract On PolygonScan
