@@ -13,7 +13,7 @@ rotateFunds = async () => {
   let wallet = new ethers.Wallet(account_from.privateKey, provider);
   // Initialize the contract
   const oracle = new ethers.Contract(
-    "0xE3a98D9FAAB4a4B338B40A6dF6273Ab520152b8c",
+    "0x84c0e771fa41AAC13707037fA0E282D43884754D",
     config.abi,
     wallet
   );
@@ -28,7 +28,7 @@ rotateFunds = async () => {
   );
 
   // Withdraw LINK tokens from the contract to the owner
-  if (withdrawableLink > 2) {
+  if (ethers.utils.formatEther(ethers.BigNumber.from(txn.toString())) > 2) {
     const txn_withdraw = await oracle.withdraw(
       wallet.address,
       ethers.utils.parseEther(withdrawableLink.toString())
@@ -36,12 +36,10 @@ rotateFunds = async () => {
     const receipt_withdraw = await txn_withdraw.wait();
     console.log(
       "Link Tokens trasnffered to owner's Address: ",
-      ethers.utils.formatEther(
-        ethers.BigNumber.from(withdrawableLink.toString())
-      )
+      withdrawableLink
     );
   } else {
-    console.log("Not enough LINK tokens to withdraw (<2)");
+    console.log("Not enough LINK tokens to withdraw (<=2)");
   }
 
   // Transfer LINK tokens to PriceFeed contract
@@ -54,15 +52,16 @@ rotateFunds = async () => {
   );
   // Checking Link balance in our wallet
   var accountBalance = await linkContract.balanceOf(wallet.address);
-  accountBalance = ethers.utils.formatEther(ethers.BigNumber.from(accountBalance.toString()))
+  accountBalance = ethers.utils.formatEther(
+    ethers.BigNumber.from(accountBalance.toString())
+  );
   console.log("Link Balance in our Wallet: ", accountBalance);
 
-  if (accountBalance > 5.5) {
-
+  if (accountBalance > 2.5) {
     const transferAmount = ethers.utils.parseEther(
-      ((accountBalance - 5.5).toString())
+      (accountBalance-2).toString()
     );
-    console.log("Transfer Amount: ", transferAmount);
+    console.log("Transfer Amount: ", ethers.utils.formatEther(transferAmount));
 
     const txn_transfer = await linkContract.transfer(
       priceFeedContract,
@@ -73,9 +72,8 @@ rotateFunds = async () => {
       "Link Tokens transferred to PriceFeed contract: ",
       ethers.utils.formatEther(transferAmount)
     );
-  }
-  else{
-      console.log("Not enough LINK tokens to transfer (<5)");
+  } else {
+    console.log("Not enough LINK tokens to transfer (<2.5)");
   }
 };
 

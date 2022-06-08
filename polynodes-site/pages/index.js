@@ -68,12 +68,12 @@ export default function Home() {
               alpaca.polynodes.xyz
             </a>
           </p>
-          <button
+          {/* <button
             className={styles.finityButton}
             onClick={() => router.replace("./nodes")}
           >
             Start Exploring Nodes
-          </button>
+          </button> */}
         </main>
         {/* <div className={styles.polynodewrapper}>
       <img src = "./images/Polynodestransparent.png"/>
